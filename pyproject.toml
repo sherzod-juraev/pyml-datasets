@@ -1,0 +1,232 @@
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
+# ================================================================================= #
+# ------------------------------------ Project ------------------------------------ #
+# ================================================================================= #
+[project]
+name = "pyml-datasets"
+dynamic = ["version"]
+description = "Classic tabular datasets in NPZ format for pyml — a machine learning library built from scratch"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT AND CC-BY-4.0"
+license-files = ["LICENSE", "LICENSES/*"]
+authors = [
+    {name = "Sherzod Juraev", email = "juraevsherzod9943@gmail.com"}
+]
+keywords = [
+    "datasets",
+    "machine-learning",
+    "education",
+    "numpy",
+    "npz",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.26.0",
+]
+
+# ================================================================================= #
+# --------------------------- Optional Dependencies ------------------------------- #
+# ================================================================================= #
+[project.optional-dependencies]
+# scikit-learn is used only by the build scripts that convert the datasets to NPZ.
+dev = [
+    "interrogate>=1.7.0",
+    "mypy>=1.11",
+    "pytest>=8.0",
+    "pytest-sugar>=1.0",
+    "ruff>=0.6.0",
+    "scikit-learn>=1.4.0",
+]
+docs = [
+    "doc8>=1.0.0",
+    "pydata-sphinx-theme>=0.15.0",
+    "rstcheck>=6.0.0",
+    "sphinx>=7.0.0",
+    "sphinx-autodoc-typehints>=2.2.0",
+    "sphinx-copybutton>=0.5.0",
+    "sphinx-design>=0.5.0",
+    "sphinx-lint>=1.0.0",
+    "sphinx-notfound-page>=1.1.0",
+    "sphinxext-opengraph>=0.13.0",
+    "sphinx-sitemap>=2.6.0",
+]
+all = [
+    "pyml_datasets[dev]",
+    "pyml_datasets[docs]",
+]
+
+# ================================================================================= #
+# ------------------------------------- URLs -------------------------------------- #
+# ================================================================================= #
+[project.urls]
+Homepage = "https://github.com/sherzod-juraev/pyml-datasets"
+Repository = "https://github.com/sherzod-juraev/pyml-datasets"
+Issues = "https://github.com/sherzod-juraev/pyml-datasets/issues"
+pyml = "https://github.com/sherzod-juraev/pyml"
+
+# ================================================================================= #
+# ------------------------------------ Setuptools --------------------------------- #
+# ================================================================================= #
+[tool.setuptools.dynamic]
+version = {attr = "pyml_datasets.__version__"}
+
+[tool.setuptools.packages.find]
+where = [".",]
+include = ["pyml_datasets", "pyml_datasets.*",]
+exclude = [
+    "tests", "tests.*",
+]
+
+[tool.setuptools.package-data]
+pyml_datasets = ["py.typed", "data/*.npz"]
+
+# ================================================================================= #
+# ------------------------------------ Pytest ------------------------------------- #
+# ================================================================================= #
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --strict-markers --strict-config"
+filterwarnings = ["ignore::UserWarning"]
+
+# ================================================================================= #
+# ------------------------------------- Ruff -------------------------------------- #
+# ================================================================================= #
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+include = [
+    "pyml_datasets/**/*.py",
+    "scripts/**/*.py",
+    "tests/**/*.py",
+]
+exclude = [
+    "__pycache__",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".mypy_cache",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "B", "C4", "D", "E", "F", "I", "N", "UP", "SIM", "W",
+]
+ignore = [
+    "N803", "N806",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "D", "N802", "SIM",
+]
+
+# ================================================================================= #
+# -------------------------------------- Mypy ------------------------------------- #
+# ================================================================================= #
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+# ================================================================================= #
+# ----------------------------------- Interrogate --------------------------------- #
+# ================================================================================= #
+[tool.interrogate]
+fail-under = 100
+verbose = 1
+quiet = false
+whitelist-regex = []
+color = true
+exclude = [
+    "docs",
+    "tests",
+]
+ignore-init-method = false
+ignore-init-module = false
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-property-decorators = false
+ignore-module = false
+ignore-nested-functions = false
+ignore-nested-classes = false
+
+
+# ================================================================================= #
+# --------------------------------- Docs Quality Tools ---------------------------- #
+# ================================================================================= #
+[tool.rstcheck]
+ignore_directives = [
+    "autoclass", "autofunction",
+    "button-link", "button-ref",
+    "card",
+    "doctest", "dropdown",
+    "grid", "grid-item-card",
+    "only",
+    "plot",
+    "tab-item", "tab-set",
+    "toctree",
+]
+ignore_substitutions = [
+    "home_description",
+]
+ignore_messages = [
+    "Unknown target name",
+]
+ignore_rules = [
+    "class",
+    "doc",
+    "func",
+    "meth",
+    "ref",
+]
+report_level = "warning"
+ignore_paths = [
+    "docs/build/*",
+]
+
+[tool.doc8]
+max-line-length = 100
+ignore = ["D000",]
+ignore_paths = [
+    "docs/build",
+    "docs/source/_static",
+]
+
+[tool.sphinx-lint]
+max-line-length = 100
+exclude = [
+    "docs/build",
+]
