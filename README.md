@@ -8,6 +8,7 @@
 
 [![Tests](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/tests.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/tests.yml)
 [![Docs](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/docs.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/docs.yml)
+   [![Documentation](https://readthedocs.org/projects/pyml-datasets/badge/?version=latest)](https://pyml-datasets.readthedocs.io/en/latest/)
 [![Code: MIT](https://img.shields.io/badge/code-MIT-yellow.svg)](LICENSE)
 [![Data: per dataset](https://img.shields.io/badge/data-per%20dataset-lightgrey.svg)](#license)
 [![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)](https://www.python.org/)
@@ -17,6 +18,8 @@
 
 Classic tabular datasets for machine learning, stored as NumPy `.npz`
 files and loaded with a single function call.
+
+📖 [pyml-datasets.readthedocs.io](https://pyml-datasets.readthedocs.io/en/latest/)
 
 ## Quick example
 
