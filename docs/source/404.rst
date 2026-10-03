@@ -1,0 +1,31 @@
+:orphan:
+
+Oops! This page took a detour
+=============================
+
+.. raw:: html
+
+   <div style="text-align: center; margin: 2rem 0;">
+     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 471 180" width="471"
+          fill="currentColor" role="img" aria-label="404"
+          style="max-width: 100%; height: auto;">
+       <path d="M73.4 45.2 33 108.4H73.4ZM70.7
+         10H103.8V108.4H121.3V135.5H103.8V170H73.4V135.5H10V104.8Z M155.3
+         10h12v160h-12ZM155.34628265237777 10.0h160v12h-160ZM204.7
+         10h12v160h-12ZM155.34628265237777 59.3h160v12h-160ZM254.0
+         10h12v160h-12ZM155.34628265237777 108.7h160v12h-160ZM303.3
+         10h12v160h-12ZM155.34628265237777 158.0h160v12h-160Z M412.8 45.2 372.4
+         108.4H412.8ZM410 10H443.1V108.4H460.7V135.5H443.1V170H412.8V135.5H349.3V104.8Z"/>
+     </svg>
+   </div>
+
+**We couldn't find the page you were looking for.**
+
+Don't worry, these things happen. The page might have moved, been
+renamed, or perhaps there is a tiny typo in the URL. Either way, we
+are here to help you get back on track.
+
+.. tip::
+
+   **Quick Tip:** You can always click the **pyml-datasets** logo in the
+   top-left corner of your screen to jump straight back to our homepage.
