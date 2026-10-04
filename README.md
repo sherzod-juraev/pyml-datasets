@@ -29,6 +29,11 @@ X, y = load_wine()
 print(X.shape, y.shape)  # (178, 13) (178,)
 ```
 
+> [!NOTE]
+> Importing `pyml_datasets` does not read any data. A dataset file is read from disk only when
+> its `load_*` function is called, so the import stays fast and you only load the datasets you
+> use.
+
 ## Installation
 
 ```bash
@@ -53,7 +58,17 @@ pyml-datasets/
 │
 ├── pyml_datasets/
 │   ├── data/
-│   └── _loader.py
+│   ├── _loader.py
+│   ├── _sklearn.py
+│   └── _wine_quality.py
+│
+├── scripts/
+│
+├── tests/
+│   ├── test_init.py
+│   ├── test_loader.py
+│   ├── test_sklearn_datasets.py
+│   └── test_wine_quality.py
 │
 ├── .gitignore
 ├── .readthedocs.yaml
@@ -77,12 +92,8 @@ pyml-datasets/
 ## License
 
 The code is released under the [MIT license](LICENSE). The datasets were created by other
-authors and keep the terms of their original sources:
-
-| Dataset                                          |                                               License                                               |
-|:-------------------------------------------------|:---------------------------------------------------------------------------------------------------:|
-| Iris, Wine, Breast Cancer Wisconsin (Diagnostic) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), from the UCI Machine Learning Repository |
-| Diabetes, Linnerud, California Housing           |                                  Not stated by the original source                                  |
-
-Citations and attribution requirements are on the dataset pages of the documentation.
+authors and keep the terms of their original sources, so the license differs from dataset to
+dataset and some sources do not state one. The license, source and citation of every dataset
+are listed in the documentation: [Datasets — pyml-datasets](https://pyml-datasets.readthedocs.io/en/latest/datasets/index.html#datasets)
+and [License](https://pyml-datasets.readthedocs.io/en/latest/license.html).
    

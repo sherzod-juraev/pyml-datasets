@@ -6,7 +6,6 @@ Dataset
 
 .. autoclass:: pyml_datasets.Dataset
     :members:
-    :show-inheritance:
     :exclude-members: X, y, feature_names, target_names, description
 
 Iterating over a ``Dataset`` yields ``X`` and then ``y``.
@@ -25,3 +24,5 @@ Loaders
 .. autofunction:: pyml_datasets.load_linnerud
 
 .. autofunction:: pyml_datasets.load_california_housing
+
+.. autofunction:: pyml_datasets.load_wine_quality

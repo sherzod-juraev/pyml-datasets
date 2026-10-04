@@ -30,6 +30,10 @@ original source.
      - CC BY 4.0
      - `UCI Machine Learning Repository
        <https://archive.ics.uci.edu/dataset/17/breast-cancer-wisconsin-diagnostic>`__
+   * - :doc:`datasets/wine_quality`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository
+       <https://archive.ics.uci.edu/dataset/186/wine+quality>`__
    * - :doc:`datasets/diabetes`
      - Not stated by the source
      - `Efron et al. (2004), data page
@@ -44,7 +48,7 @@ original source.
 CC BY 4.0 datasets
 ~~~~~~~~~~~~~~~~~~
 
-Iris, Wine and Breast Cancer Wisconsin (Diagnostic) are distributed by the UCI Machine
+The datasets marked CC BY 4.0 in the table above are distributed by the UCI Machine
 Learning Repository under the `Creative Commons Attribution 4.0 International license
 <https://creativecommons.org/licenses/by/4.0/>`_. The license text is included in the
 package as
@@ -53,16 +57,16 @@ It requires giving credit to the original authors, so please use the citation on
 each dataset page.
 
 Changes made: the files were converted to the NumPy ``.npz`` format. Feature values
-were not modified, only stored as ``float64``, and class labels were stored as
-``int64``.
+were not modified, only stored as ``float64``. Class labels were stored as ``int64``
+and regression targets as ``float64``.
 
 Datasets without a stated license
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For Diabetes, Linnerud and California Housing no license could be found at the original
-source, so no license is claimed for them here. They are included for educational use
-with attribution to their authors. Please check the original source before using them
-for any other purpose.
+For the datasets marked "Not stated by the source" in the table above, no license could
+be found at the original source, so no license is claimed for them here. They are
+included for educational use with attribution to their authors. Please check the
+original source before using them for any other purpose.
 
 Citation
 --------

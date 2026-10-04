@@ -1,7 +1,7 @@
 Datasets
 ========
 
-Six classic datasets are bundled with the package. Each page below describes the features and
+The datasets listed below are bundled with the package. Each page describes the features and
 targets, gives the source with a ready-to-use citation, states the license and shows how to
 load the data.
 
@@ -51,6 +51,12 @@ load the data.
      - 8
      - 1
      - Not stated
+   * - :doc:`wine_quality`
+     - Regression
+     - 6497
+     - 11
+     - 1
+     - CC BY 4.0
 
 "Not stated" means that the original source gives no license, see :doc:`../license`.
 
@@ -63,3 +69,4 @@ load the data.
    diabetes
    linnerud
    california_housing
+   wine_quality

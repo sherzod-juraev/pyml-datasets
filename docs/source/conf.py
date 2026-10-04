@@ -63,7 +63,6 @@ autodoc_default_options = {
     "member-order": "bysource",
     "undoc-members": False,
     "private-members": False,
-    "inherited-members": "object",
     "autosummary": True,
 }
 autodoc_typehints_format = "short"

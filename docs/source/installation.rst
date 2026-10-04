@@ -4,13 +4,10 @@ Installation
 Requirements
 ------------
 
-|python-badge| |numpy-badge|
+|python-badge|
 
 .. |python-badge| image:: https://img.shields.io/badge/python-3.12+-blue.svg
    :target: https://www.python.org/
-
-.. |numpy-badge| image:: https://img.shields.io/badge/numpy-1.26+-013243.svg
-   :target: https://numpy.org/
 
 .. note::
 
