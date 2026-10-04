@@ -43,7 +43,6 @@ dependencies = [
 # --------------------------- Optional Dependencies ------------------------------- #
 # ================================================================================= #
 [project.optional-dependencies]
-# scikit-learn is used only by the build scripts that convert the datasets to NPZ.
 dev = [
     "interrogate>=1.7.0",
     "mypy>=1.11",
@@ -51,6 +50,7 @@ dev = [
     "pytest-sugar>=1.0",
     "ruff>=0.6.0",
     "scikit-learn>=1.4.0",
+    "ucimlrepo>=0.0.7",
 ]
 docs = [
     "doc8>=1.0.0",
@@ -152,7 +152,7 @@ python_version = "3.12"
 strict = true
 
 [[tool.mypy.overrides]]
-module = ["sklearn.*"]
+module = ["sklearn.*", "ucimlrepo.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

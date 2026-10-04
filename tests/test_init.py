@@ -9,6 +9,7 @@ EXPECTED_LOADERS = {
     "load_iris",
     "load_linnerud",
     "load_wine",
+    "load_wine_quality",
 }
 
 
