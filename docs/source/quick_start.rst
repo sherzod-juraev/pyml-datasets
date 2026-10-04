@@ -16,9 +16,8 @@ Every dataset has a loader named ``load_<name>``. It returns a
    >>> data.y.shape
    (178,)
 
-The same call works for the other loaders: ``load_iris``, ``load_breast_cancer``,
-``load_diabetes``, ``load_linnerud`` and ``load_california_housing``. See
-:doc:`datasets/index` for what each one contains.
+Every other loader works the same way. The :doc:`api` page lists all of them, and
+:doc:`datasets/index` describes what each dataset contains.
 
 The Dataset object
 ------------------
@@ -42,7 +41,7 @@ The Dataset object
      - Names of the columns of ``X``.
    * - ``target_names``
      - tuple of ``str`` or ``None``
-     - Class names for classification, target names for multi-output regression, ``None``
+     - Class names for classification, names of the targets for regression, ``None``
        if the source has none.
    * - ``description``
      - ``str``
