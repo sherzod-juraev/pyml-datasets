@@ -10,6 +10,13 @@ file in the repository and in the installed package metadata.
 Data
 ----
 
+
+.. note::
+
+   The datasets in this package were converted to the NumPy ``.npz`` format. Apart from this
+   change of file format, the data are unchanged from the original sources unless a dataset's
+   entry says otherwise.
+
 The datasets were created by other people, so each one keeps the terms of its
 original source.
 
