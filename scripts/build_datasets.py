@@ -1,27 +1,53 @@
 """Build the bundled NPZ datasets.
 
-Run it manually from the repository root and commit the resulting files::
+Run it from the repository root and commit the resulting files::
 
     python -m scripts.build_datasets
     python -m scripts.build_datasets iris wine --overwrite
 
-Every dataset has a recipe in ``scripts/recipes/`` that loads or downloads the raw data.
-``scripts/_npz.py`` validates and saves it. Existing files are skipped unless ``--overwrite``
-is given, because NPZ files are not byte-for-byte reproducible and every rebuild adds a new
-binary blob to the git history. ``california_housing`` is downloaded by scikit-learn on the
-first run and ``wine_quality`` comes from the UCI repository, so both need an internet
-connection.
+Every dataset has a recipe in ``scripts/recipes/`` that loads or downloads the raw data, and
+an ``INFO`` in ``pyml_datasets/datasets/`` that says where the data comes from and under
+which license. ``scripts/_npz.py`` combines both, validates the result and saves it. Existing
+files are skipped unless ``--overwrite`` is given, because NPZ files are not byte-for-byte
+reproducible and every rebuild adds a new binary file to the git history. Some recipes
+download data, so they need an internet connection.
+
+After building, run ``python -m scripts.generate`` to refresh the manifest, the notice and
+the documentation.
 """
 
 import argparse
 from collections.abc import Sequence
+from importlib import import_module
 from pathlib import Path
 from typing import Final
 
+from pyml_datasets import DatasetInfo
+from scripts import ROOT
 from scripts._npz import save, to_arrays, validate
-from scripts.recipes import REGISTRY
+from scripts.recipes import get_recipe, recipe_names
 
-_OUTPUT_DIR: Final = Path(__file__).resolve().parents[1] / "pyml_datasets" / "data"
+_OUTPUT_DIR: Final = ROOT / "pyml_datasets" / "data"
+
+
+def _info_of(name: str) -> DatasetInfo:
+    """Import the dataset module and return its ``INFO``.
+
+    The module is imported directly and not through the registry, so a dataset that was
+    just scaffolded can be built before ``scripts.generate`` has registered it.
+
+    Parameters
+    ----------
+    name : str
+        Dataset name.
+
+    Returns
+    -------
+    DatasetInfo
+        The ``INFO`` constant of ``pyml_datasets/datasets/<name>.py``.
+    """
+    info: DatasetInfo = import_module(f"pyml_datasets.datasets.{name}").INFO
+    return info
 
 
 def build_dataset(name: str, output_dir: Path, overwrite: bool = False) -> None:
@@ -30,7 +56,7 @@ def build_dataset(name: str, output_dir: Path, overwrite: bool = False) -> None:
     Parameters
     ----------
     name : str
-        Dataset name, one of the keys of the recipe registry.
+        Dataset name, one of ``recipe_names()``.
     output_dir : Path
         Directory where the file is written, created if missing.
     overwrite : bool, default=False
@@ -41,8 +67,9 @@ def build_dataset(name: str, output_dir: Path, overwrite: bool = False) -> None:
         print(f"skip   {name}: {path.name} already exists (use --overwrite)")
         return
 
-    arrays = to_arrays(REGISTRY[name]())
-    validate(name, arrays)
+    info = _info_of(name)
+    arrays = to_arrays(get_recipe(name)(), info)
+    validate(info, arrays)
     save(path, arrays)
 
     size_kib = path.stat().st_size / 1024
@@ -62,12 +89,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     int
         Exit code, 0 on success.
     """
+    available = recipe_names()
     parser = argparse.ArgumentParser(description="Build the bundled NPZ datasets.")
     parser.add_argument(
         "names",
         nargs="*",
         metavar="NAME",
-        help=f"datasets to build, all by default: {', '.join(REGISTRY)}",
+        help=f"datasets to build, all by default: {', '.join(available)}",
     )
     parser.add_argument(
         "--output-dir",
@@ -82,13 +110,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    names: list[str] = args.names or list(REGISTRY)
-    unknown = [name for name in names if name not in REGISTRY]
+    names: list[str] = args.names or list(available)
+    unknown = [name for name in names if name not in available]
     if unknown:
         parser.error(f"unknown dataset(s): {', '.join(unknown)}")
 
     for name in names:
         build_dataset(name, args.output_dir, args.overwrite)
+    print("Next: python -m scripts.generate")
     return 0
 
 

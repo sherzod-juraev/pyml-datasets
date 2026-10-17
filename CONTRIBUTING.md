@@ -1,25 +1,22 @@
 # Contributing
 
 > [!NOTE]
-> This is a personal, educational project. I am not
-> actively seeking contributors at this time.
+> This is a personal, educational project. I am **not** looking for contributors or
+> collaborators, and I may be slow to answer, or not answer, issues and pull requests. I would
+> rather say this honestly than let you wait for a reply.
 
-However, this project is open-source, and you are **welcome to**:
+This project is open-source under the [MIT License](LICENSE), and you are **welcome to**:
 
 - **Fork** this repository.
 - **Copy** the code.
 - **Modify** it for your own needs.
 - **Develop** your own version independently.
 
-The code is under the [MIT License](LICENSE), but the datasets are not: every dataset keeps the
-terms of its original source (see [LICENSES](LICENSES) and the
-[documentation](https://pyml-datasets.readthedocs.io/en/latest/license.html)). If you copy or
-redistribute the data files, follow those terms.
+If you build something interesting, I would love to hear about it. The datasets keep their own
+licenses, see [Admission policy](#dataset-admission-policy) before you copy any of them.
 
-If you build something interesting, I would love to hear about it.
-
-The rest of this file is also a map of the project: where things are, how to check them, and
-how a new dataset or a release is done.
+The rest of this file is a map of the project, written mostly for myself and for anyone who
+forks it: where things are, how to check them, and how to add a dataset or make a release.
 
 ## Quick start
 
@@ -37,25 +34,40 @@ environments, the same way as the CI.
 
 ```text
 pyml-datasets/
-├── .github/workflows/          # CI workflows
-├── assets/                     # Branding
-├── docs/                       # Sphinx documentation
-├── LICENSES/                   # Licenses of the datasets
+├── .github/workflows/          # CI workflows, each one calls Nox
+├── assets/branding/            # Logos
+├── docs/source/                # Sphinx documentation
+│   ├── _generated/             # Generated includes (do not edit)
+│   ├── datasets/               # One page per dataset
+│   └── design/                 # Design notes
+├── legal/evidence/             # One evidence file per dataset: where the license was read
+├── LICENSES/                   # Full text of every license the data is under
 ├── pyml_datasets/              # Source code
-│   ├── data/                   # The .npz files
-│   ├── _loader.py              # Dataset class and the file loader
-│   ├── _sklearn.py             # Datasets that come from scikit-learn
-│   └── _wine_quality.py        # Wine Quality (UCI)
-├── scripts/                    # Scripts that generate the data files
-├── tests/                      # Test suite
-├── .gitignore                  # Git ignore rules
-├── .readthedocs.yaml           # Read the Docs config
+│   ├── data/                   # <name>.npz files and MANIFEST.json (generated)
+│   ├── datasets/               # One module per dataset: INFO + load_<name>()
+│   │   └── __init__.py         # ENTRIES, the registry input (generated)
+│   ├── _loader.py              # Reads an npz file into a Dataset
+│   ├── _registry.py            # list_datasets, get_info, load_dataset
+│   └── _types.py               # DatasetInfo and Dataset
+├── scripts/                    # Development tools, not shipped in the wheel
+│   ├── recipes/                # One recipe per dataset: how to get the arrays
+│   ├── build_datasets.py       # recipe + INFO -> data/<name>.npz
+│   ├── generate.py             # INFO -> registry, NOTICE, README table, docs, manifest
+│   ├── check_legal.py          # The legal gate
+│   └── new_dataset.py          # Scaffolds the files of a new dataset
+├── tests/                      # Test suite, organised by concern
+│   └── expected/               # One module per dataset: independent facts
 ├── CONTRIBUTING.md             # This file
-├── LICENSE                     # MIT License
+├── LICENSE                     # MIT License (the code)
+├── NOTICE.md                   # Creators, sources, citations, changes (generated)
 ├── noxfile.py                  # Nox sessions
 ├── pyproject.toml              # Project metadata and tool config
 └── README.md                   # Project overview
 ```
+
+The idea behind the layout: **a dataset is described once**, in `pyml_datasets/datasets/<name>.py`
+(its `INFO`). Everything that says where a dataset comes from or under which license it is
+distributed is generated from that. See `docs/source/design/single_source.rst`.
 
 ## Development setup
 
@@ -66,79 +78,28 @@ pyml-datasets/
 
 ### Optional extras
 
-The project defines the following extras in [pyproject.toml](pyproject.toml).
+| Extra  |                           Purpose                            |
+|:-------|:------------------------------------------------------------:|
+| `nox`  |                      Nox, to run sessions                    |
+| `dev`  | mypy, ruff, pytest, interrogate, scikit-learn, ucimlrepo     |
+| `docs` |                Sphinx and documentation tools                |
+| `all`  |                      Everything above                        |
 
-| Extra  |                         Purpose                          |
-|:-------|:--------------------------------------------------------:|
-| `nox`  |          Nox, which runs all the quality checks          |
-| `dev`  | mypy, ruff, pytest, interrogate, scikit-learn, ucimlrepo |
-| `docs` |              Sphinx and documentation tools              |
-| `all`  |                     `dev` and `docs`                     |
-
-`scikit-learn` and `ucimlrepo` are needed only to generate the data files and to compare them
-with the originals in the tests. They are not runtime dependencies: the package itself needs
-NumPy only.
-
-### Setup
-
-Install the extras you need:
-
-- Nox (recommended, runs everything in isolated environments):
-
-```bash
-pip install -e ".[nox]"
-```
-
-- Development dependencies, to run a tool directly in your own environment:
-
-```bash
-pip install -e ".[dev]"
-```
-
-- Documentation tools:
-
-```bash
-pip install -e ".[docs]"
-```
-
-- Development and documentation together:
-
-```bash
-pip install -e ".[all]"
-```
-
-## Quality tooling
-
-| Tool                        |                  Checks                   |
-|:----------------------------|:-----------------------------------------:|
-| mypy (strict)               |            Static type checking           |
-| interrogate                 |         Docstring coverage (100%)         |
-| ruff                        |           Linting and formatting          |
-| pytest                      |      Test suite, also with oldest NumPy   |
-| sphinx-lint, doc8, rstcheck |      Documentation style and syntax       |
-| sphinx linkcheck            |    Validity of every link in the docs     |
-| wheel check                 | Contents of the built wheel, smoke test   |
-
-Each tool is configured in [pyproject.toml](pyproject.toml) and run by a Nox session, see
-[Nox sessions](#nox-sessions) below.
+scikit-learn and ucimlrepo are needed only to rebuild data files, never to use the package.
 
 ## Nox sessions
 
-This project uses [Nox](https://nox.thea.codes/) to run all quality checks in isolated
-environments. Nox creates a separate virtual environment for each session, installs the
-required dependencies, and runs the configured commands. This guarantees reproducibility
-across machines and Python versions.
-
-| Session      |      Python      |                           What it runs                            |
-|:-------------|:----------------:|:-----------------------------------------------------------------:|
-| `lint`       |       3.13       |                ruff check and ruff format --check                 |
-| `types`      |       3.13       |        mypy (strict) on `pyml_datasets`, `scripts`, `tests`       |
-| `docstrings` |       3.13       |           interrogate, docstring coverage must be 100%            |
-| `tests`      | 3.12, 3.13, 3.14 |                              pytest                               |
-| `tests-min`  |       3.12       |             pytest with the oldest NumPy that is supported        |
-| `docs`       |       3.13       |  sphinx-lint, doc8, rstcheck, `sphinx-build -W`, Sphinx doctest   |
-| `linkcheck`  |       3.13       |        Sphinx linkcheck, validity of every link in the docs       |
-| `package`    |       3.13       | builds the wheel, checks its contents, loads every dataset from it |
+| Session      |      Python      |                          What it runs                          |
+|:-------------|:----------------:|:--------------------------------------------------------------:|
+| `lint`       |       3.13       |               ruff check and ruff format --check               |
+| `types`      |       3.13       |        mypy (strict) on `pyml_datasets`, `scripts`, `tests`    |
+| `docstrings` |       3.13       |  interrogate (100% coverage) and the doctests of the package   |
+| `legal`      |       3.13       |        `scripts.check_legal` and `scripts.generate --check`    |
+| `tests`      | 3.12, 3.13, 3.14 |                             pytest                             |
+| `tests-min`  |       3.12       |            pytest with the oldest supported NumPy              |
+| `docs`       |       3.13       |        sphinx-lint, doc8, rstcheck, `sphinx-build -W`          |
+| `linkcheck`  |       3.13       |        Sphinx linkcheck, validity of every link in the docs    |
+| `package`    |       3.13       | builds the wheel, checks its contents, imports an installed copy |
 
 `nox` without arguments runs every session except `linkcheck`, which needs the network and is
 slow.
@@ -147,96 +108,180 @@ slow.
 nox -l                          # list all sessions
 nox -s lint                     # run one session
 nox -s tests-3.13               # run one session on one Python version
-nox -s tests -- -k wine         # arguments after -- are passed to pytest
+nox -s tests -- -k penguins     # arguments after -- are passed to pytest
 nox -R                          # reuse the existing virtual environments, much faster
 ```
 
-### What the `package` session guards
-
-The session builds the wheel and then fails if:
-
-- `py.typed` or `__init__.py` is missing,
-- an `.npz` file from `pyml_datasets/data/` is not in the wheel,
-- the license files are missing from the metadata,
-- `tests/`, `docs/` or `scripts/` leaked into the wheel.
-
-After that it installs the wheel into a clean environment, moves out of the repository, and
-loads **every** `load_*` function listed in `__all__`. A dataset is therefore tested
-automatically as soon as it is exported.
-
 ## Continuous integration
 
-Every workflow calls Nox, so a failure in the CI can always be reproduced locally with the
-same command.
+Every workflow calls Nox, so a failure in the CI is reproduced locally with the same command.
 
-| Workflow            |                Sessions                |                   When                   |
-|:--------------------|:--------------------------------------:|:----------------------------------------:|
-| `tests.yml`         | `tests-<version>`, `tests-min`         | push, pull request, every Monday         |
-| `quality.yml`       | `lint`, `types`, `docstrings`, `package` | push, pull request                     |
-| `docs.yml`          |                 `docs`                 | push, pull request                       |
-| `docs-linkcheck.yml`|              `linkcheck`               | every week                               |
+| Workflow        | Runs on                     | Nox sessions                                            |
+|:----------------|:----------------------------|:--------------------------------------------------------|
+| `quality.yml`   | push, pull request          | `lint`, `types`, `docstrings`, `legal`, `package`       |
+| `tests.yml`     | push, pull request          | `tests` on 3.12, 3.13, 3.14 (and 3.13 on Windows)       |
+| `docs.yml`      | push, pull request          | `docs`                                                  |
+| `linkcheck.yml` | weekly schedule, manual run | `linkcheck`                                             |
+
+"Push" means a push to `main` or `dev`, and a pull request means one that targets `main`.
 
 ## Conventions
 
 ### Code
 
-- Importing the package reads no data. Imports in `__init__.py` are eager on purpose (the
-  package is tiny), and a data file is read only when a `load_*` function is called.
-- Every loader returns a `Dataset` with a two-dimensional `X` and a `y` of the same length.
-  The `package` session checks this for every exported loader.
-- Public names are listed in `__all__` and imported from the package root:
-  `from pyml_datasets import load_iris`.
-- The runtime depends on NumPy only. Anything else (scikit-learn, ucimlrepo) belongs to the
-  `dev` extra and to `scripts/`.
+- Public names are importable from `pyml_datasets`: `load_<name>`, `load_dataset`,
+  `get_info`, `list_datasets`, `Dataset`, `DatasetInfo`. The import block and `__all__` are
+  generated, do not edit the parts between the `<generated:...>` markers.
 - Everything is checked by mypy in strict mode, ruff (line length 100) and interrogate
-  (100% docstring coverage, private members included).
+  (100% docstring coverage, private members and scripts included).
+- Data files are read with `allow_pickle=False`. Never store an object array.
+- A recipe downloads only from `https` addresses and pins the SHA-256 of the file.
 
 ### Docstrings
 
-- NumPy style.
-- The module docstring is short prose.
-- Every public loader documents what it returns, the shape of the data and the source.
+- NumPy style. The docstring explains the behavior and does not repeat the code.
+- Examples are doctests. They run in the `docstrings` session, so they must stay correct.
 
 ### Tests
 
-- `tests/` has one file per module (`test_loader.py`, `test_sklearn_datasets.py`, ...) plus
-  `test_init.py` for the public API.
-- Tests are grouped in classes by behavior. There is only a module docstring, no docstrings
-  on the tests.
-- Data files are compared with the originals (for example scikit-learn) where an original
-  exists.
+- `tests/` is organised by concern, not by file: `test_loader` (the reader), `test_registry`,
+  `test_contract` (rules for every dataset), `test_facts` (compare with `tests/expected`),
+  `test_integrity` (manifest, stored provenance), `test_missing_values`, `test_legal`,
+  `test_info` and `test_scripts`. Tests that must hold for every dataset use the `name`
+  fixture and run once per dataset, so a new dataset is tested without writing a test.
+- `tests/expected/<name>.py` holds facts taken from the **documentation of the source**
+  (shape, class counts, published means), never copied from the file under test.
 
 ### Commits and versions
 
-- Commits follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`,
-  `docs`, `test`, `build`, `refactor` and `chore`, with a body that explains what changed and
-  why.
+- Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 - Work happens on `dev`. `main` receives a merge only when all checks pass.
-- `__version__` in `pyml_datasets/__init__.py` is the single source of truth, `pyproject.toml`
-  and the docs read it. It changes only when the public API changes (a new dataset or a
-  breaking change is a MINOR bump while the version is 0.x). Housekeeping commits do not
-  change it.
+- `__version__` in `pyml_datasets/__init__.py` is the single source of truth. Adding a dataset
+  is a MINOR bump, removing one or changing the data format is a breaking change.
+- Every release gets an entry in `docs/source/changelog.rst`.
+
+## Dataset admission policy
+
+This is the most important section. A dataset is bundled **only if** its source explicitly
+states one of:
+
+- **CC0 1.0** (`CC0-1.0`), or
+- **CC BY 4.0** (`CC-BY-4.0`).
+
+Not accepted, however famous the dataset is:
+
+- no license stated, or a license that cannot be found,
+- non-commercial (NC), share-alike (SA), no-derivatives (ND), GPL-style licenses,
+- "free for educational/research use" and similar statements: they are not licenses,
+- an unclear origin: a copy on a forum, a competition, a book CD, a blog,
+- a dataset that is a copy of a bigger one whose license is unknown.
+
+Rules for a dataset that is accepted:
+
+1. **Read the license at the original source** (not a mirror, not a library that bundles it),
+   and write down where in `legal/evidence/<name>.md`: the license, the address of the page,
+   the date, who checked it and an archived copy of the page (Wayback Machine). The
+   maintainer re-reads it in a browser and writes the date in `Maintainer check`.
+2. **Credit and changes.** CC BY requires credit and a statement of changes. `creators`,
+   `citation` and `changes` in `INFO` are that statement, and they end up in the notice, the
+   docs and the data file. Cite the way the source asks, and list *every* change, also the
+   boring ones (dtype, label shift, dropped column, categorical coding).
+3. **Do not hide where the bytes came from.** `obtained_from` names the exact file or the
+   library the recipe reads. If it is a copy in a library (for example scikit-learn), say so;
+   the license is still the one of the original source.
+4. **Do not change the data to fit.** Missing values stay as `NaN`, repeated rows stay.
+5. **Check for extra terms.** Some CC0/CC BY data packages add a request on top (a data use
+   policy, a citation request). Put it in `notes`.
+
+If a license changes, or somebody tells me it is wrong, the dataset is removed from the next
+version immediately and the history is cleaned if asked. Contact: juraevsherzod9943@gmail.com.
 
 ## Adding a dataset
 
-1. Check the license of the source first. A dataset whose terms do not allow redistribution
-   does not go into this repository.
-2. Write a script in `scripts/` that generates the `.npz` file, so the file can always be
-   reproduced.
-3. Put the file into `pyml_datasets/data/`. The `data/*.npz` pattern in `pyproject.toml`
-   includes it in the wheel automatically.
-4. Add the `load_*` function (in a new module if the source is new), import it in
-   `pyml_datasets/__init__.py` and add it to `__all__`.
-5. Add the license text to `LICENSES/` if the source needs one.
-6. Write the tests in `tests/`.
-7. Add the documentation: the dataset page with its license, source and citation, and a row
-   in the README table.
-8. Run `nox` until every session passes.
+Example: adding `seeds`. You can do every step with the tools; you edit only the lines
+marked `TODO`.
+
+**1. Decide it is allowed.** Read the [policy](#dataset-admission-policy). If the license
+page is not clear, stop here.
+
+**2. Scaffold.**
+
+```bash
+python -m scripts.new_dataset seeds --license CC-BY-4.0 --task classification
+```
+
+This creates five files and refuses to overwrite anything:
+
+| File                                | What goes into it                                         |
+|:------------------------------------|:----------------------------------------------------------|
+| `pyml_datasets/datasets/seeds.py`   | `INFO` (provenance, license) and `load_seeds()`           |
+| `scripts/recipes/seeds.py`          | `build()`: how to get the arrays, returns `Built`         |
+| `tests/expected/seeds.py`           | Facts from the source: shape, class counts, means         |
+| `docs/source/datasets/seeds.rst`    | Prose for students: features, target, example             |
+| `legal/evidence/seeds.md`           | Where and when the license was read                       |
+
+**3. Fill in `INFO`.** Every field is validated when the module is imported: the license
+must be allowed, URLs must be `https`, the DOI must look like a DOI, creators and changes
+must not be empty. Set `has_missing=True` if the data has `NaN`, and `categorical={...}` for
+categorical features (feature name -> names of the categories, in code order).
+
+**4. Write the recipe.** `build()` returns a `Built` with `X`, `y`, `feature_names`, and
+optionally `target_names` and `extras`. Use `scripts.recipes._sources.download(url, sha256)`
+for files from the internet; it accepts only `https` and checks the digest. Missing values
+become `NaN`, categories become integer codes. Check the shape and the values you expect, so a
+silent change at the source is noticed. A recipe knows nothing about licenses.
+
+**5. Build the data file and generate.**
+
+```bash
+python -m scripts.build_datasets seeds
+python -m scripts.generate
+```
+
+The first command combines the recipe and `INFO`, validates the arrays and saves
+`pyml_datasets/data/seeds.npz`. The second updates the registry (`ENTRIES`), the exports,
+`NOTICE.md`, the README table, the documentation includes and `MANIFEST.json`. Never edit
+those by hand; `generate --check` fails if you do.
+
+**6. Fill in the facts and the evidence.** Write `tests/expected/seeds.py` from the source
+documentation, then the documentation page and `legal/evidence/seeds.md`.
+
+**7. Check everything.**
+
+```bash
+python -m scripts.check_legal     # fails on TODO, missing evidence, license mismatch
+nox                               # lint, types, docstrings, legal, tests, docs, package
+```
+
+You do not write tests for a normal dataset: the contract, integrity, missing-value and
+legal tests run for it automatically. Add a test only for something special about it.
+
+### Extending in other directions
+
+| I want to...                           | Where                                                                  |
+|:---------------------------------------|:-----------------------------------------------------------------------|
+| allow another license                  | Do not, without a long think. `LICENSE_IDS` in `pyml_datasets/_types.py`, add `LICENSES/<id>.txt`, `pyproject.toml` license expression, `_LICENSE_NAMES` in `scripts/_render.py`, `new_dataset.py` and the policy above |
+| add a field that every dataset has     | `DatasetInfo` in `_types.py`, then `scripts/_render.py` to show it, then regenerate and rebuild (the `meta` array changes) |
+| change the file format                 | Bump `_FORMAT_VERSION` in `_loader.py` and `FORMAT_VERSION` in `scripts/_npz.py`, rebuild everything, write the change in the changelog |
+| add a new kind of task (e.g. clustering) | `TASKS` in `_types.py`, the dtype rules in `scripts/_npz.py`, the checks in `validate`, the loader doc |
+| add a new generated file               | A function in `scripts/_render.py`, and one line in `expected_files()` of `scripts/generate.py` |
+| add a legal rule                       | `scripts/check_legal.py` and a test in `tests/test_legal.py`           |
+| rebuild a data file                    | `python -m scripts.build_datasets NAME --overwrite`, then `generate`; compare the new manifest digest with the old one |
+
+## Removing a dataset
+
+Delete its module, recipe, data file, expected facts, documentation page and evidence file,
+run `python -m scripts.generate`, add a "Removed" entry to the changelog and bump the
+version. If the reason is legal, also purge the files from the git history
+(`git filter-repo --invert-paths --path pyml_datasets/data/NAME.npz ...`) and replace the
+affected tags and releases.
 
 ## Releasing
 
-1. Run `nox` on `dev`, and make sure the CI is green.
-2. Bump `__version__` in `pyml_datasets/__init__.py` if the public API changed.
+1. Run `nox` on `dev`, and make sure the CI is green. Read the warnings of
+   `python -m scripts.check_legal`.
+2. Bump `__version__` in `pyml_datasets/__init__.py` and add the entry to
+   `docs/source/changelog.rst`.
 3. Merge `dev` into `main` and push.
-4. Create the tag `vX.Y.Z` on `main` and a GitHub release titled `vX.Y.Z — <What Changed>`.
+4. Create the tag `vX.Y.Z` on `main` and a GitHub release titled `vX.Y.Z`.
 5. Check that the Read the Docs build is green.

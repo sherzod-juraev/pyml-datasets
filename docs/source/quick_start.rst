@@ -45,10 +45,32 @@ The Dataset object
        if the source has none.
    * - ``description``
      - ``str``
-     - Description of the dataset, including its source.
+     - Description of the dataset, including its source, citation, license and the
+       changes made to the data.
+   * - ``info``
+     - :class:`~pyml_datasets.DatasetInfo`
+     - The same provenance as structured fields: license, source, DOI, citation and so on.
 
 In classification datasets ``y`` holds integer labels ``0, 1, 2, ...`` that follow
 the order of ``target_names``.
+
+License, citation and missing values
+------------------------------------
+
+Every dataset carries its license and its citation. They can also be read without loading
+the data:
+
+.. code-block:: pycon
+
+   >>> from pyml_datasets import get_info, list_datasets
+   >>> list_datasets("classification")[:3]
+   ('breast_cancer', 'digits', 'iris')
+   >>> get_info("penguins").license
+   'CC0-1.0'
+
+Some datasets have missing values, stored as ``NaN``, and some have categorical features,
+stored as integer codes. ``Dataset.has_missing`` and ``Dataset.categorical_features`` tell
+you, see :doc:`data_format`.
 
 Unpacking
 ---------

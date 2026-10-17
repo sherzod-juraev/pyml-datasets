@@ -1,0 +1,11 @@
+.. autofunction:: pyml_datasets.load_breast_cancer
+
+.. autofunction:: pyml_datasets.load_digits
+
+.. autofunction:: pyml_datasets.load_iris
+
+.. autofunction:: pyml_datasets.load_penguins
+
+.. autofunction:: pyml_datasets.load_wine
+
+.. autofunction:: pyml_datasets.load_wine_quality
