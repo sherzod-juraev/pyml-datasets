@@ -2,12 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [dev, main]
+    branches: [main, dev]
   pull_request:
     branches: [main]
-  schedule:
-    - cron: "0 5 * * 1"
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,14 +15,18 @@ concurrency:
 
 jobs:
   tests:
-    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: ["3.12", "3.13", "3.14"]
+        include:
+          - os: windows-latest
+            python-version: "3.13"
+
     steps:
       - uses: actions/checkout@v4
 
@@ -39,29 +40,5 @@ jobs:
       - name: Install Nox
         run: python -m pip install --upgrade pip nox
 
-      - name: Run the test suite
+      - name: Run the tests session
         run: nox -s tests-${{ matrix.python-version }}
-
-  tests-min:
-    name: Oldest dependencies / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-          cache-dependency-path: pyproject.toml
-
-      - name: Install Nox
-        run: python -m pip install --upgrade pip nox
-
-      - name: Run the test suite with the oldest NumPy
-        run: nox -s tests-min

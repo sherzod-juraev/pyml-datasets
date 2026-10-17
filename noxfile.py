@@ -21,8 +21,18 @@ _DOCS_DOCTEST = "docs/build/doctest"
 _DOCS_LINKCHECK = "docs/build/linkcheck"
 
 _DATA_DIR = Path(_PACKAGE) / "data"
-_WHEEL_REQUIRED = [f"{_PACKAGE}/py.typed", f"{_PACKAGE}/__init__.py"]
-_WHEEL_LICENSES = [".dist-info/licenses/LICENSE", ".dist-info/licenses/LICENSES/CC-BY-4.0.txt"]
+_WHEEL_REQUIRED = [
+    f"{_PACKAGE}/py.typed",
+    f"{_PACKAGE}/__init__.py",
+    f"{_PACKAGE}/data/MANIFEST.json",
+]
+# The notice and the text of every license the data is under must travel with the wheel.
+_WHEEL_LICENSES = [
+    ".dist-info/licenses/LICENSE",
+    ".dist-info/licenses/NOTICE.md",
+    ".dist-info/licenses/LICENSES/CC-BY-4.0.txt",
+    ".dist-info/licenses/LICENSES/CC0-1.0.txt",
+]
 _WHEEL_FORBIDDEN_PREFIXES = ("tests/", "docs/", "scripts/")
 
 # Runs inside the session, from a folder outside the repository, against the installed wheel.
@@ -35,11 +45,16 @@ location = Path(pyml_datasets.__file__).resolve()
 assert "site-packages" in location.parts, f"not imported from site-packages: {location}"
 assert isinstance(pyml_datasets.__version__, str)
 
-loaders = [name for name in pyml_datasets.__all__ if name.startswith("load_")]
-assert loaders, "the package exports no loaders"
+names = pyml_datasets.list_datasets()
+assert names, "the package bundles no datasets"
+loaders = [f"load_{name}" for name in names]
+for loader in loaders:
+    assert loader in pyml_datasets.__all__, loader
 for name in loaders:
     data = getattr(pyml_datasets, name)()
     assert data.X.ndim == 2 and len(data.X) == len(data.y), name
+    assert data.info.license in {"CC0-1.0", "CC-BY-4.0"}, name
+    assert data.info.citation in data.description.replace("\\n  ", " ").replace("\\n", " "), name
 print("pyml_datasets", pyml_datasets.__version__, "from", location.parent)
 print("loaded", len(loaders), "datasets:", ", ".join(loaders))
 """
@@ -59,7 +74,16 @@ for requirement in sys.argv[1:]:
     print(name, installed)
 """
 
-nox.options.sessions = ["lint", "types", "docstrings", "tests", "tests-min", "docs", "package"]
+nox.options.sessions = [
+    "lint",
+    "types",
+    "docstrings",
+    "legal",
+    "tests",
+    "tests-min",
+    "docs",
+    "package",
+]
 nox.options.error_on_external_run = True
 
 
@@ -132,9 +156,18 @@ def types(session: nox.Session) -> None:
 
 @nox.session(python=DEFAULT_PYTHON)
 def docstrings(session: nox.Session) -> None:
-    """Check that the docstring coverage of the package and the scripts is 100%."""
+    """Check that the docstring coverage is 100% and that the examples in them run."""
     session.install(".[dev]")
     session.run("interrogate", _PACKAGE, "scripts")
+    session.run("pytest", "--doctest-modules", _PACKAGE)
+
+
+@nox.session(python=DEFAULT_PYTHON)
+def legal(session: nox.Session) -> None:
+    """Check licenses and evidence, and that the generated files are up to date."""
+    session.install(".[dev]")
+    session.run("python", "-m", "scripts.check_legal")
+    session.run("python", "-m", "scripts.generate", "--check")
 
 
 @nox.session(python=PYTHON_VERSIONS)
