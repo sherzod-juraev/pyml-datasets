@@ -1,0 +1,41 @@
+{
+  "datasets": {
+    "breast_cancer": {
+      "X": "2d093b6df872a272c3082b8833b7a3f05e0c1618709f81e9b2350fa33b798f82",
+      "feature_names": "5afa689f88ff533ac177a39b1d45920a76281de71c8e4a1f0d9a374c55e9145d",
+      "target_names": "887e06a9d1029dbe23a68e2e1adaa4bda4a53533a49276da5523eba4706a1a80",
+      "y": "a03ccde3555223d4647b207e61220c1dd2c03d379afc97ed637ae5fcd82f0f82"
+    },
+    "digits": {
+      "X": "eae60fe2d2cebccb4a1e5b814c388f713c94cff6495357d75f1ba8ea958905bc",
+      "feature_names": "5c3dad87b63750a6e275822914cc22428320bd50d4c699978ab4bb129581cd6d",
+      "target_names": "42e9ffae0a40e40acf28c49da99e5ba47917c8d59dae2cdb913891958c41a661",
+      "y": "b9519414936017f9f834bce37ac83d1d40de6303b9a95a359e989ddd1730f9fa"
+    },
+    "iris": {
+      "X": "3ad18409e3be546be7a387162e824dd582abefedab401864a13c24e7164d3d4b",
+      "feature_names": "475b416d0e00d616b334e472d61394c69ca07532ba83853d687dc14cf7fcbefd",
+      "target_names": "cf4ea1e8c91effa1b3cd2aff1f75967be8f3dc0150dffd904de29fc8280978d2",
+      "y": "c1f255e4540a6464758737109edbf1b1599c88b01d433be9dad78cbf085c4c4e"
+    },
+    "penguins": {
+      "X": "61a590284281e66fe1752213fb4b2024cfdae1102b790d08b24ecad7e857a62f",
+      "feature_names": "2f4c5b6722f6f7f945ab211bd729daf861eb0d14d93d7108fc26b8ecbe4b64a1",
+      "target_names": "9354e47a0c1de246fc7af814fcd8288d6afb8b78447411f5708fb4bdbcf965b8",
+      "y": "d8774803042f47feedc83a47af4c510ec7ee8c11315569f8cb553a64903899ed"
+    },
+    "wine": {
+      "X": "a7ac3c6956d60383aaa230121ceead57cb6f9529b0100e2f0213b906757f8953",
+      "feature_names": "80be364ed7771d7ee3645d4a856a63e7674614dc4766d97b917ca8415959f560",
+      "target_names": "510ed5460f27e24c4daaf928c3a7b5f8f404f4f9481a34f626b01cb2e82366f5",
+      "y": "0ffc1bd54945d1177d763961d449e7114afc907f9ad7f7fd4155f2722fc525a0"
+    },
+    "wine_quality": {
+      "X": "546dfa7afbebc0a303f688f5ab2e2786fd2eb24a63adaadc6670e8abf739a22e",
+      "feature_names": "4060fffe720cb8bce0bc337a6e4f53c0df99f2f55bf00dedb1f8fb724edff72d",
+      "target_names": "c029621ee47c91dca43061637b3a0e1f7e2ceb47ff64559f63d200634694d802",
+      "y": "a574c91d6cbc02ce8530e2fdf8eaa18fb06a3f07719f7a33496ebbfcca63755d"
+    }
+  },
+  "format_version": 2
+}

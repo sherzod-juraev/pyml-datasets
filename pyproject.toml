@@ -11,8 +11,8 @@ dynamic = ["version"]
 description = "Classic tabular datasets in NPZ format for pyml — a machine learning library built from scratch"
 readme = "README.md"
 requires-python = ">=3.12"
-license = "MIT AND CC-BY-4.0"
-license-files = ["LICENSE", "LICENSES/*"]
+license = "MIT AND CC-BY-4.0 AND CC0-1.0"
+license-files = ["LICENSE", "LICENSES/*", "NOTICE.md"]
 authors = [
     {name = "Sherzod Juraev", email = "juraevsherzod9943@gmail.com"}
 ]
@@ -98,7 +98,7 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-pyml_datasets = ["py.typed", "data/*.npz"]
+pyml_datasets = ["py.typed", "data/*.npz", "data/MANIFEST.json"]
 
 # ================================================================================= #
 # ------------------------------------ Pytest ------------------------------------- #

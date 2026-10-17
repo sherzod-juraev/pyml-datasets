@@ -4,9 +4,12 @@ pyml-datasets
 =============
 
 Classic tabular datasets for `pyml <https://github.com/sherzod-juraev/pyml>`_,
-stored as NumPy ``.npz`` files and loaded with a single function call. The data
-comes from established sources such as scikit-learn and the UCI Machine Learning
-Repository, and each dataset keeps its original license and citation.
+stored as NumPy ``.npz`` files and loaded with a single function call. Only datasets
+with an explicit **CC0 1.0** or **CC BY 4.0** license are bundled, and each one keeps its
+original license, citation and a list of the changes made to it.
+
+This is a personal project of a student, made for pyml. It is not looking for contributors,
+see the `README <https://github.com/sherzod-juraev/pyml-datasets#readme>`_.
 
 The package depends only on NumPy. The tools used to download and convert the
 original data, for example scikit-learn and ucimlrepo, are needed only to
@@ -56,3 +59,5 @@ project, but it is a standalone package with no dependency on pyml.
    data_format
    api
    license
+   design/index
+   changelog
