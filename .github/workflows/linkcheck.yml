@@ -17,18 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.13"
-          cache: pip
-          cache-dependency-path: pyproject.toml
-
-      - name: Install Nox
-        run: python -m pip install --upgrade pip nox
+          enable-cache: true
+          cache-dependency-glob: uv.lock
 
       - name: Check the links of the documentation
-        run: nox -s linkcheck
+        run: uv run --locked --only-group nox nox -s linkcheck
 
       - name: Upload the report
         if: failure()

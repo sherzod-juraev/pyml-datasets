@@ -2,9 +2,7 @@
 requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
-# ================================================================================= #
-# ------------------------------------ Project ------------------------------------ #
-# ================================================================================= #
+# --- Project --- #
 [project]
 name = "pyml-datasets"
 dynamic = ["version"]
@@ -40,53 +38,61 @@ dependencies = [
     "numpy>=1.26.0",
 ]
 
-# ================================================================================= #
-# --------------------------- Optional Dependencies ------------------------------- #
-# ================================================================================= #
-[project.optional-dependencies]
-nox = [
-    "nox>=2026.2.9",
-]
-dev = [
-    "interrogate>=1.7.0",
-    "mypy>=1.11",
+# --- Dependency groups --- #
+[dependency-groups]
+# --- Development tools --- #
+dev-test = [
     "pytest>=8.0",
     "pytest-sugar>=1.0",
-    "ruff>=0.6.0",
+    "pytest-cov>=7.1.0",
+]
+dev-lint = ["ruff>=0.6.0"]
+dev-types = ["mypy>=1.11"]
+dev-docstring = ["interrogate>=1.7.0"]
+dev-package = ["build>=1.2"]
+dev = [
+    {include-group = "dev-test"},
+    {include-group = "dev-lint"},
+    {include-group = "dev-types"},
+    {include-group = "dev-docstring"},
+    {include-group = "dev-package"},
     "scikit-learn>=1.4.0",
     "ucimlrepo>=0.0.7",
 ]
-docs = [
+# --- Documentation tools --- #
+docs-lint = [
     "doc8>=1.0.0",
-    "pydata-sphinx-theme>=0.15.0",
     "rstcheck>=6.0.0",
+    "sphinx-lint>=1.0.0",
+]
+docs-build = [
+    "pydata-sphinx-theme>=0.15.0",
     "sphinx>=7.0.0",
     "sphinx-autodoc-typehints>=2.2.0",
     "sphinx-copybutton>=0.5.0",
     "sphinx-design>=0.5.0",
-    "sphinx-lint>=1.0.0",
     "sphinx-notfound-page>=1.1.0",
     "sphinxext-opengraph>=0.13.0",
     "sphinx-sitemap>=2.6.0",
 ]
-all = [
-    "pyml_datasets[nox]",
-    "pyml_datasets[dev]",
-    "pyml_datasets[docs]",
+docs = [
+    {include-group = "docs-lint"},
+    {include-group = "docs-build"},
 ]
+docs-live = [
+    {include-group = "docs-build"},
+    "sphinx-autobuild>=2025.8.25",
+]
+nox = ["nox>=2026.2.9"]
 
-# ================================================================================= #
-# ------------------------------------- URLs -------------------------------------- #
-# ================================================================================= #
+# --- Urls --- #
 [project.urls]
 Homepage = "https://github.com/sherzod-juraev/pyml-datasets"
 Repository = "https://github.com/sherzod-juraev/pyml-datasets"
 Issues = "https://github.com/sherzod-juraev/pyml-datasets/issues"
 pyml = "https://github.com/sherzod-juraev/pyml"
 
-# ================================================================================= #
-# ------------------------------------ Setuptools --------------------------------- #
-# ================================================================================= #
+# --- Setuptools --- #
 [tool.setuptools.dynamic]
 version = {attr = "pyml_datasets.__version__"}
 
@@ -100,20 +106,16 @@ exclude = [
 [tool.setuptools.package-data]
 pyml_datasets = ["py.typed", "data/*.npz", "data/MANIFEST.json"]
 
-# ================================================================================= #
-# ------------------------------------ Pytest ------------------------------------- #
-# ================================================================================= #
+# --- Pytest --- #
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short --strict-markers --strict-config"
-filterwarnings = ["ignore::UserWarning"]
+filterwarnings = ["error"]
 
-# ================================================================================= #
-# ------------------------------------- Ruff -------------------------------------- #
-# ================================================================================= #
+# --- Ruff --- #
 [tool.ruff]
 target-version = "py312"
 line-length = 100
@@ -150,9 +152,7 @@ convention = "numpy"
     "D", "N802", "SIM",
 ]
 
-# ================================================================================= #
-# -------------------------------------- Mypy ------------------------------------- #
-# ================================================================================= #
+# --- Mypy --- #
 [tool.mypy]
 python_version = "3.12"
 strict = true
@@ -166,9 +166,7 @@ module = "tests.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
 
-# ================================================================================= #
-# ----------------------------------- Interrogate --------------------------------- #
-# ================================================================================= #
+# --- Interrogate --- #
 [tool.interrogate]
 fail-under = 100
 verbose = 1
@@ -190,9 +188,7 @@ ignore-nested-functions = false
 ignore-nested-classes = false
 
 
-# ================================================================================= #
-# --------------------------------- Docs Quality Tools ---------------------------- #
-# ================================================================================= #
+# --- Docs quality tools --- #
 [tool.rstcheck]
 ignore_directives = [
     "autoclass", "autofunction",

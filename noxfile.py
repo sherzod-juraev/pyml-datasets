@@ -84,7 +84,34 @@ nox.options.sessions = [
     "docs",
     "package",
 ]
+nox.options.default_venv_backend = "uv"
 nox.options.error_on_external_run = True
+
+
+def _sync(session: nox.Session, *flags: str) -> None:
+    """Install the locked environment into the session's own virtual environment.
+
+    The environment is installed from ``uv.lock`` without changing it, so the session
+    fails if the lock file is out of date. No dependency group is installed unless it
+    is passed in ``flags``.
+
+    Parameters
+    ----------
+    session : nox.Session
+        Session whose virtual environment receives the packages.
+    *flags : str
+        Extra arguments for ``uv sync``, for example ``"--group", "dev"`` or
+        ``"--only-group", "dev-lint"``.
+    """
+    session.run_install(
+        "uv",
+        "sync",
+        "--locked",
+        "--no-default-groups",
+        *flags,
+        env={"UV_PROJECT_ENVIRONMENT": session.virtualenv.location},
+        external=True,
+    )
 
 
 def _minimum_requirements() -> list[str]:
@@ -141,7 +168,7 @@ def _check_wheel_contents(session: nox.Session, wheel: Path) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def lint(session: nox.Session) -> None:
     """Check the code style and the formatting with ruff."""
-    session.install(".[dev]")
+    _sync(session, "--only-group", "dev-lint")
     session.run("ruff", "check", *_SOURCE_PATHS)
     session.run("ruff", "format", "--check", *_SOURCE_PATHS)
 
@@ -149,7 +176,7 @@ def lint(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def types(session: nox.Session) -> None:
     """Check the types with mypy in strict mode."""
-    session.install(".[dev]")
+    _sync(session, "--group", "dev-types", "--group", "dev-test")
     session.run("mypy", _PACKAGE, "scripts")
     session.run("mypy", "tests")
 
@@ -157,7 +184,7 @@ def types(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def docstrings(session: nox.Session) -> None:
     """Check that the docstring coverage is 100% and that the examples in them run."""
-    session.install(".[dev]")
+    _sync(session, "--group", "dev-docstring", "--group", "dev-test")
     session.run("interrogate", _PACKAGE, "scripts")
     session.run("pytest", "--doctest-modules", _PACKAGE)
 
@@ -165,7 +192,7 @@ def docstrings(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def legal(session: nox.Session) -> None:
     """Check licenses and evidence, and that the generated files are up to date."""
-    session.install(".[dev]")
+    _sync(session, "--group", "dev")
     session.run("python", "-m", "scripts.check_legal")
     session.run("python", "-m", "scripts.generate", "--check")
 
@@ -176,18 +203,16 @@ def tests(session: nox.Session) -> None:
 
     Arguments after ``--`` are passed to pytest, for example ``nox -s tests -- -k wine``.
     """
-    session.install(".[dev]")
+    _sync(session, "--group", "dev-test")
     session.run("pytest", *session.posargs)
 
 
 @nox.session(name="tests-min", python=PYTHON_VERSIONS[0])
 def tests_min(session: nox.Session) -> None:
     """Run the test suite with the oldest NumPy that pyml-datasets claims to support."""
+    _sync(session, "--group", "dev-test")
     minimum = _minimum_requirements()
-    # One install call on purpose: for pip an installed package is only a preference, so a
-    # second call would raise NumPy to the version that the dev dependencies (scikit-learn,
-    # SciPy) want and the test would no longer run on the minimum.
-    session.install(".[dev]", *minimum)
+    session.install(*minimum)
     session.run("python", "-c", _CHECK_VERSIONS, *minimum)
     session.run("pytest", *session.posargs)
 
@@ -195,7 +220,7 @@ def tests_min(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def docs(session: nox.Session) -> None:
     """Check the documentation style, run its doctests and build it with warnings as errors."""
-    session.install(".[docs]")
+    _sync(session, "--group", "docs")
     session.run("sphinx-lint", _DOCS_SOURCE)
     session.run("doc8", _DOCS_SOURCE)
     session.run("rstcheck", "--recursive", _DOCS_SOURCE)
@@ -211,14 +236,14 @@ def docs(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def linkcheck(session: nox.Session) -> None:
     """Check that every link in the documentation is valid (needs the network, so it is slow)."""
-    session.install(".[docs]")
+    _sync(session, "--group", "docs-build")
     session.run("sphinx-build", "-b", "linkcheck", "-E", _DOCS_SOURCE, _DOCS_LINKCHECK)
 
 
 @nox.session(python=DEFAULT_PYTHON)
 def package(session: nox.Session) -> None:
     """Build the wheel, check its contents and load every dataset from an installed copy."""
-    session.install("build")
+    _sync(session, "--group", "dev-package")
     dist = Path(session.create_tmp()) / "dist"
     # Leftovers of an earlier build would be packed into the new wheel as they are.
     for leftover in (dist, Path("build"), *Path().glob("*.egg-info")):

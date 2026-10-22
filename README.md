@@ -99,17 +99,24 @@ print(model.score(X_test, y_test))  # accuracy on the test set
 ## Installation
 
 pyml-datasets is not published on PyPI. It requires Python 3.12 or newer (NumPy is the only
-dependency) and is installed directly from GitHub:
+dependency) and is installed directly from GitHub. With pip:
 
 ```bash
 pip install git+https://github.com/sherzod-juraev/pyml-datasets.git
 ```
 
-To install a fixed release, add its tag after `@`, replacing `vX.Y.Z` with a tag from the
+With [uv](https://docs.astral.sh/uv/):
+
+```bash
+uv add git+https://github.com/sherzod-juraev/pyml-datasets.git
+```
+
+To install a fixed release, add its tag, replacing `vX.Y.Z` with a tag from the
 [Releases](https://github.com/sherzod-juraev/pyml-datasets/releases) page:
 
 ```bash
 pip install git+https://github.com/sherzod-juraev/pyml-datasets.git@vX.Y.Z
+uv add git+https://github.com/sherzod-juraev/pyml-datasets.git --tag vX.Y.Z
 ```
 
 ## What's inside
@@ -145,7 +152,7 @@ also change at the source, so please check yourself if it matters for your use.
 
 If you are the creator or the rights holder of a dataset here and the license, the
 attribution or the changes listed for it are wrong, or you do not want it distributed, write
-to juraevsherzod9943@gmail.com. I will fix or remove it. Removing a dataset from the current
+to 📧 juraevsherzod9943@gmail.com. I will fix or remove it. Removing a dataset from the current
 version is quick; removing it from the git history of the repository is something I can do
 too, and I will if you ask.
 

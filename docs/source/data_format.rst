@@ -55,14 +55,15 @@ Rebuilding the files
 The files are generated from the original sources by the scripts in ``scripts/``. Each
 dataset has a recipe in ``scripts/recipes/`` that fetches the data and returns it as a
 ``Built`` object, and the provenance in ``pyml_datasets/datasets/<name>.py``. The ``dev``
-extra installs the packages the recipes need, and recipes that download data need an
-internet connection. Run the commands from the repository root:
+dependency group, which ``uv sync`` installs, contains the packages the recipes need, and
+recipes that download data need an internet connection. Run the commands from the repository
+root:
 
 .. code-block:: console
 
-   $ python -m scripts.build_datasets
-   $ python -m scripts.build_datasets iris wine --overwrite
-   $ python -m scripts.generate
+   $ uv run python -m scripts.build_datasets
+   $ uv run python -m scripts.build_datasets iris wine --overwrite
+   $ uv run python -m scripts.generate
 
 Existing files are skipped unless ``--overwrite`` is given. ``.npz`` files are not
 byte-for-byte reproducible, so every rebuild would add a new binary file to the git history.
@@ -75,5 +76,5 @@ Adding a dataset
 ----------------
 
 The steps are in ``CONTRIBUTING.md``, section *Adding a dataset*. In short:
-``python -m scripts.new_dataset`` creates the files, you fill in the facts, build the file
-and run ``python -m scripts.generate`` and ``nox``.
+``uv run python -m scripts.new_dataset`` creates the files, you fill in the facts, build the
+file and run ``uv run python -m scripts.generate``, then the Nox sessions.

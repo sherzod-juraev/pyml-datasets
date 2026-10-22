@@ -30,15 +30,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-          cache-dependency-path: pyproject.toml
-
-      - name: Install Nox
-        run: python -m pip install --upgrade pip nox
+          enable-cache: true
+          cache-dependency-glob: uv.lock
 
       - name: Run the tests session
-        run: nox -s tests-${{ matrix.python-version }}
+        run: uv run --locked --only-group nox nox -s tests-${{ matrix.python-version }}
+
+  tests-min:
+    name: Oldest supported NumPy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Run the tests-min session
+        run: uv run --locked --only-group nox nox -s tests-min
