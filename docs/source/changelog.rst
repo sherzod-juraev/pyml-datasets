@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.3.1
+-----
+
+Fixed
+~~~~~
+
+- Dataset ``penguins``: the creators are now the authors of the cited package, as in the
+  citation and the DOI. The source link and the recipe now use the tag ``v0.1.0`` of the
+  package repository instead of the ``main`` branch. The data did not change.
+
+Changed
+~~~~~~~
+
+- The license evidence of every dataset now contains a Wayback Machine copy of the license
+  page and the confirmation of the maintainer.
+
 0.3.0
 -----
 
