@@ -7,8 +7,10 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+from pyml_datasets import get_info, list_datasets
 from scripts import new_dataset
 from scripts._npz import array_digest, to_arrays, validate
+from scripts._render import render_datasets_toctree
 from scripts.generate import replace_block
 from scripts.recipes import get_recipe, recipe_names
 from scripts.recipes._common import Built
@@ -113,3 +115,16 @@ def test_new_dataset_scaffold(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
 def test_new_dataset_rejects_bad_input(name: str, license_id: str) -> None:
     with pytest.raises(ValueError):
         new_dataset.create(name, license_id, "classification", "2026-10-17")
+
+
+def test_datasets_toctree_is_hidden_and_ends_with_a_newline() -> None:
+    text = render_datasets_toctree([get_info("iris")])
+    assert text.splitlines()[:3] == [".. toctree::", "   :hidden:", ""]
+    assert text.endswith("\n")
+
+
+def test_datasets_toctree_lists_every_dataset_sorted_by_name() -> None:
+    names = list_datasets()
+    infos = [get_info(name) for name in reversed(names)]
+    entries = [line.strip() for line in render_datasets_toctree(infos).splitlines()[3:]]
+    assert entries == [f"{name}" for name in sorted(names)]

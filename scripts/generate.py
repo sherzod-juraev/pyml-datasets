@@ -216,6 +216,7 @@ def expected_files() -> dict[Path, str]:
         facts_of,
         render_api_loaders,
         render_datasets_table,
+        render_datasets_toctree,
         render_license_table,
         render_notice,
         render_overview,
@@ -235,6 +236,7 @@ def expected_files() -> dict[Path, str]:
     files[DATA_DIR / "MANIFEST.json"] = render_manifest(names)
 
     files[GENERATED_DOCS / "datasets_table.inc"] = render_datasets_table(datas, facts)
+    files[GENERATED_DOCS / "datasets_toctree.inc"] = render_datasets_toctree(infos)
     files[GENERATED_DOCS / "license_table.inc"] = render_license_table(infos)
     files[GENERATED_DOCS / "api_loaders.inc"] = render_api_loaders(infos)
     for data in datas:

@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.3.0
+-----
+
+Added
+~~~~~
+
+- Dataset ``credit_card_default`` (Default of Credit Card Clients, CC BY 4.0): 30000 clients
+  in Taiwan, 23 integer features and a binary target. The values are stored as released,
+  including the codes that the source does not document, see the page of the dataset.
+
+Changed
+~~~~~~~
+
+- The toctree of the datasets index is generated.
+
 0.2.0
 -----
 

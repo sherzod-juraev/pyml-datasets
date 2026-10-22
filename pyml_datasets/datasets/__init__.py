@@ -7,10 +7,11 @@ from collections.abc import Callable
 from typing import Final
 
 from .._types import Dataset, DatasetInfo
-from . import breast_cancer, digits, iris, penguins, wine, wine_quality
+from . import breast_cancer, credit_card_default, digits, iris, penguins, wine, wine_quality
 
 ENTRIES: Final[tuple[tuple[DatasetInfo, Callable[[], Dataset]], ...]] = (
     (breast_cancer.INFO, breast_cancer.load_breast_cancer),
+    (credit_card_default.INFO, credit_card_default.load_credit_card_default),
     (digits.INFO, digits.load_digits),
     (iris.INFO, iris.load_iris),
     (penguins.INFO, penguins.load_penguins),

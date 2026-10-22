@@ -8,6 +8,9 @@
    * - :doc:`Breast Cancer Wisconsin (Diagnostic) </datasets/breast_cancer>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic>`__
+   * - :doc:`Default of Credit Card Clients </datasets/credit_card_default>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients>`__
    * - :doc:`Optical Recognition of Handwritten Digits </datasets/digits>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits>`__

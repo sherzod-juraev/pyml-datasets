@@ -13,12 +13,4 @@ Only datasets with an explicit **CC0 1.0** or **CC BY 4.0** license are bundled,
 Missing values are stored as ``NaN``. A dataset says whether it has any before you load it:
 ``get_info(name).has_missing``.
 
-.. toctree::
-   :hidden:
-
-   breast_cancer
-   digits
-   iris
-   penguins
-   wine
-   wine_quality
+.. include:: /_generated/datasets_toctree.inc

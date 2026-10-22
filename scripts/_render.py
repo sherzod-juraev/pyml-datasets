@@ -457,3 +457,26 @@ def render_api_loaders(infos: Sequence[DatasetInfo]) -> str:
         for info in sorted(infos, key=lambda item: item.name)
     ]
     return "\n".join(entries)
+
+
+def render_datasets_toctree(infos: Sequence[DatasetInfo]) -> str:
+    """Write the ``toctree`` of the datasets index page.
+
+    The entries are sorted by dataset name, in the same order as
+    ``render_datasets_table``. They are relative to the page that includes the file,
+    so it must be included from ``docs/source/datasets/index.rst``, next to the dataset
+    pages.
+
+    Parameters
+    ----------
+    infos : sequence of DatasetInfo
+        Information of every bundled dataset.
+
+    Returns
+    -------
+    str
+        reStructuredText that is included in the datasets index.
+    """
+    lines = [".. toctree::", "   :hidden:", ""]
+    lines += [f"   {info.name}" for info in sorted(infos, key=lambda item: item.name)]
+    return "\n".join(lines) + "\n"
