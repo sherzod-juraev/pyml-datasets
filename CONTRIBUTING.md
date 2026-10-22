@@ -209,7 +209,9 @@ Nox, so a failure in the CI is reproduced locally with the same command:
 - Everything is checked by mypy in strict mode, ruff (line length 100) and interrogate
   (100% docstring coverage, private members and scripts included).
 - Data files are read with `allow_pickle=False`. Never store an object array.
-- A recipe downloads only from `https` addresses and pins the SHA-256 of the file.
+- A recipe either downloads only from `https` addresses and pins the SHA-256 of the file,
+  or reads a UCI dataset with `ucimlrepo` and checks its shape, dtypes and target values.
+  A recipe does not import pandas.
 
 ### Docstrings
 
@@ -275,6 +277,7 @@ Rules for a dataset that is accepted:
    library the recipe reads. If it is a copy in a library (for example scikit-learn), say so;
    the license is still the one of the original source.
 4. **Do not change the data to fit.** Missing values stay as `NaN`, repeated rows stay.
+   Values that the source does not document stay as they are, describe them in `notes`.
 5. **Check for extra terms.** Some CC0/CC BY data packages add a request on top (a data use
    policy, a citation request). Put it in `notes`.
 
@@ -312,10 +315,15 @@ must not be empty. Set `has_missing=True` if the data has `NaN`, and `categorica
 categorical features (feature name -> names of the categories, in code order).
 
 **4. Write the recipe.** `build()` returns a `Built` with `X`, `y`, `feature_names`, and
-optionally `target_names` and `extras`. Use `scripts.recipes._sources.download(url, sha256)`
-for files from the internet; it accepts only `https` and checks the digest. Missing values
-become `NaN`, categories become integer codes. Check the shape and the values you expect, so a
-silent change at the source is noticed. A recipe knows nothing about licenses.
+optionally `target_names` and `extras`. A recipe gets the arrays in one of two ways. For a
+file on the internet use `scripts.recipes._sources.download(url, sha256)`; it accepts only
+`https` and checks the digest. For a UCI dataset use `ucimlrepo` (`fetch_ucirepo(id=...)`,
+see `scripts/recipes/credit_card_default.py`): check the shape, the dtypes, the target
+values and the variable descriptions, and save `ucimlrepo_version` in `extras`. Do not
+import pandas in a recipe, use the methods of the frames that `ucimlrepo` returns. Missing
+values become `NaN`, categories become integer codes. Values that the source does not
+document stay as they are and are described in `notes`. Check the shape and the values you
+expect, so a silent change at the source is noticed. A recipe knows nothing about licenses.
 
 **5. Build the data file and generate.**
 
@@ -326,12 +334,17 @@ uv run python -m scripts.generate
 
 The first command combines the recipe and `INFO`, validates the arrays and saves
 `pyml_datasets/data/seeds.npz`. The second updates the registry (`ENTRIES`), the exports,
-`NOTICE.md`, the README table, the documentation includes and `MANIFEST.json`. Never edit
-those by hand; `generate --check` fails if you do. Running `generate` again changes nothing
-when nothing changed.
+`NOTICE.md`, the README table, the toctree of the datasets index, the other documentation
+includes and `MANIFEST.json`. Never edit those by hand; `generate --check` fails if you do.
+Running `generate` again changes nothing when nothing changed.
 
 **6. Fill in the facts and the evidence.** Write `tests/expected/seeds.py` from the source
-documentation, then the documentation page and `legal/evidence/seeds.md`.
+documentation. A fact that is not on the page of the source (for example class counts) is
+checked against the original file, and where it comes from is noted in a comment. Then write
+the documentation page (`generate` adds it to the toctree) and `legal/evidence/seeds.md`,
+and finish the evidence: open the license page in a browser, save it to the Wayback Machine,
+put the link in `Archive` and your name and the date in `Maintainer check`. `check_legal`
+warns until you do.
 
 **7. Check everything.**
 

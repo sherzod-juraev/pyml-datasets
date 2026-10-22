@@ -9,7 +9,7 @@ with an explicit **CC0 1.0** or **CC BY 4.0** license are bundled, and each one 
 original license, citation and a list of the changes made to it.
 
 This is a personal project of a student, made for pyml. It is not looking for contributors,
-see the `README <https://github.com/sherzod-juraev/pyml-datasets#readme>`_.
+see the `README <https://github.com/sherzod-juraev/pyml-datasets>`_.
 
 The package depends only on NumPy. The tools used to download and convert the
 original data, for example scikit-learn and ucimlrepo, are needed only to
