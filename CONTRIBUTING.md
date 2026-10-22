@@ -20,21 +20,32 @@ forks it: where things are, how to check them, and how to add a dataset or make 
 
 ## Quick start
 
+The project uses [uv](https://docs.astral.sh/uv/) to manage Python versions, dependencies and
+virtual environments. Install it first, see the
+[uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
+
 ```bash
 git clone https://github.com/sherzod-juraev/pyml-datasets.git
 cd pyml-datasets
-pip install -e ".[nox]"
-nox
+uv run --locked --only-group nox nox
 ```
 
-`nox` runs every default session (see [Nox sessions](#nox-sessions)) in isolated virtual
-environments, the same way as the CI.
+The last command installs only Nox, at the version pinned in `uv.lock`, and runs every default
+session (see [Nox sessions](#nox-sessions)) in isolated virtual environments, the same way as
+the CI.
+
+To work on the code, create the project environment (`.venv`) with the development tools:
+
+```bash
+uv sync --locked    # the default group, dev: tests, lint, types, docstrings, packaging
+uv run pytest       # run a command inside .venv, no activation needed
+```
 
 ## Project structure
 
 ```text
 pyml-datasets/
-├── .github/workflows/          # CI workflows, each one calls Nox
+├── .github/workflows/          # CI workflows, each one calls Nox through uv
 ├── assets/branding/            # Logos
 ├── docs/source/                # Sphinx documentation
 │   ├── _generated/             # Generated includes (do not edit)
@@ -61,8 +72,9 @@ pyml-datasets/
 ├── LICENSE                     # MIT License (the code)
 ├── NOTICE.md                   # Creators, sources, citations, changes (generated)
 ├── noxfile.py                  # Nox sessions
-├── pyproject.toml              # Project metadata and tool config
-└── README.md                   # Project overview
+├── pyproject.toml              # Project metadata, dependency groups and tool config
+├── README.md                   # Project overview
+└── uv.lock                     # Exact version of every locked dependency (committed)
 ```
 
 The idea behind the layout: **a dataset is described once**, in `pyml_datasets/datasets/<name>.py`
@@ -73,53 +85,115 @@ distributed is generated from that. See `docs/source/design/single_source.rst`.
 
 ### Requirements
 
-- Python 3.12, 3.13 and 3.14. Install all three to run the whole Nox matrix, or run a single
-  version, for example `nox -s tests-3.13`.
+- [uv](https://docs.astral.sh/uv/). It also installs the Python versions that are missing, so
+  you do not have to install Python 3.12, 3.13 and 3.14 yourself to run the whole Nox matrix.
+  Run a single version if you prefer, for example `nox -s tests-3.13`.
 
-### Optional extras
+### Dependency groups
 
-| Extra  |                           Purpose                            |
-|:-------|:------------------------------------------------------------:|
-| `nox`  |                      Nox, to run sessions                    |
-| `dev`  | mypy, ruff, pytest, interrogate, scikit-learn, ucimlrepo     |
-| `docs` |                Sphinx and documentation tools                |
-| `all`  |                      Everything above                        |
+The development tools are **dependency groups** ([PEP 735](https://peps.python.org/pep-0735/))
+in `pyproject.toml`, not extras. They are not part of the published package: `pip install
+pyml-datasets` installs NumPy and nothing else. `uv.lock` pins the exact version of every
+package of every group.
+
+| Group           |                      Purpose                       |
+|:----------------|:--------------------------------------------------:|
+| `dev-test`      |           pytest, pytest-sugar, pytest-cov         |
+| `dev-lint`      |                        ruff                        |
+| `dev-types`     |                        mypy                        |
+| `dev-docstring` |                     interrogate                    |
+| `dev-package`   |                  build (the wheel)                 |
+| `dev`           | all `dev-*` groups, scikit-learn and ucimlrepo     |
+| `docs-lint`     |            doc8, rstcheck, sphinx-lint             |
+| `docs-build`    |           Sphinx, its theme and extensions         |
+| `docs`          |             `docs-lint` and `docs-build`           |
+| `docs-live`     |       `docs-build` and sphinx-autobuild            |
+| `nox`           |                  Nox, to run sessions              |
 
 scikit-learn and ucimlrepo are needed only to rebuild data files, never to use the package.
 
+`uv sync` installs the `dev` group by default. Add or replace groups with flags:
+
+```bash
+uv sync --locked                      # the project and the dev group
+uv sync --locked --group docs         # add one more group
+uv sync --locked --all-groups         # every group
+uv sync --locked --only-group nox     # only one group, without the project
+```
+
+`uv sync` makes `.venv` match the groups you ask for exactly, so it also **removes** the
+packages of the groups you did not name. `--locked` makes uv fail instead of changing
+`uv.lock` when it is out of date. Without it, `uv sync` and `uv run` update the lock file
+silently.
+
+### Dependencies and the lock file
+
+`uv.lock` is committed, so everyone, and the CI, installs the same versions. `pyproject.toml`
+holds the lower bounds (`pytest>=8.0`), `uv.lock` holds the exact versions.
+
+```bash
+uv add --group dev-test pytest-xdist   # add a tool to a group and update the lock
+uv remove --group dev-test pytest-xdist
+uv lock                                # re-resolve after editing pyproject.toml by hand
+uv lock --check                        # is uv.lock up to date? (writes nothing)
+uv lock --upgrade                      # move every package to the newest allowed version
+uv lock --upgrade-package ruff         # move one package only
+```
+
+Commit `uv.lock` together with the `pyproject.toml` change. The CI uses `--locked`, so a
+forgotten `uv lock` turns the checks red. After an upgrade, run `nox` before you commit: a new
+version can bring new lint rules or warnings (pytest runs with `filterwarnings = ["error"]`).
+
+Two things are outside the lock: the `[build-system]` requirement (`setuptools`), which
+is installed in an isolated build environment, and the Python version itself.
+
+To see the documentation while you edit it:
+
+```bash
+uv run --group docs-live sphinx-autobuild docs/source docs/build/html
+```
+
 ## Nox sessions
 
-| Session      |      Python      |                          What it runs                          |
-|:-------------|:----------------:|:--------------------------------------------------------------:|
-| `lint`       |       3.13       |               ruff check and ruff format --check               |
-| `types`      |       3.13       |        mypy (strict) on `pyml_datasets`, `scripts`, `tests`    |
-| `docstrings` |       3.13       |  interrogate (100% coverage) and the doctests of the package   |
-| `legal`      |       3.13       |        `scripts.check_legal` and `scripts.generate --check`    |
-| `tests`      | 3.12, 3.13, 3.14 |                             pytest                             |
-| `tests-min`  |       3.12       |            pytest with the oldest supported NumPy              |
-| `docs`       |       3.13       |        sphinx-lint, doc8, rstcheck, `sphinx-build -W`          |
-| `linkcheck`  |       3.13       |        Sphinx linkcheck, validity of every link in the docs    |
-| `package`    |       3.13       | builds the wheel, checks its contents, imports an installed copy |
+Every session installs its own environment from `uv.lock` (`uv sync --locked`) and only the
+groups it needs.
+
+| Session      |      Python      | Groups                          |                          What it runs                          |
+|:-------------|:----------------:|:--------------------------------|:--------------------------------------------------------------:|
+| `lint`       |       3.13       | `dev-lint`                      |               ruff check and ruff format --check               |
+| `types`      |       3.13       | `dev-types`, `dev-test`         |        mypy (strict) on `pyml_datasets`, `scripts`, `tests`    |
+| `docstrings` |       3.13       | `dev-docstring`, `dev-test`     |  interrogate (100% coverage) and the doctests of the package   |
+| `legal`      |       3.13       | `dev`                           |        `scripts.check_legal` and `scripts.generate --check`    |
+| `tests`      | 3.12, 3.13, 3.14 | `dev-test`                      |                             pytest                             |
+| `tests-min`  |       3.12       | `dev-test`                      |  pytest with the oldest supported NumPy installed on top       |
+| `docs`       |       3.13       | `docs`                          |        sphinx-lint, doc8, rstcheck, `sphinx-build -W`          |
+| `linkcheck`  |       3.13       | `docs-build`                    |        Sphinx linkcheck, validity of every link in the docs    |
+| `package`    |       3.13       | `dev-package`                   | builds the wheel, checks its contents, imports an installed copy |
 
 `nox` without arguments runs every session except `linkcheck`, which needs the network and is
 slow.
 
 ```bash
-nox -l                          # list all sessions
-nox -s lint                     # run one session
-nox -s tests-3.13               # run one session on one Python version
-nox -s tests -- -k penguins     # arguments after -- are passed to pytest
-nox -R                          # reuse the existing virtual environments, much faster
+uv run --locked --only-group nox nox -l                    # list all sessions
+uv run --locked --only-group nox nox -s lint               # run one session
+uv run --locked --only-group nox nox -s tests-3.13         # one session on one Python version
+uv run --locked --only-group nox nox -s tests -- -k penguins   # arguments after -- go to pytest
+uv run --locked --only-group nox nox -R                    # reuse the existing environments
 ```
+
+If `nox` is already available in your shell (for example after `uv sync --group nox`), you
+can drop the `uv run --locked --only-group nox` prefix and type `nox -s lint`.
 
 ## Continuous integration
 
-Every workflow calls Nox, so a failure in the CI is reproduced locally with the same command.
+Every workflow installs uv (`astral-sh/setup-uv`, with the cache keyed on `uv.lock`) and calls
+Nox, so a failure in the CI is reproduced locally with the same command:
+`uv run --locked --only-group nox nox -s <session>`.
 
 | Workflow        | Runs on                     | Nox sessions                                            |
 |:----------------|:----------------------------|:--------------------------------------------------------|
 | `quality.yml`   | push, pull request          | `lint`, `types`, `docstrings`, `legal`, `package`       |
-| `tests.yml`     | push, pull request          | `tests` on 3.12, 3.13, 3.14 (and 3.13 on Windows)       |
+| `tests.yml`     | push, pull request          | `tests` on 3.12, 3.13, 3.14 (and 3.13 on Windows), `tests-min` |
 | `docs.yml`      | push, pull request          | `docs`                                                  |
 | `linkcheck.yml` | weekly schedule, manual run | `linkcheck`                                             |
 
@@ -151,11 +225,22 @@ Every workflow calls Nox, so a failure in the CI is reproduced locally with the 
   fixture and run once per dataset, so a new dataset is tested without writing a test.
 - `tests/expected/<name>.py` holds facts taken from the **documentation of the source**
   (shape, class counts, published means), never copied from the file under test.
+- A warning is a failure (`filterwarnings = ["error"]`). Fix its cause, or filter that one
+  warning in `pyproject.toml` with a comment that says why.
+
+### Dependencies
+
+- A development tool goes into a group of `[dependency-groups]`, never into
+  `[project] dependencies`, which is what the users of the package install.
+- Every change of `pyproject.toml` dependencies is followed by `uv lock`, and `uv.lock` is
+  committed in the same commit.
+- A new Nox session installs only the groups it needs with `_sync(session, "--group", ...)`.
 
 ### Commits and versions
 
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
-- Work happens on `dev`. `main` receives a merge only when all checks pass.
+- Work happens on `dev`. `main` receives a pull request from `dev`, and it is merged only when
+  all checks pass.
 - `__version__` in `pyml_datasets/__init__.py` is the single source of truth. Adding a dataset
   is a MINOR bump, removing one or changing the data format is a breaking change.
 - Every release gets an entry in `docs/source/changelog.rst`.
@@ -199,7 +284,8 @@ version immediately and the history is cleaned if asked. Contact: juraevsherzod9
 ## Adding a dataset
 
 Example: adding `seeds`. You can do every step with the tools; you edit only the lines
-marked `TODO`.
+marked `TODO`. The commands run in the project environment, so `uv run` comes before them
+(the `dev` group has everything they need).
 
 **1. Decide it is allowed.** Read the [policy](#dataset-admission-policy). If the license
 page is not clear, stop here.
@@ -207,7 +293,7 @@ page is not clear, stop here.
 **2. Scaffold.**
 
 ```bash
-python -m scripts.new_dataset seeds --license CC-BY-4.0 --task classification
+uv run python -m scripts.new_dataset seeds --license CC-BY-4.0 --task classification
 ```
 
 This creates five files and refuses to overwrite anything:
@@ -234,14 +320,15 @@ silent change at the source is noticed. A recipe knows nothing about licenses.
 **5. Build the data file and generate.**
 
 ```bash
-python -m scripts.build_datasets seeds
-python -m scripts.generate
+uv run python -m scripts.build_datasets seeds
+uv run python -m scripts.generate
 ```
 
 The first command combines the recipe and `INFO`, validates the arrays and saves
 `pyml_datasets/data/seeds.npz`. The second updates the registry (`ENTRIES`), the exports,
 `NOTICE.md`, the README table, the documentation includes and `MANIFEST.json`. Never edit
-those by hand; `generate --check` fails if you do.
+those by hand; `generate --check` fails if you do. Running `generate` again changes nothing
+when nothing changed.
 
 **6. Fill in the facts and the evidence.** Write `tests/expected/seeds.py` from the source
 documentation, then the documentation page and `legal/evidence/seeds.md`.
@@ -249,8 +336,8 @@ documentation, then the documentation page and `legal/evidence/seeds.md`.
 **7. Check everything.**
 
 ```bash
-python -m scripts.check_legal     # fails on TODO, missing evidence, license mismatch
-nox                               # lint, types, docstrings, legal, tests, docs, package
+uv run python -m scripts.check_legal    # fails on TODO, missing evidence, license mismatch
+uv run --locked --only-group nox nox    # lint, types, docstrings, legal, tests, docs, package
 ```
 
 You do not write tests for a normal dataset: the contract, integrity, missing-value and
@@ -266,12 +353,13 @@ legal tests run for it automatically. Add a test only for something special abou
 | add a new kind of task (e.g. clustering) | `TASKS` in `_types.py`, the dtype rules in `scripts/_npz.py`, the checks in `validate`, the loader doc |
 | add a new generated file               | A function in `scripts/_render.py`, and one line in `expected_files()` of `scripts/generate.py` |
 | add a legal rule                       | `scripts/check_legal.py` and a test in `tests/test_legal.py`           |
-| rebuild a data file                    | `python -m scripts.build_datasets NAME --overwrite`, then `generate`; compare the new manifest digest with the old one |
+| add a development tool                 | A group in `[dependency-groups]`, `uv lock`, then `_sync(session, "--group", ...)` in `noxfile.py` |
+| rebuild a data file                    | `uv run python -m scripts.build_datasets NAME --overwrite`, then `generate`; compare the new manifest digest with the old one |
 
 ## Removing a dataset
 
 Delete its module, recipe, data file, expected facts, documentation page and evidence file,
-run `python -m scripts.generate`, add a "Removed" entry to the changelog and bump the
+run `uv run python -m scripts.generate`, add a "Removed" entry to the changelog and bump the
 version. If the reason is legal, also purge the files from the git history
 (`git filter-repo --invert-paths --path pyml_datasets/data/NAME.npz ...`) and replace the
 affected tags and releases.
@@ -279,9 +367,9 @@ affected tags and releases.
 ## Releasing
 
 1. Run `nox` on `dev`, and make sure the CI is green. Read the warnings of
-   `python -m scripts.check_legal`.
+   `uv run python -m scripts.check_legal`. Check that `uv lock --check` passes.
 2. Bump `__version__` in `pyml_datasets/__init__.py` and add the entry to
    `docs/source/changelog.rst`.
-3. Merge `dev` into `main` and push.
+3. Open a pull request from `dev` to `main` and merge it when the CI is green.
 4. Create the tag `vX.Y.Z` on `main` and a GitHub release titled `vX.Y.Z`.
 5. Check that the Read the Docs build is green.
