@@ -1,9 +1,9 @@
 Source and citation
 -------------------
 
-* Source: `palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman) <https://allisonhorst.github.io/palmerpenguins/>`__
-* Obtained from: The file inst/extdata/penguins.csv of the GitHub repository allisonhorst/palmerpenguins. Its SHA-256 digest is pinned in the build recipe.
-* Creators: Kristen B. Gorman, Palmer Station Antarctica LTER
+* Source: `palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman) <https://github.com/allisonhorst/palmerpenguins/tree/v0.1.0>`__
+* Obtained from: The file inst/extdata/penguins.csv of the GitHub repository allisonhorst/palmerpenguins, tag v0.1.0. Its SHA-256 digest is pinned in the build recipe.
+* Creators: Allison Marie Horst, Alison Presmanes Hill, Kristen B Gorman
 * DOI: https://doi.org/10.5281/zenodo.3960218
 
 Please cite the dataset as:
