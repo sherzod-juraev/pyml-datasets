@@ -17,9 +17,9 @@ INFO: Final = DatasetInfo(
     license="CC0-1.0",
     license_url="https://creativecommons.org/publicdomain/zero/1.0/",
     source="palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman)",
-    source_url="https://allisonhorst.github.io/palmerpenguins/",
+    source_url="https://github.com/allisonhorst/palmerpenguins/tree/v0.1.0",
     doi="10.5281/zenodo.3960218",
-    creators=("Kristen B. Gorman", "Palmer Station Antarctica LTER"),
+    creators=("Allison Marie Horst", "Alison Presmanes Hill", "Kristen B Gorman"),
     citation=(
         "Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago "
         "(Antarctica) penguin data. R package version 0.1.0. "
@@ -27,7 +27,7 @@ INFO: Final = DatasetInfo(
     ),
     obtained_from=(
         "The file inst/extdata/penguins.csv of the GitHub repository "
-        "allisonhorst/palmerpenguins. Its SHA-256 digest is pinned in the build recipe."
+        "allisonhorst/palmerpenguins, tag v0.1.0. Its SHA-256 digest is pinned in the build recipe."
     ),
     changes=(
         "Converted to the NumPy NPZ format. Measurements are stored as float64 and the "

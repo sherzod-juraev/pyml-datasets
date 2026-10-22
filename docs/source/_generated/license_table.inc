@@ -19,7 +19,7 @@
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/53/iris>`__
    * - :doc:`Palmer Penguins </datasets/penguins>`
      - CC0 1.0
-     - `palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman) <https://allisonhorst.github.io/palmerpenguins/>`__
+     - `palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman) <https://github.com/allisonhorst/palmerpenguins/tree/v0.1.0>`__
    * - :doc:`Wine </datasets/wine>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/109/wine>`__

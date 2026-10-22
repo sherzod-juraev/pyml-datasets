@@ -65,9 +65,9 @@ The code of pyml-datasets is released under the MIT license, see `LICENSE`. The 
 ## Palmer Penguins (`penguins`)
 
 - **License:** [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
-- **Creators:** Kristen B. Gorman, Palmer Station Antarctica LTER
-- **Source:** [palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman)](https://allisonhorst.github.io/palmerpenguins/)
-- **Obtained from:** The file inst/extdata/penguins.csv of the GitHub repository allisonhorst/palmerpenguins. Its SHA-256 digest is pinned in the build recipe.
+- **Creators:** Allison Marie Horst, Alison Presmanes Hill, Kristen B Gorman
+- **Source:** [palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman)](https://github.com/allisonhorst/palmerpenguins/tree/v0.1.0)
+- **Obtained from:** The file inst/extdata/penguins.csv of the GitHub repository allisonhorst/palmerpenguins, tag v0.1.0. Its SHA-256 digest is pinned in the build recipe.
 - **Citation:** Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. R package version 0.1.0. https://allisonhorst.github.io/palmerpenguins/. doi:10.5281/zenodo.3960218.
 - **Changes made:**
   - Converted to the NumPy NPZ format. Measurements are stored as float64 and the species as int64 labels (0 = Adelie, 1 = Chinstrap, 2 = Gentoo).
