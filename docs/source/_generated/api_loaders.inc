@@ -1,5 +1,7 @@
 .. autofunction:: pyml_datasets.load_breast_cancer
 
+.. autofunction:: pyml_datasets.load_credit_card_default
+
 .. autofunction:: pyml_datasets.load_digits
 
 .. autofunction:: pyml_datasets.load_iris

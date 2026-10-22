@@ -14,6 +14,12 @@
      - 30
      - No
      - CC BY 4.0
+   * - :doc:`Default of Credit Card Clients </datasets/credit_card_default>`
+     - Classification
+     - 30000
+     - 23
+     - No
+     - CC BY 4.0
    * - :doc:`Optical Recognition of Handwritten Digits </datasets/digits>`
      - Classification
      - 1797
