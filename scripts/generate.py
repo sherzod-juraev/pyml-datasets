@@ -49,6 +49,11 @@ def dataset_names() -> tuple[str, ...]:
 def render_datasets_init(names: Sequence[str]) -> str:
     """Write ``pyml_datasets/datasets/__init__.py``.
 
+    The modules are imported one per line with a trailing comma, which is the form that
+    ``ruff format`` and the import sorter keep for any number of datasets. A single long
+    import line would be rewritten by ruff once it passes the line length, and the file
+    would then differ from what this function writes.
+
     Parameters
     ----------
     names : sequence of str
@@ -59,6 +64,7 @@ def render_datasets_init(names: Sequence[str]) -> str:
     str
         Python source with the ``ENTRIES`` tuple.
     """
+    modules = "".join(f"    {name},\n" for name in names)
     entries = "".join(f"    ({name}.INFO, {name}.load_{name}),\n" for name in names)
     return (
         '"""Bundled datasets, one module per dataset.\n\n'
@@ -67,7 +73,7 @@ def render_datasets_init(names: Sequence[str]) -> str:
         "from collections.abc import Callable\n"
         "from typing import Final\n\n"
         "from .._types import Dataset, DatasetInfo\n"
-        f"from . import {', '.join(names)}\n\n"
+        f"from . import (\n{modules})\n\n"
         "ENTRIES: Final[tuple[tuple[DatasetInfo, Callable[[], Dataset]], ...]] = (\n"
         f"{entries})\n"
     )
