@@ -223,8 +223,9 @@ Nox, so a failure in the CI is reproduced locally with the same command:
 - `tests/` is organised by concern, not by file: `test_loader` (the reader), `test_registry`,
   `test_contract` (rules for every dataset), `test_facts` (compare with `tests/expected`),
   `test_integrity` (manifest, stored provenance), `test_missing_values`, `test_legal`,
-  `test_info` and `test_scripts`. Tests that must hold for every dataset use the `name`
-  fixture and run once per dataset, so a new dataset is tested without writing a test.
+  `test_legal_evidence`, `test_generate_init`, `test_info` and `test_scripts`. Tests that
+  must hold for every dataset use the `name` fixture and run once per dataset, so a new
+  dataset is tested without writing a test.
 - `tests/expected/<name>.py` holds facts taken from the **documentation of the source**
   (shape, class counts, published means), never copied from the file under test.
 - A warning is a failure (`filterwarnings = ["error"]`). Fix its cause, or filter that one
@@ -245,6 +246,9 @@ Nox, so a failure in the CI is reproduced locally with the same command:
   all checks pass.
 - `__version__` in `pyml_datasets/__init__.py` is the single source of truth. Adding a dataset
   is a MINOR bump, removing one or changing the data format is a breaking change.
+- A change that does not touch the wheel (`scripts/`, `tests/`, `docs/`, the evidence files,
+  the CI) does not bump the version. Write it in the changelog of the next release, under
+  *Changed*, only if it changes what the maintainer or a contributor has to do.
 - Every release gets an entry in `docs/source/changelog.rst`.
 
 ## Dataset admission policy
@@ -267,8 +271,10 @@ Rules for a dataset that is accepted:
 
 1. **Read the license at the original source** (not a mirror, not a library that bundles it),
    and write down where in `legal/evidence/<name>.md`: the license, the address of the page,
-   the date, who checked it and an archived copy of the page (Wayback Machine). The
-   maintainer re-reads it in a browser and writes the date in `Maintainer check`.
+   the date, who checked it and an archived copy of the page. The `Archive` is a Wayback
+   Machine link to that same page. The maintainer opens the archived copy, re-reads the page
+   in a browser and writes their name and the date in `Maintainer check`, for example
+   `Sherzod, 2026-10-20`. The legal check fails while either of them is missing or `pending`.
 2. **Credit and changes.** CC BY requires credit and a statement of changes. `creators`,
    `citation` and `changes` in `INFO` are that statement, and they end up in the notice, the
    docs and the data file. Cite the way the source asks, and list *every* change, also the
@@ -343,13 +349,15 @@ documentation. A fact that is not on the page of the source (for example class c
 checked against the original file, and where it comes from is noted in a comment. Then write
 the documentation page (`generate` adds it to the toctree) and `legal/evidence/seeds.md`,
 and finish the evidence: open the license page in a browser, save it to the Wayback Machine,
-put the link in `Archive` and your name and the date in `Maintainer check`. `check_legal`
-warns until you do.
+open the saved copy to see that it shows the license, put the link in `Archive` and your
+name and the date in `Maintainer check`. Do this before you open the pull request:
+`check_legal` fails while either of them is missing or `pending`.
 
 **7. Check everything.**
 
 ```bash
-uv run python -m scripts.check_legal    # fails on TODO, missing evidence, license mismatch
+uv run python -m scripts.check_legal    # fails on TODO, missing evidence, license mismatch,
+                                        # missing archive or maintainer check
 uv run --locked --only-group nox nox    # lint, types, docstrings, legal, tests, docs, package
 ```
 
@@ -365,7 +373,7 @@ legal tests run for it automatically. Add a test only for something special abou
 | change the file format                 | Bump `_FORMAT_VERSION` in `_loader.py` and `FORMAT_VERSION` in `scripts/_npz.py`, rebuild everything, write the change in the changelog |
 | add a new kind of task (e.g. clustering) | `TASKS` in `_types.py`, the dtype rules in `scripts/_npz.py`, the checks in `validate`, the loader doc |
 | add a new generated file               | A function in `scripts/_render.py`, and one line in `expected_files()` of `scripts/generate.py` |
-| add a legal rule                       | `scripts/check_legal.py` and a test in `tests/test_legal.py`           |
+| add a legal rule                       | `scripts/check_legal.py` and a test in `tests/test_legal.py` or `tests/test_legal_evidence.py` |
 | add a development tool                 | A group in `[dependency-groups]`, `uv lock`, then `_sync(session, "--group", ...)` in `noxfile.py` |
 | rebuild a data file                    | `uv run python -m scripts.build_datasets NAME --overwrite`, then `generate`; compare the new manifest digest with the old one |
 
@@ -380,7 +388,8 @@ affected tags and releases.
 ## Releasing
 
 1. Run `nox` on `dev`, and make sure the CI is green. Read the warnings of
-   `uv run python -m scripts.check_legal`. Check that `uv lock --check` passes.
+   `uv run python -m scripts.check_legal`: they are reminders, for example a license that
+   was verified more than a year ago. Check that `uv lock --check` passes.
 2. Bump `__version__` in `pyml_datasets/__init__.py` and add the entry to
    `docs/source/changelog.rst`.
 3. Open a pull request from `dev` to `main` and merge it when the CI is green.
