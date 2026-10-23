@@ -4,6 +4,23 @@
 
 The code of pyml-datasets is released under the MIT license, see `LICENSE`. The datasets were created by other people. Each one is redistributed under the license it has at its source, and the changes made to it are listed here, as these licenses require. The license texts are in the `LICENSES` folder.
 
+## Bank Marketing (`bank_marketing`)
+
+- **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Creators:** S. Moro, P. Rita, P. Cortez
+- **Source:** [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/222/bank+marketing)
+- **Obtained from:** UCI Machine Learning Repository, dataset 222, downloaded with the ucimlrepo package: all 45211 examples with 16 inputs (the bank-full version). The ucimlrepo version is recorded in the file.
+- **Citation:** Moro, S., Rita, P., & Cortez, P. (2014). Bank Marketing [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5K306
+- **Changes made:**
+  - Converted to the NumPy NPZ format. Numeric features are stored as float64 and the target as int64 labels.
+  - Categorical features are stored as integer codes, in the order of the category names listed for each feature. The target is 0 for no and 1 for yes.
+  - Entries of job, education, contact and poutcome that the UCI release marks as missing are stored as the category unknown, which the data description of the source lists for these features. No NaN values are stored.
+  - The column that UCI calls day_of_week is named day, because the source describes it as the day of the month of the last contact.
+- **Notes:**
+  - The duration of the last call is only known after the call, and the call ends with the answer. The source advises to use duration for benchmarks only and to drop it for a realistic predictive model.
+  - pdays is -1 for clients who were not contacted in a previous campaign. The value is kept as it is in the source.
+  - The classes are not balanced: far fewer clients subscribed than not.
+
 ## Breast Cancer Wisconsin (Diagnostic) (`breast_cancer`)
 
 - **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)

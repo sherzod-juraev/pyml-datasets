@@ -127,6 +127,7 @@ the sources, the citations and the changes made to each dataset.
 <!-- datasets:start -->
 | Function | Task | Samples × features | Missing values | License |
 |:---------|:-----|:------------------:|:--------------:|:-------:|
+| `load_bank_marketing` | Classification | 45211 × 16 | no | CC BY 4.0 |
 | `load_breast_cancer` | Classification | 569 × 30 | no | CC BY 4.0 |
 | `load_credit_card_default` | Classification | 30000 × 23 | no | CC BY 4.0 |
 | `load_digits` | Classification | 1797 × 64 | no | CC BY 4.0 |

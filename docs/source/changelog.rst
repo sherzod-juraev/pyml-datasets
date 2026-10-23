@@ -1,6 +1,23 @@
 Changelog
 =========
 
+0.4.0
+-----
+
+Added
+~~~~~
+
+- Dataset ``bank_marketing`` (CC BY 4.0).
+
+Changed
+~~~~~~~
+
+- The legal check is stricter. A dataset needs an archived copy of its license page and the
+  confirmation of the maintainer in its evidence file. Before, a missing archive or a pending
+  confirmation was only a warning, now it fails the check and the CI.
+- The generated ``pyml_datasets/datasets/__init__.py`` keeps the form that ``ruff format``
+  produces, so ``generate --check`` and the linter agree for any number of datasets.
+
 0.3.1
 -----
 
