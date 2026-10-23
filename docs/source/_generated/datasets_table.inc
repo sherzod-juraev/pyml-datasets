@@ -8,6 +8,12 @@
      - Features
      - Missing values
      - License
+   * - :doc:`Bank Marketing </datasets/bank_marketing>`
+     - Classification
+     - 45211
+     - 16
+     - No
+     - CC BY 4.0
    * - :doc:`Breast Cancer Wisconsin (Diagnostic) </datasets/breast_cancer>`
      - Classification
      - 569

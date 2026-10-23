@@ -5,6 +5,9 @@
    * - Dataset
      - License
      - Original source
+   * - :doc:`Bank Marketing </datasets/bank_marketing>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/222/bank+marketing>`__
    * - :doc:`Breast Cancer Wisconsin (Diagnostic) </datasets/breast_cancer>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic>`__

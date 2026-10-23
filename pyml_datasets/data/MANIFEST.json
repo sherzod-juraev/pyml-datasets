@@ -1,5 +1,11 @@
 {
   "datasets": {
+    "bank_marketing": {
+      "X": "4e09df2ecf34ba01c296b50ab021c016ccb00885322c1203aea58756e4d3a00e",
+      "feature_names": "57df890bae61728f52b39f38149e666e0c6dd00c293e9b695c11c48a84064611",
+      "target_names": "deb5f5d4dd6380905268ad7e7e569d784c3631363efa32062165de38b8c22daa",
+      "y": "5d634c1d38f03350fb1a11c05c66eaf2bf3a8fecb46098fd907d0ad30ab6b1c7"
+    },
     "breast_cancer": {
       "X": "2d093b6df872a272c3082b8833b7a3f05e0c1618709f81e9b2350fa33b798f82",
       "feature_names": "5afa689f88ff533ac177a39b1d45920a76281de71c8e4a1f0d9a374c55e9145d",

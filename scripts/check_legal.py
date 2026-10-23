@@ -4,8 +4,10 @@ Run it from the repository root, locally and in CI::
 
     python -m scripts.check_legal
 
-Errors make the command fail. Warnings are printed but do not fail it: they are things the
-maintainer still has to do by hand, such as saving an archived copy of a license page.
+Errors make the command fail. A dataset is complete only when its evidence file has an
+archived copy of the license page and the confirmation of the maintainer, so a missing or
+malformed ``Archive`` or ``Maintainer check`` is an error. Warnings are printed but do not
+fail the command: they are reminders, such as a license that was verified long ago.
 
 The rules are the admission policy of ``CONTRIBUTING.md``: only the licenses in
 ``pyml_datasets._types.LICENSE_IDS`` are accepted, the license text must be in ``LICENSES/``,
@@ -16,11 +18,12 @@ import json
 import re
 import sys
 import tomllib
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Final
+from urllib.parse import unquote, urlsplit
 
 from pyml_datasets import DatasetInfo
 from pyml_datasets._types import LICENSE_IDS
@@ -33,7 +36,11 @@ DOCS_DIR: Final = ROOT / "docs" / "source" / "datasets"
 REQUIRED_FIELDS: Final = ("License", "License page", "Checked")
 MAX_AGE_DAYS: Final = 365
 _FIELD: Final = re.compile(r"^- \*\*(?P<key>[^:*]+):\*\*[ \t]*(?P<value>.*)$", re.MULTILINE)
-_NO_ARCHIVE: Final = ("", "none", "pending")
+_PENDING: Final = ("", "none", "pending")
+_ARCHIVE: Final = re.compile(
+    r"https://web\.archive\.org/web/\d{14}[a-z_]*/(?P<original>https?://\S+)"
+)
+_ISO_DATE: Final = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
 @dataclass
@@ -45,7 +52,7 @@ class Problems:
     errors : list of str
         Problems that must be fixed. The check fails if there is any.
     warnings : list of str
-        Things to do by hand. They do not fail the check.
+        Reminders. They do not fail the check.
     """
 
     errors: list[str] = field(default_factory=list)
@@ -86,6 +93,90 @@ def license_expression_ids(expression: str) -> set[str]:
     """
     tokens = re.split(r"[\s()]+", expression)
     return {token for token in tokens if token and token not in {"AND", "OR", "WITH"}}
+
+
+def _page_key(url: str) -> tuple[str, str, str]:
+    """Reduce an address to the parts that decide which page it is.
+
+    Parameters
+    ----------
+    url : str
+        An ``http`` or ``https`` address.
+
+    Returns
+    -------
+    tuple of str
+        Host without ``www.``, decoded path without a trailing slash, and query. The scheme
+        and the fragment are ignored, so ``bank+marketing`` and ``bank%2Bmarketing`` match.
+    """
+    parts = urlsplit(url)
+    host = parts.netloc.lower().removeprefix("www.")
+    return host, unquote(parts.path).rstrip("/"), unquote(parts.query)
+
+
+def check_archive(name: str, fields: Mapping[str, str], problems: Problems) -> None:
+    """Check that the evidence links an archived copy of the license page.
+
+    Parameters
+    ----------
+    name : str
+        Dataset name.
+    fields : mapping of str to str
+        Fields of the evidence file.
+    problems : Problems
+        Collection that receives the errors.
+    """
+    value = fields.get("Archive", "")
+    if value.lower() in _PENDING:
+        problems.errors.append(f"{name}: no archived copy of the license page (Archive).")
+        return
+    match = _ARCHIVE.fullmatch(value)
+    if match is None:
+        problems.errors.append(
+            f"{name}: Archive must be a link like "
+            "https://web.archive.org/web/<14 digit timestamp>/<address of the license page>."
+        )
+        return
+    page = fields.get("License page", "")
+    if _page_key(match["original"]) != _page_key(page):
+        problems.errors.append(
+            f"{name}: Archive is a copy of {match['original']}, not of the license page {page}."
+        )
+
+
+def check_maintainer(name: str, fields: Mapping[str, str], problems: Problems, today: date) -> None:
+    """Check that the maintainer has confirmed the license, with a name and a date.
+
+    Parameters
+    ----------
+    name : str
+        Dataset name.
+    fields : mapping of str to str
+        Fields of the evidence file.
+    problems : Problems
+        Collection that receives the errors.
+    today : date
+        Current date. A confirmation cannot be dated in the future.
+    """
+    value = fields.get("Maintainer check", "")
+    if value.lower().startswith("pending") or not value:
+        problems.errors.append(
+            f"{name}: the maintainer has not confirmed the license yet (Maintainer check)."
+        )
+        return
+    found = _ISO_DATE.search(value)
+    who = value[: found.start()] if found else value
+    try:
+        confirmed = date.fromisoformat(found[0]) if found else None
+    except ValueError:
+        confirmed = None
+    if confirmed is None or not any(char.isalpha() for char in who):
+        problems.errors.append(
+            f"{name}: Maintainer check must give a name and a date, "
+            "for example 'Sherzod, 2026-10-20'."
+        )
+    elif confirmed > today:
+        problems.errors.append(f"{name}: the date of the Maintainer check is in the future.")
 
 
 def check_info(info: DatasetInfo, problems: Problems, today: date) -> None:
@@ -129,10 +220,8 @@ def check_info(info: DatasetInfo, problems: Problems, today: date) -> None:
         )
     if fields.get("Checked") and fields["Checked"] != info.verified_on:
         problems.errors.append(f"{name}: evidence date differs from verified_on.")
-    if fields.get("Archive", "").lower() in _NO_ARCHIVE:
-        problems.warnings.append(f"{name}: no archived copy of the license page (Archive).")
-    if fields.get("Maintainer check", "pending").lower().startswith("pending"):
-        problems.warnings.append(f"{name}: the maintainer has not confirmed the license yet.")
+    check_archive(name, fields, problems)
+    check_maintainer(name, fields, problems, today)
 
 
 def check_pyproject(infos: Sequence[DatasetInfo], problems: Problems) -> None:

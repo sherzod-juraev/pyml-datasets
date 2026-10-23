@@ -13,12 +13,17 @@ dataset is treated like a test: it can fail the build.
   states it, the date, who checked it and an archived copy of the page.
 * ``python -m scripts.check_legal`` fails on a missing evidence file, a mismatch between the
   evidence and ``INFO``, a DOI that is missing from the citation, a ``TODO`` left in the
-  files, an orphan data file and a license expression that does not match the data. It only
-  warns about things that need a human, such as an unconfirmed maintainer check.
+  files, an orphan data file and a license expression that does not match the data. It fails
+  as well when the evidence is not complete: the ``Archive`` must be a Wayback Machine link
+  to the license page of the evidence, and the ``Maintainer check`` must give the name of the
+  maintainer and a date. A dataset with a ``pending`` value in either field cannot be merged.
+  The check only warns when a license was verified more than a year ago.
 
 Why not allow more licenses? Share-alike and non-commercial licenses would change the
 license of the whole package or limit its use, and "free for educational use" statements
 are not licenses. If a good dataset is excluded, it is the safer choice.
 
 The check cannot read a license page for you. The evidence files are written by hand, and a
-person must re-read the page. That is the purpose of the *Maintainer check* field.
+person must re-read the page and open the archived copy, because the Wayback Machine
+sometimes saves an empty or blocked page. That is the purpose of the *Maintainer check*
+field.
