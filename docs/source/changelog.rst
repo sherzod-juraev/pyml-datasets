@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.5.0
+-----
+
+Added
+~~~~~
+
+- Dataset ``auto_mpg`` (Auto MPG, CC BY 4.0): city-cycle fuel consumption in miles per gallon
+  of 398 cars, 7 numeric features and a regression target. 6 values of ``horsepower`` are
+  missing and stored as ``NaN``. The identifier ``car_name`` is not stored, and ``origin`` has
+  no category names because the source does not give them.
+
 0.4.0
 -----
 

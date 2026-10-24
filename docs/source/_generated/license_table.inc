@@ -5,6 +5,9 @@
    * - Dataset
      - License
      - Original source
+   * - :doc:`Auto MPG </datasets/auto_mpg>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/9/auto+mpg>`__
    * - :doc:`Bank Marketing </datasets/bank_marketing>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/222/bank+marketing>`__
