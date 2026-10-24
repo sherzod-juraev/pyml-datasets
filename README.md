@@ -130,6 +130,7 @@ the sources, the citations and the changes made to each dataset.
 | `load_auto_mpg` | Regression | 398 × 7 | yes | CC BY 4.0 |
 | `load_bank_marketing` | Classification | 45211 × 16 | no | CC BY 4.0 |
 | `load_breast_cancer` | Classification | 569 × 30 | no | CC BY 4.0 |
+| `load_concrete_strength` | Regression | 1030 × 8 | no | CC BY 4.0 |
 | `load_credit_card_default` | Classification | 30000 × 23 | no | CC BY 4.0 |
 | `load_digits` | Classification | 1797 × 64 | no | CC BY 4.0 |
 | `load_iris` | Classification | 150 × 4 | no | CC BY 4.0 |

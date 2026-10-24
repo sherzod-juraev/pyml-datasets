@@ -14,6 +14,9 @@
    * - :doc:`Breast Cancer Wisconsin (Diagnostic) </datasets/breast_cancer>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic>`__
+   * - :doc:`Concrete Compressive Strength </datasets/concrete_strength>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength>`__
    * - :doc:`Default of Credit Card Clients </datasets/credit_card_default>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients>`__

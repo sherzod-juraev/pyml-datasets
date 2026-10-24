@@ -26,6 +26,12 @@
      - 30
      - No
      - CC BY 4.0
+   * - :doc:`Concrete Compressive Strength </datasets/concrete_strength>`
+     - Regression
+     - 1030
+     - 8
+     - No
+     - CC BY 4.0
    * - :doc:`Default of Credit Card Clients </datasets/credit_card_default>`
      - Classification
      - 30000

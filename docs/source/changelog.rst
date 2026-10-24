@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.6.0
+-----
+
+Added
+~~~~~
+
+- Dataset ``concrete_strength`` (Concrete Compressive Strength, CC BY 4.0): compressive
+  strength in MPa of 1030 concrete samples, eight numeric features (seven ingredients and the
+  age) and a regression target. There are no missing values.
+
+Changed
+~~~~~~~
+
+- The expected facts of the tests can state a larger tolerance for the published means of a
+  dataset.
+
 0.5.0
 -----
 
