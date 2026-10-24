@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.7.0
+-----
+
+Added
+~~~~~
+
+- Dataset ``abalone`` (UCI Abalone, CC BY 4.0): physical measurements of 4177 abalones, one
+  categorical feature (the sex) and the number of rings of the shell as a regression target.
+  The source scaled the continuous values by dividing by 200, see the page of the dataset.
+
 0.6.0
 -----
 
