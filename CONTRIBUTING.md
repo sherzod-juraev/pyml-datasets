@@ -275,6 +275,13 @@ Rules for a dataset that is accepted:
    Machine link to that same page. The maintainer opens the archived copy, re-reads the page
    in a browser and writes their name and the date in `Maintainer check`, for example
    `Sherzod, 2026-10-20`. The legal check fails while either of them is missing or `pending`.
+   **Write every date in UTC, not in the time of your computer.** The Wayback Machine, GitHub
+   and the legal check all use UTC, and the day in UTC can be a day behind your own: at
+   01:00 in Tashkent (UTC+5) it is still the previous day in UTC. The number in an `Archive`
+   link (`web/20261022201245/...` is 2026-10-22 20:12:45 UTC) shows the UTC day of the copy,
+   so the date of `Maintainer check` is that day or a later one, never an earlier one. The
+   same goes for `Checked` and `verified_on`. The legal check rejects a date that is still
+   in the future in UTC.
 2. **Credit and changes.** CC BY requires credit and a statement of changes. `creators`,
    `citation` and `changes` in `INFO` are that statement, and they end up in the notice, the
    docs and the data file. Cite the way the source asks, and list *every* change, also the
@@ -350,8 +357,10 @@ checked against the original file, and where it comes from is noted in a comment
 the documentation page (`generate` adds it to the toctree) and `legal/evidence/seeds.md`,
 and finish the evidence: open the license page in a browser, save it to the Wayback Machine,
 open the saved copy to see that it shows the license, put the link in `Archive` and your
-name and the date in `Maintainer check`. Do this before you open the pull request:
-`check_legal` fails while either of them is missing or `pending`.
+name and the date in `Maintainer check`. Write the date in UTC (rule 1 of the legal rules
+above): `date -u +%F` on Linux and macOS, `(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd")`
+in PowerShell. Do this before you open the pull request: `check_legal` fails while either
+of them is missing or `pending`.
 
 **7. Check everything.**
 

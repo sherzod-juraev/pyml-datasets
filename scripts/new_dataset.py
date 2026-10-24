@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Final
 
 from pyml_datasets._types import LICENSE_IDS, TASKS
-from scripts import ROOT
+from scripts import ROOT, utc_today
 
 _NAME: Final = re.compile(r"[a-z][a-z0-9_]*")
 
@@ -155,7 +155,7 @@ def create(name: str, license_id: str, task: str, today: str) -> list[Path]:
     task : str
         ``"classification"`` or ``"regression"``.
     today : str
-        Date for ``verified_on`` and the evidence file, ``YYYY-MM-DD``.
+        Date for ``verified_on`` and the evidence file, ``YYYY-MM-DD`` in UTC.
 
     Returns
     -------
@@ -217,15 +217,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     int
         Exit code, 0 on success.
     """
-    from datetime import date
-
     parser = argparse.ArgumentParser(description="Scaffold a new dataset.")
     parser.add_argument("name", help="dataset name, for example 'seeds'")
     parser.add_argument("--license", required=True, choices=LICENSE_IDS, dest="license_id")
     parser.add_argument("--task", required=True, choices=TASKS)
     args = parser.parse_args(argv)
 
-    created = create(args.name, args.license_id, args.task, date.today().isoformat())
+    created = create(args.name, args.license_id, args.task, utc_today().isoformat())
     for path in created:
         print(f"created {path.relative_to(ROOT)}")
     print("Now search for TODO, fill the files in, then see CONTRIBUTING.md, 'Adding a dataset'.")
