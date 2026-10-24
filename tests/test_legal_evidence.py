@@ -118,3 +118,19 @@ def test_maintainer_check_cannot_be_dated_in_the_future(
 ) -> None:
     problems = run(tmp_path, monkeypatch, check="Sherzod, 2026-10-24")
     assert any("in the future" in error for error in problems.errors)
+
+
+def test_future_date_error_tells_to_write_utc(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    problems = run(tmp_path, monkeypatch, check="Sherzod, 2026-10-24")
+    assert any("Write dates in UTC" in error for error in problems.errors)
+
+
+def test_the_gate_takes_today_from_the_utc_clock(monkeypatch: pytest.MonkeyPatch) -> None:
+    days: list[date] = []
+    monkeypatch.setattr(check_legal, "utc_today", lambda: date(2026, 10, 24))
+    monkeypatch.setattr(check_legal, "check_info", lambda info, problems, today: days.append(today))
+    check_legal.collect_problems()
+    assert days
+    assert set(days) == {date(2026, 10, 24)}

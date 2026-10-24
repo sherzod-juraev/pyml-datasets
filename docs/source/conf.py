@@ -1,7 +1,7 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import os
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pyml_datasets
 
@@ -13,7 +13,7 @@ author = pyml_datasets.__author__
 release = pyml_datasets.__version__
 version = release
 year = 2026
-current_year = datetime.now().year
+current_year = datetime.now(UTC).year
 year_str = str(year) if current_year == year else f"{year}-{current_year}"
 copyright = f"{year_str}, {author}"
 source_suffix = {

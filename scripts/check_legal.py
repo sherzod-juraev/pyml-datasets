@@ -27,7 +27,7 @@ from urllib.parse import unquote, urlsplit
 
 from pyml_datasets import DatasetInfo
 from pyml_datasets._types import LICENSE_IDS
-from scripts import ROOT
+from scripts import ROOT, utc_today
 from scripts.generate import DATA_DIR, dataset_names
 
 EVIDENCE_DIR: Final = ROOT / "legal" / "evidence"
@@ -156,7 +156,7 @@ def check_maintainer(name: str, fields: Mapping[str, str], problems: Problems, t
     problems : Problems
         Collection that receives the errors.
     today : date
-        Current date. A confirmation cannot be dated in the future.
+        Current date in UTC. A confirmation cannot be dated in the future.
     """
     value = fields.get("Maintainer check", "")
     if value.lower().startswith("pending") or not value:
@@ -176,7 +176,9 @@ def check_maintainer(name: str, fields: Mapping[str, str], problems: Problems, t
             "for example 'Sherzod, 2026-10-20'."
         )
     elif confirmed > today:
-        problems.errors.append(f"{name}: the date of the Maintainer check is in the future.")
+        problems.errors.append(
+            f"{name}: the date of the Maintainer check is in the future. Write dates in UTC."
+        )
 
 
 def check_info(info: DatasetInfo, problems: Problems, today: date) -> None:
@@ -189,7 +191,7 @@ def check_info(info: DatasetInfo, problems: Problems, today: date) -> None:
     problems : Problems
         Collection that receives the errors and warnings.
     today : date
-        Current date, used to find old verifications.
+        Current date in UTC, used to find old verifications.
     """
     name = info.name
     if info.license not in LICENSE_IDS:
@@ -280,7 +282,7 @@ def collect_problems(today: date | None = None) -> Problems:
     Parameters
     ----------
     today : date, optional
-        Current date, today if not given.
+        Current date, today's date in UTC if not given.
 
     Returns
     -------
@@ -294,7 +296,7 @@ def collect_problems(today: date | None = None) -> Problems:
     check_files(names, problems)
     infos = [get_info(name) for name in names]
     for info in infos:
-        check_info(info, problems, today or date.today())
+        check_info(info, problems, today or utc_today())
     check_pyproject(infos, problems)
     return problems
 

@@ -1,12 +1,14 @@
 """Tests of the development scripts: validation, scaffolding and generated blocks."""
 
+from datetime import UTC, date, datetime, tzinfo
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+import scripts
 from pyml_datasets import get_info, list_datasets
 from scripts import new_dataset
 from scripts._npz import array_digest, to_arrays, validate
@@ -109,6 +111,35 @@ def test_new_dataset_scaffold(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
     compile(module, "seeds.py", "exec")
     with pytest.raises(FileExistsError):
         new_dataset.create("seeds", "CC-BY-4.0", "classification", "2026-10-17")
+
+
+def test_new_dataset_writes_the_utc_date(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    for folder in (
+        "pyml_datasets/datasets",
+        "scripts/recipes",
+        "tests/expected",
+        "docs/source/datasets",
+        "legal/evidence",
+    ):
+        (tmp_path / folder).mkdir(parents=True)
+    monkeypatch.setattr(new_dataset, "ROOT", tmp_path)
+    monkeypatch.setattr(new_dataset, "utc_today", lambda: date(2026, 10, 24))
+    argv = ["seeds", "--license", "CC0-1.0", "--task", "classification"]
+    assert new_dataset.main(argv) == 0
+    evidence = (tmp_path / "legal/evidence/seeds.md").read_text("utf-8")
+    assert "**Checked:** 2026-10-24" in evidence
+
+
+def test_utc_today_uses_the_utc_clock(monkeypatch: pytest.MonkeyPatch) -> None:
+    class Clock(datetime):
+        """19:44 UTC on 2026-10-24, which is already the 25th in Tashkent (UTC+5)."""
+
+        @classmethod
+        def now(cls, tz: tzinfo | None = None) -> Self:
+            return cls(2026, 10, 24, 19, 44, tzinfo=UTC).astimezone(tz)
+
+    monkeypatch.setattr(scripts, "datetime", Clock)
+    assert scripts.utc_today() == date(2026, 10, 24)
 
 
 @pytest.mark.parametrize(("name", "license_id"), [("Bad", "CC0-1.0"), ("ok", "MIT")])
