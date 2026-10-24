@@ -1,3 +1,5 @@
+.. autofunction:: pyml_datasets.load_auto_mpg
+
 .. autofunction:: pyml_datasets.load_bank_marketing
 
 .. autofunction:: pyml_datasets.load_breast_cancer

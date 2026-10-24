@@ -8,6 +8,7 @@ from typing import Final
 
 from .._types import Dataset, DatasetInfo
 from . import (
+    auto_mpg,
     bank_marketing,
     breast_cancer,
     credit_card_default,
@@ -19,6 +20,7 @@ from . import (
 )
 
 ENTRIES: Final[tuple[tuple[DatasetInfo, Callable[[], Dataset]], ...]] = (
+    (auto_mpg.INFO, auto_mpg.load_auto_mpg),
     (bank_marketing.INFO, bank_marketing.load_bank_marketing),
     (breast_cancer.INFO, breast_cancer.load_breast_cancer),
     (credit_card_default.INFO, credit_card_default.load_credit_card_default),

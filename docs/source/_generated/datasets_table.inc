@@ -8,6 +8,12 @@
      - Features
      - Missing values
      - License
+   * - :doc:`Auto MPG </datasets/auto_mpg>`
+     - Regression
+     - 398
+     - 7
+     - Yes
+     - CC BY 4.0
    * - :doc:`Bank Marketing </datasets/bank_marketing>`
      - Classification
      - 45211
