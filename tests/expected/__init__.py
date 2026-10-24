@@ -26,6 +26,9 @@ class Expected:
         The first values of the first sample. Only as many values as given are compared.
     column_means : dict of int to float
         Published mean of selected columns, ignoring missing values.
+    mean_tolerance : float
+        Largest allowed difference between a published mean and the mean of the data. It is
+        small unless the source itself offers the data with two different precisions.
     n_missing : int
         Number of missing values in ``X``.
     """
@@ -35,6 +38,7 @@ class Expected:
     class_counts: tuple[int, ...] | None
     first_row: tuple[float, ...]
     column_means: dict[int, float] = field(default_factory=dict)
+    mean_tolerance: float = 1e-4
     n_missing: int = 0
 
 

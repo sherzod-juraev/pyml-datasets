@@ -18,6 +18,12 @@
       "target_names": "887e06a9d1029dbe23a68e2e1adaa4bda4a53533a49276da5523eba4706a1a80",
       "y": "a03ccde3555223d4647b207e61220c1dd2c03d379afc97ed637ae5fcd82f0f82"
     },
+    "concrete_strength": {
+      "X": "52ae50a3e539612e7ff2ab55c472d92980a4291f890ccd0b8be766cc093a9e01",
+      "feature_names": "cd8e12019f30fa8c015a77195450e19d0867ad9d50729a2f7fe569bf1fb60af8",
+      "target_names": "afb9a6e13722dae6432c419e919b27f7bef6e813312d8d96e08237f6754203db",
+      "y": "e4d3e0e3a2aa8ae659dee79bdc9a71a65b549936b3e7cf5e9b9e85d6ecb5a88b"
+    },
     "credit_card_default": {
       "X": "3beb4edb75ef8cd6d6a2efb79d7c8e468f2f024172faf33df612e4cbda59ae95",
       "feature_names": "d23743b9bb53d43425349977f3f09fa115afcd9f91266c53955c6afaa78bb00c",

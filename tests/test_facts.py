@@ -42,4 +42,6 @@ def test_first_row(name: str) -> None:
 def test_published_means(name: str) -> None:
     expected, data = all_expected()[name], load_dataset(name)
     for column, mean in expected.column_means.items():
-        assert float(np.nanmean(data.X[:, column])) == pytest.approx(mean, abs=1e-4)
+        assert float(np.nanmean(data.X[:, column])) == pytest.approx(
+            mean, abs=expected.mean_tolerance
+        )
