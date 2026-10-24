@@ -1,6 +1,7 @@
 .. toctree::
    :hidden:
 
+   abalone
    auto_mpg
    bank_marketing
    breast_cancer

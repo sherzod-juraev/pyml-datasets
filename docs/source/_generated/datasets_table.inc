@@ -8,6 +8,12 @@
      - Features
      - Missing values
      - License
+   * - :doc:`Abalone </datasets/abalone>`
+     - Regression
+     - 4177
+     - 8
+     - No
+     - CC BY 4.0
    * - :doc:`Auto MPG </datasets/auto_mpg>`
      - Regression
      - 398

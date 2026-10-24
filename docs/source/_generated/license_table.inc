@@ -5,6 +5,9 @@
    * - Dataset
      - License
      - Original source
+   * - :doc:`Abalone </datasets/abalone>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/1/abalone>`__
    * - :doc:`Auto MPG </datasets/auto_mpg>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/9/auto+mpg>`__

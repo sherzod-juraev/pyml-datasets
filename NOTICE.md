@@ -4,6 +4,23 @@
 
 The code of pyml-datasets is released under the MIT license, see `LICENSE`. The datasets were created by other people. Each one is redistributed under the license it has at its source, and the changes made to it are listed here, as these licenses require. The license texts are in the `LICENSES` folder.
 
+## Abalone (`abalone`)
+
+- **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Creators:** Warwick Nash, Tracy Sellers, Simon Talbot, Andrew Cawthorn, Wes Ford
+- **Source:** [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/1/abalone)
+- **Obtained from:** UCI Machine Learning Repository, dataset 1, downloaded with the ucimlrepo package: all 4177 examples with 8 inputs. The ucimlrepo version is recorded in the file.
+- **Citation:** Nash, W., Sellers, T., Talbot, S., Cawthorn, A., & Ford, W. (1994). Abalone [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C55C7W
+- **Changes made:**
+  - Converted to the NumPy NPZ format. Features and the target are stored as float64.
+  - The column Sex is stored as integer codes, in the order of the category names listed for it. The names of the columns are written in lower case, for example Whole_weight is stored as whole_weight. The target is the number of rings.
+  - The continuous values are stored as the source gives them, with the scaling that the notes describe.
+- **Notes:**
+  - The source says that examples with missing values were removed from the original data, most of them because the number of rings was missing, and that the ranges of the continuous values were scaled for use with an artificial neural network by dividing by 200. Keep this in mind when you use the units mm and grams that the variable table of UCI lists.
+  - The data comes from a study that was not made for machine learning, by the Marine Resources Division of the Department of Primary Industry and Fisheries, Tasmania. The dataset was donated to UCI by Sam Waugh of the University of Tasmania.
+  - The sex is M, F or I (infant).
+  - The number of rings plus 1.5 gives the age of the abalone in years.
+
 ## Auto MPG (`auto_mpg`)
 
 - **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
