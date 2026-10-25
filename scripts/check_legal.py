@@ -20,7 +20,7 @@ import sys
 import tomllib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Final
 from urllib.parse import unquote, urlsplit
@@ -38,7 +38,7 @@ MAX_AGE_DAYS: Final = 365
 _FIELD: Final = re.compile(r"^- \*\*(?P<key>[^:*]+):\*\*[ \t]*(?P<value>.*)$", re.MULTILINE)
 _PENDING: Final = ("", "none", "pending")
 _ARCHIVE: Final = re.compile(
-    r"https://web\.archive\.org/web/\d{14}[a-z_]*/(?P<original>https?://\S+)"
+    r"https://web\.archive\.org/web/(?P<stamp>\d{14})[a-z_]*/(?P<original>https?://\S+)"
 )
 _ISO_DATE: Final = re.compile(r"\d{4}-\d{2}-\d{2}")
 
@@ -181,6 +181,40 @@ def check_maintainer(name: str, fields: Mapping[str, str], problems: Problems, t
         )
 
 
+def check_order(name: str, fields: Mapping[str, str], problems: Problems) -> None:
+    """Check that the maintainer did not confirm the license before the page was archived.
+
+    The timestamp of a Wayback link is in UTC, so the dates are compared in UTC. A
+    confirmation dated one day before its archived copy usually means that the date was
+    written in local time, for example 01:00 in Tashkent is still the previous day in UTC.
+    Nothing is reported when the archive or the confirmation is missing or malformed, the
+    other checks report that.
+
+    Parameters
+    ----------
+    name : str
+        Dataset name.
+    fields : mapping of str to str
+        Fields of the evidence file.
+    problems : Problems
+        Collection that receives the errors.
+    """
+    archive = _ARCHIVE.fullmatch(fields.get("Archive", ""))
+    found = _ISO_DATE.search(fields.get("Maintainer check", ""))
+    if archive is None or found is None:
+        return
+    try:
+        archived = datetime.strptime(archive["stamp"], "%Y%m%d%H%M%S").date()
+        confirmed = date.fromisoformat(found[0])
+    except ValueError:
+        return
+    if confirmed < archived:
+        problems.errors.append(
+            f"{name}: the Maintainer check ({confirmed}) is dated before the archived copy "
+            f"({archived} UTC). Write dates in UTC: the archive timestamp is in UTC."
+        )
+
+
 def check_info(info: DatasetInfo, problems: Problems, today: date) -> None:
     """Check the license, the citation and the evidence of one dataset.
 
@@ -224,6 +258,7 @@ def check_info(info: DatasetInfo, problems: Problems, today: date) -> None:
         problems.errors.append(f"{name}: evidence date differs from verified_on.")
     check_archive(name, fields, problems)
     check_maintainer(name, fields, problems, today)
+    check_order(name, fields, problems)
 
 
 def check_pyproject(infos: Sequence[DatasetInfo], problems: Problems) -> None:

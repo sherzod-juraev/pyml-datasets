@@ -279,9 +279,9 @@ Rules for a dataset that is accepted:
    and the legal check all use UTC, and the day in UTC can be a day behind your own: at
    01:00 in Tashkent (UTC+5) it is still the previous day in UTC. The number in an `Archive`
    link (`web/20261022201245/...` is 2026-10-22 20:12:45 UTC) shows the UTC day of the copy,
-   so the date of `Maintainer check` is that day or a later one, never an earlier one. The
-   same goes for `Checked` and `verified_on`. The legal check rejects a date that is still
-   in the future in UTC.
+   so the date of `Maintainer check` is that day or a later one, never an earlier one. `Checked`
+   and `verified_on` are written in UTC as well. The legal check rejects a `Maintainer check`
+   that is dated before its archived copy or is still in the future in UTC.
 2. **Credit and changes.** CC BY requires credit and a statement of changes. `creators`,
    `citation` and `changes` in `INFO` are that statement, and they end up in the notice, the
    docs and the data file. Cite the way the source asks, and list *every* change, also the
