@@ -16,7 +16,9 @@ dataset is treated like a test: it can fail the build.
   files, an orphan data file and a license expression that does not match the data. It fails
   as well when the evidence is not complete: the ``Archive`` must be a Wayback Machine link
   to the license page of the evidence, and the ``Maintainer check`` must give the name of the
-  maintainer and a date. A dataset with a ``pending`` value in either field cannot be merged.
+  maintainer and a date in UTC. The date cannot be in the future, and it cannot be earlier than
+  the day of the archived copy, whose timestamp is in UTC too. A dataset with a ``pending`` value
+  in either field cannot be merged.
   The check only warns when a license was verified more than a year ago.
 
 Why not allow more licenses? Share-alike and non-commercial licenses would change the

@@ -134,3 +134,34 @@ def test_the_gate_takes_today_from_the_utc_clock(monkeypatch: pytest.MonkeyPatch
     check_legal.collect_problems()
     assert days
     assert set(days) == {date(2026, 10, 24)}
+
+
+def test_maintainer_check_before_the_archived_copy_is_an_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The copy was saved on 2026-10-23 at 05:40 UTC.
+    problems = run(tmp_path, monkeypatch, check="Sherzod, 2026-10-22")
+    assert any("before the archived copy" in error for error in problems.errors)
+    assert any("2026-10-23 UTC" in error for error in problems.errors)
+
+
+def test_maintainer_check_on_the_day_of_the_archived_copy_is_accepted(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    problems = run(tmp_path, monkeypatch, check="Sherzod, 2026-10-23")
+    assert problems.errors == []
+
+
+def test_maintainer_check_after_the_archived_copy_is_accepted(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    archive = f"https://web.archive.org/web/20261021120000/{PAGE}"
+    problems = run(tmp_path, monkeypatch, archive=archive)
+    assert problems.errors == []
+
+
+def test_order_is_not_reported_when_the_archive_is_broken(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    problems = run(tmp_path, monkeypatch, archive="pending", check="Sherzod, 2026-10-01")
+    assert not any("before the archived copy" in error for error in problems.errors)
