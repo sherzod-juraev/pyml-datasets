@@ -8,6 +8,7 @@
    concrete_strength
    credit_card_default
    digits
+   energy_efficiency
    iris
    penguins
    wine

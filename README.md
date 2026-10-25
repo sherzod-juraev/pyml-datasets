@@ -134,6 +134,7 @@ the sources, the citations and the changes made to each dataset.
 | `load_concrete_strength` | Regression | 1030 × 8 | no | CC BY 4.0 |
 | `load_credit_card_default` | Classification | 30000 × 23 | no | CC BY 4.0 |
 | `load_digits` | Classification | 1797 × 64 | no | CC BY 4.0 |
+| `load_energy_efficiency` | Regression | 768 × 8 | no | CC BY 4.0 |
 | `load_iris` | Classification | 150 × 4 | no | CC BY 4.0 |
 | `load_penguins` | Classification | 344 × 7 | yes | CC0 1.0 |
 | `load_wine` | Classification | 178 × 13 | no | CC BY 4.0 |

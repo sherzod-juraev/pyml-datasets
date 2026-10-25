@@ -23,6 +23,17 @@ def test_shape_and_missing(name: str) -> None:
     assert int(np.isnan(data.X).sum()) == expected.n_missing
 
 
+def test_targets(name: str) -> None:
+    expected, data = all_expected()[name], load_dataset(name)
+    rows = expected.shape[0]
+    if expected.n_targets == 1:
+        assert data.y.shape == (rows,)
+    else:
+        assert data.y.shape == (rows, expected.n_targets)
+        assert data.target_names is not None
+        assert len(data.target_names) == expected.n_targets
+
+
 def test_classes(name: str) -> None:
     expected, data = all_expected()[name], load_dataset(name)
     if expected.n_classes is None:

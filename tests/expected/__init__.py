@@ -31,6 +31,8 @@ class Expected:
         small unless the source itself offers the data with two different precisions.
     n_missing : int
         Number of missing values in ``X``.
+    n_targets : int
+        Number of columns of ``y``, 1 if ``y`` is a vector.
     """
 
     shape: tuple[int, int]
@@ -40,6 +42,7 @@ class Expected:
     column_means: dict[int, float] = field(default_factory=dict)
     mean_tolerance: float = 1e-4
     n_missing: int = 0
+    n_targets: int = 1
 
 
 def all_expected() -> dict[str, Expected]:

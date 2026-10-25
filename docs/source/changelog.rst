@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.8.0
+-----
+
+Added
+~~~~~
+
+- Dataset ``energy_efficiency`` (UCI Energy Efficiency, CC BY 4.0): heating load and cooling
+  load of 768 simulated buildings, predicted from eight building parameters. It is the first
+  dataset with two targets: ``y`` has the shape ``(768, 2)`` and the names of its columns are
+  in ``Dataset.target_names``.
+
 0.7.0
 -----
 

@@ -26,6 +26,9 @@
    * - :doc:`Optical Recognition of Handwritten Digits </datasets/digits>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits>`__
+   * - :doc:`Energy Efficiency </datasets/energy_efficiency>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/242/energy+efficiency>`__
    * - :doc:`Iris </datasets/iris>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/53/iris>`__

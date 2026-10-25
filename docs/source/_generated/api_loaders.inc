@@ -12,6 +12,8 @@
 
 .. autofunction:: pyml_datasets.load_digits
 
+.. autofunction:: pyml_datasets.load_energy_efficiency
+
 .. autofunction:: pyml_datasets.load_iris
 
 .. autofunction:: pyml_datasets.load_penguins

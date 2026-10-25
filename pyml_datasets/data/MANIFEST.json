@@ -42,6 +42,12 @@
       "target_names": "42e9ffae0a40e40acf28c49da99e5ba47917c8d59dae2cdb913891958c41a661",
       "y": "b9519414936017f9f834bce37ac83d1d40de6303b9a95a359e989ddd1730f9fa"
     },
+    "energy_efficiency": {
+      "X": "49da78dca7ec84ee9990969acfa0036138cf86ba8a347e1ef327df644f53ca76",
+      "feature_names": "2cf031ee8380c21273698261d838e04837fa340735cd19bab23c2cc559c75dd8",
+      "target_names": "71bda74572274995c1db11991df94d7794196be8bab902c2ee3497cd8c424b69",
+      "y": "d413f2f9b6bc9f01b15a28933e4d827b565e65d5f9e4e17c2f02fc6b5f78a3db"
+    },
     "iris": {
       "X": "3ad18409e3be546be7a387162e824dd582abefedab401864a13c24e7164d3d4b",
       "feature_names": "475b416d0e00d616b334e472d61394c69ca07532ba83853d687dc14cf7fcbefd",
