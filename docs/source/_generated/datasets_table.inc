@@ -50,6 +50,12 @@
      - 64
      - No
      - CC BY 4.0
+   * - :doc:`Energy Efficiency </datasets/energy_efficiency>`
+     - Regression
+     - 768
+     - 8
+     - No
+     - CC BY 4.0
    * - :doc:`Iris </datasets/iris>`
      - Classification
      - 150
