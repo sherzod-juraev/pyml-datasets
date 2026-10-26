@@ -17,6 +17,9 @@
    * - :doc:`Breast Cancer Wisconsin (Diagnostic) </datasets/breast_cancer>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic>`__
+   * - :doc:`Combined Cycle Power Plant </datasets/combined_cycle_power_plant>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/294/combined+cycle+power+plant>`__
    * - :doc:`Concrete Compressive Strength </datasets/concrete_strength>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength>`__
