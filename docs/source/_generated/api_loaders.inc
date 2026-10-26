@@ -6,6 +6,8 @@
 
 .. autofunction:: pyml_datasets.load_breast_cancer
 
+.. autofunction:: pyml_datasets.load_combined_cycle_power_plant
+
 .. autofunction:: pyml_datasets.load_concrete_strength
 
 .. autofunction:: pyml_datasets.load_credit_card_default

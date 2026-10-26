@@ -32,6 +32,12 @@
      - 30
      - No
      - CC BY 4.0
+   * - :doc:`Combined Cycle Power Plant </datasets/combined_cycle_power_plant>`
+     - Regression
+     - 9568
+     - 4
+     - No
+     - CC BY 4.0
    * - :doc:`Concrete Compressive Strength </datasets/concrete_strength>`
      - Regression
      - 1030

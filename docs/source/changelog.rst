@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.9.0
+-----
+
+Added
+~~~~~
+
+- Dataset ``combined_cycle_power_plant`` (UCI Combined Cycle Power Plant, CC BY 4.0): net hourly
+  electrical energy output of a power plant, predicted from four hourly average ambient
+  variables (temperature, exhaust vacuum, ambient pressure and relative humidity). 9568 data
+  points, the largest regression dataset of the package.
+
 0.8.0
 -----
 

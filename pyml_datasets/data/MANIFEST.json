@@ -24,6 +24,12 @@
       "target_names": "887e06a9d1029dbe23a68e2e1adaa4bda4a53533a49276da5523eba4706a1a80",
       "y": "a03ccde3555223d4647b207e61220c1dd2c03d379afc97ed637ae5fcd82f0f82"
     },
+    "combined_cycle_power_plant": {
+      "X": "ece48de1810f9c2c9b8c9af0fe71c9f0fc72474965f6802db8af393064c413bf",
+      "feature_names": "761e9ad4eb0971123dbaaa8e73364c001893793292c7fa0656a8ad797fec0bf0",
+      "target_names": "599d6ceea8a7b2bacb4bf53b7caa33cacaf4575b88a43e3babc497615f18126e",
+      "y": "42107e187eacb0d432f3b08eb27982ed7d276d46b45946623cb54d940faacde9"
+    },
     "concrete_strength": {
       "X": "52ae50a3e539612e7ff2ab55c472d92980a4291f890ccd0b8be766cc093a9e01",
       "feature_names": "cd8e12019f30fa8c015a77195450e19d0867ad9d50729a2f7fe569bf1fb60af8",
