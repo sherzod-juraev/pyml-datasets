@@ -128,6 +128,7 @@ the sources, the citations and the changes made to each dataset.
 | Function | Task | Samples × features | Missing values | License |
 |:---------|:-----|:------------------:|:--------------:|:-------:|
 | `load_abalone` | Regression | 4177 × 8 | no | CC BY 4.0 |
+| `load_airfoil_self_noise` | Regression | 1503 × 5 | no | CC BY 4.0 |
 | `load_auto_mpg` | Regression | 398 × 7 | yes | CC BY 4.0 |
 | `load_bank_marketing` | Classification | 45211 × 16 | no | CC BY 4.0 |
 | `load_breast_cancer` | Classification | 569 × 30 | no | CC BY 4.0 |

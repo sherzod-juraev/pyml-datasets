@@ -6,6 +6,12 @@
       "target_names": "402f7a6f74a95c3f262c14facc26c6b7f173219bd2bfbbdd7c91645b8d283b63",
       "y": "3fb91805b2b326836117adc1005e6b235995bab403c0d18d995041da5e1fd4f0"
     },
+    "airfoil_self_noise": {
+      "X": "1550370fab70f32b86f67a7e9a200b60d6067e37c86d1a1347a377bdf2132e6f",
+      "feature_names": "2dcc04ffd99b0ae70d916cf19ea33075974266a874238c028a1ed83c9bbed852",
+      "target_names": "638db0041e9d1e21bbc5168bff00a6bbf5bb00eac7abaff51353c3e9b11f4c01",
+      "y": "cedd73181f260acba942a640b4fd9a7b1bb84c1d49be15258287cebd99d5fad6"
+    },
     "auto_mpg": {
       "X": "a218bc4efab8722b99f88e31e0e18a01cbf6f04eecb1e0bb109046bd3d5156ca",
       "feature_names": "34ea525e8445031ab8e7c5a11e93ef7f1e8701b3930a04dae1165d8bb62031cf",

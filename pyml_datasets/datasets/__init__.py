@@ -9,6 +9,7 @@ from typing import Final
 from .._types import Dataset, DatasetInfo
 from . import (
     abalone,
+    airfoil_self_noise,
     auto_mpg,
     bank_marketing,
     breast_cancer,
@@ -25,6 +26,7 @@ from . import (
 
 ENTRIES: Final[tuple[tuple[DatasetInfo, Callable[[], Dataset]], ...]] = (
     (abalone.INFO, abalone.load_abalone),
+    (airfoil_self_noise.INFO, airfoil_self_noise.load_airfoil_self_noise),
     (auto_mpg.INFO, auto_mpg.load_auto_mpg),
     (bank_marketing.INFO, bank_marketing.load_bank_marketing),
     (breast_cancer.INFO, breast_cancer.load_breast_cancer),

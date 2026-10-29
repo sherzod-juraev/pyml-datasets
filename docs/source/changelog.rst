@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.10.0
+------
+
+Added
+~~~~~
+
+- Dataset ``airfoil_self_noise`` (UCI Airfoil Self-Noise, CC BY 4.0): scaled sound pressure
+  level of NACA 0012 airfoil blade sections, predicted from five inputs (frequency, angle of
+  attack, chord length, free-stream velocity and suction side displacement thickness). 1503
+  examples from a series of aerodynamic and acoustic tests in an anechoic wind tunnel.
+
 0.9.0
 -----
 
