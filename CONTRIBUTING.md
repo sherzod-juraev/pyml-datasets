@@ -197,7 +197,7 @@ Nox, so a failure in the CI is reproduced locally with the same command:
 | `docs.yml`      | push, pull request          | `docs`                                                  |
 | `linkcheck.yml` | weekly schedule, manual run | `linkcheck`                                             |
 
-"Push" means a push to `main` or `dev`, and a pull request means one that targets `main`.
+"Push" means a push to `main`, and a pull request means one that targets `main`.
 
 ## Conventions
 
@@ -242,8 +242,10 @@ Nox, so a failure in the CI is reproduced locally with the same command:
 ### Commits and versions
 
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
-- Work happens on `dev`. `main` receives a pull request from `dev`, and it is merged only when
-  all checks pass.
+- `main` is the only long-lived branch. Every piece of work (a dataset, a fix, a documentation
+  change) gets its own short-lived branch from `main`, for example `dataset/german-credit`,
+  `fix/utc-dates` or `docs/contributing`. It goes to `main` in a pull request that is merged
+  only when all checks pass, and the branch is deleted after the merge.
 - `__version__` in `pyml_datasets/__init__.py` is the single source of truth. Adding a dataset
   is a MINOR bump, removing one or changing the data format is a breaking change.
 - A change that does not touch the wheel (`scripts/`, `tests/`, `docs/`, the evidence files,
@@ -396,11 +398,12 @@ affected tags and releases.
 
 ## Releasing
 
-1. Run `nox` on `dev`, and make sure the CI is green. Read the warnings of
+1. Run `nox` on the branch of the release, and make sure the CI is green. Read the warnings of
    `uv run python -m scripts.check_legal`: they are reminders, for example a license that
    was verified more than a year ago. Check that `uv lock --check` passes.
 2. Bump `__version__` in `pyml_datasets/__init__.py` and add the entry to
    `docs/source/changelog.rst`.
-3. Open a pull request from `dev` to `main` and merge it when the CI is green.
+3. Open a pull request from that branch to `main` and merge it when the CI is green. Then
+   update your local `main` (`git switch main && git pull`) and delete the merged branch.
 4. Create the tag `vX.Y.Z` on `main` and a GitHub release titled `vX.Y.Z`.
 5. Check that the Read the Docs build is green.
