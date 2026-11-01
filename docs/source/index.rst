@@ -24,30 +24,71 @@ project, but it is a standalone package with no dependency on pyml.
 
 .. grid:: 1 1 2 2
    :gutter: 3
+   :class-container: sd-mb-4
 
-   .. grid-item-card:: Quick start
-      :link: quick_start
-      :link-type: doc
+   .. grid-item-card::
+      :text-align: center
+      :shadow: sm
 
+      Quick start
+      ^^^^^^^^^^^
       Load a dataset, inspect it and train a pyml model in a few lines.
 
-   .. grid-item-card:: Datasets
-      :link: datasets/index
-      :link-type: doc
+      +++
+      .. button-ref:: quick_start
+         :ref-type: doc
+         :color: primary
+         :expand:
 
+         Get started
+
+   .. grid-item-card::
+      :text-align: center
+      :shadow: sm
+
+      Datasets
+      ^^^^^^^^
       What each dataset contains, where it comes from and how to cite it.
 
-   .. grid-item-card:: License and citation
-      :link: license
-      :link-type: doc
+      +++
+      .. button-ref:: datasets/index
+         :ref-type: doc
+         :color: primary
+         :expand:
 
+         Browse the datasets
+
+   .. grid-item-card::
+      :text-align: center
+      :shadow: sm
+
+      License and citation
+      ^^^^^^^^^^^^^^^^^^^^
       Which license applies to the code and to each dataset.
 
-   .. grid-item-card:: API reference
-      :link: api
-      :link-type: doc
+      +++
+      .. button-ref:: license
+         :ref-type: doc
+         :color: primary
+         :expand:
 
+         Read the license
+
+   .. grid-item-card::
+      :text-align: center
+      :shadow: sm
+
+      API reference
+      ^^^^^^^^^^^^^
       The ``Dataset`` class and the ``load_*`` functions.
+
+      +++
+      .. button-ref:: api
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Browse the API
 
 .. toctree::
    :hidden:
