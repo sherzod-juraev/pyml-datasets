@@ -1,13 +1,13 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import os
+import sys
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pyml_datasets
 
-# ================================================================================= #
-# ----------------------------- Project Configurations ---------------------------- #
-# ================================================================================= #
+# --- Project Configurations --- #
 project = "pyml-datasets"
 author = pyml_datasets.__author__
 release = pyml_datasets.__version__
@@ -20,9 +20,7 @@ source_suffix = {
     ".rst": "restructuredtext",
 }
 
-# ================================================================================= #
-# --------------------------- RST Substitutions ----------------------------------- #
-# ================================================================================= #
+# --- RST Substitutions --- #
 _HOME_DESCRIPTION = (
     "Classic tabular datasets in NPZ format for pyml — a machine learning library"
     " built from scratch"
@@ -33,15 +31,13 @@ rst_prolog = f"""
 """
 
 
-# ================================================================================= #
-# ------------------------------ Canonical URL ------------------------------------ #
-# ================================================================================= #
+# --- Canonical URL --- #
 _READTHEDOCS_CANONICAL_URL = os.environ.get("READTHEDOCS_CANONICAL_URL")
 _CANONICAL_URL = _READTHEDOCS_CANONICAL_URL or "https://pyml-datasets.readthedocs.io/en/latest/"
 
-# ================================================================================= #
-# ----------------------------------- Extensions ---------------------------------- #
-# ================================================================================= #
+# --- Extensions --- #
+sys.path.insert(0, str(Path(__file__).parent / "_ext"))
+
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
@@ -54,11 +50,10 @@ extensions = [
     "notfound.extension",
     "sphinxext.opengraph",
     "sphinx_sitemap",
+    "hide_empty_sidebar",
 ]
 
-# ================================================================================= #
-# ------------------------------------ Autodoc ------------------------------------ #
-# ================================================================================= #
+# --- Autodoc --- #
 autodoc_default_options = {
     "member-order": "bysource",
     "undoc-members": False,
@@ -68,9 +63,7 @@ autodoc_default_options = {
 autodoc_typehints_format = "short"
 autosummary_generate = False
 
-# ================================================================================= #
-# ------------------------------------ Napoleon ----------------------------------- #
-# ================================================================================= #
+# --- Napoleon --- #
 napoleon_numpy_docstring = True
 napoleon_google_docstring = False
 napoleon_include_init_with_doc = False
@@ -80,40 +73,30 @@ napoleon_custom_sections = [
     ("Attributes", "params_style"),
 ]
 
-# ================================================================================= #
-# ----------------------------- Code Syntax & Styling ----------------------------- #
-# ================================================================================= #
+# --- Code Syntax & Styling --- #
 toc_object_entries_show_parents = "hide"
 pygments_style = "friendly"
 default_role = "literal"
 add_module_names = False
 
-# ================================================================================= #
-# -------------------------- Sphinx Autodoc Typehints ----------------------------- #
-# ================================================================================= #
+# --- Sphinx Autodoc Typehints --- #
 typehints_fully_qualified = False
 typehints_use_signature = True
 typehints_use_signature_return = True
 typehints_defaults = "comma"
 
-# ================================================================================= #
-# -------------------------------- Intersphinx ------------------------------------ #
-# ================================================================================= #
+# --- Intersphinx --- #
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
 }
 
-# ================================================================================= #
-# --------------------------------- CopyButton ------------------------------------ #
-# ================================================================================= #
+# --- CopyButton --- #
 copybutton_prompt_text = r">>> |\$ "
 copybutton_prompt_is_regexp = True
 copybutton_only_copy_prompt_lines = True
 
-# ================================================================================= #
-# ------------------------------- OpenGraph --------------------------------------- #
-# ================================================================================= #
+# --- OpenGraph --- #
 ogp_site_url = _CANONICAL_URL
 ogp_image = "_static/branding/og-image.png"
 ogp_description_length = 200
@@ -123,9 +106,7 @@ ogp_custom_meta_tags = [
     '<meta property="og:image:height" content="630" />',
 ]
 
-# ================================================================================= #
-# ------------------------------- Sphinx Sitemap ---------------------------------- #
-# ================================================================================= #
+# --- Sphinx Sitemap --- #
 html_baseurl = _CANONICAL_URL
 sitemap_url_scheme = "{link}"
 sitemap_excludes = [
@@ -133,16 +114,12 @@ sitemap_excludes = [
     "genindex.html",
 ]
 
-# ================================================================================= #
-# ------------------------------- Sphinx Linkcheck -------------------------------- #
-# ================================================================================= #
+# --- Sphinx Linkcheck --- #
 linkcheck_allowed_redirects = {
     r"https://doi\.org/.*": r".*",
 }
 
-# ================================================================================= #
-# -------------------------- Options For Html Output ------------------------------ #
-# ================================================================================= #
+# --- Options For Html Output --- #
 templates_path = [
     "_templates",
 ]
@@ -151,9 +128,7 @@ html_extra_path = [
 ]
 exclude_patterns = []
 
-# ================================================================================= #
-# ---------------------------- Theme & Branding ----------------------------------- #
-# ================================================================================= #
+# --- Theme & Branding --- #
 html_theme = "pydata_sphinx_theme"
 html_title = "pyml-datasets"
 html_context = {
@@ -163,9 +138,7 @@ html_domain_indices = False
 html_last_updated_fmt = "%b %d, %Y"
 html_copy_source = False
 
-# ================================================================================= #
-# --------------------------- Theme Customizations -------------------------------- #
-# ================================================================================= #
+# --- Theme Customizations --- #
 html_theme_options = {
     "logo": {
         "image_light": "_static/branding/logo.svg",
@@ -180,9 +153,7 @@ html_theme_options = {
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
 }
 
-# ================================================================================= #
-# ------------------------------------- CSS Files --------------------------------- #
-# ================================================================================= #
+# --- CSS Files --- #
 html_static_path = [
     "_static",
 ]
@@ -193,7 +164,6 @@ html_css_files = [
     "css/right_sidebar.css",
     "css/breadcrumb.css",
     "css/footer_nav.css",
-    "pygments.css",
     "css/code_blocks.css",
-    "css/installation.css",
+    "css/fonts.css",
 ]
