@@ -11,6 +11,7 @@
    credit_card_default
    digits
    energy_efficiency
+   german_credit
    iris
    penguins
    wine

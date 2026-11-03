@@ -6,7 +6,7 @@ and no data is read until a ``load_*`` function or ``load_dataset`` is called.
 Every dataset carries its license, its source and its citation in ``Dataset.info``.
 """
 
-__version__: str = "0.10.0"
+__version__: str = "0.11.0"
 __author__: str = "Sherzod Juraev"
 
 from ._registry import get_info, list_datasets, load_dataset
@@ -25,6 +25,7 @@ from .datasets.concrete_strength import load_concrete_strength
 from .datasets.credit_card_default import load_credit_card_default
 from .datasets.digits import load_digits
 from .datasets.energy_efficiency import load_energy_efficiency
+from .datasets.german_credit import load_german_credit
 from .datasets.iris import load_iris
 from .datasets.penguins import load_penguins
 from .datasets.wine import load_wine
@@ -50,6 +51,7 @@ __all__ = [
     "load_credit_card_default",
     "load_digits",
     "load_energy_efficiency",
+    "load_german_credit",
     "load_iris",
     "load_penguins",
     "load_wine",

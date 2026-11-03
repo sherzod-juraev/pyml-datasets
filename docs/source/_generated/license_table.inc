@@ -35,6 +35,9 @@
    * - :doc:`Energy Efficiency </datasets/energy_efficiency>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/242/energy+efficiency>`__
+   * - :doc:`German Credit </datasets/german_credit>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data>`__
    * - :doc:`Iris </datasets/iris>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/53/iris>`__

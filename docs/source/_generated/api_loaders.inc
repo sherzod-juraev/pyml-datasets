@@ -18,6 +18,8 @@
 
 .. autofunction:: pyml_datasets.load_energy_efficiency
 
+.. autofunction:: pyml_datasets.load_german_credit
+
 .. autofunction:: pyml_datasets.load_iris
 
 .. autofunction:: pyml_datasets.load_penguins
