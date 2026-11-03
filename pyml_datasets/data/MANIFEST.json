@@ -60,6 +60,12 @@
       "target_names": "71bda74572274995c1db11991df94d7794196be8bab902c2ee3497cd8c424b69",
       "y": "d413f2f9b6bc9f01b15a28933e4d827b565e65d5f9e4e17c2f02fc6b5f78a3db"
     },
+    "german_credit": {
+      "X": "6a919e7c4fbf198571875bd0e6efef20d442034c6a54bab37cb3849183a87f28",
+      "feature_names": "4c8c1688a481f02c0aa8b3d466b9a532cd478338b3ebdae28f37e987764e2236",
+      "target_names": "80c9f56e370fae0bc7b45770435d99e91046450ebccded68e8af64b5db702cee",
+      "y": "99c2238d8403c347e091e46851cb330e68cd483e094d000fb88ea0926afaebd7"
+    },
     "iris": {
       "X": "3ad18409e3be546be7a387162e824dd582abefedab401864a13c24e7164d3d4b",
       "feature_names": "475b416d0e00d616b334e472d61394c69ca07532ba83853d687dc14cf7fcbefd",

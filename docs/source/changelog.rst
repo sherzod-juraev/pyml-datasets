@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.11.0
+------
+
+Added
+~~~~~
+
+- Dataset ``german_credit`` (UCI Statlog German Credit Data, CC BY 4.0): 1000 credit applicants
+  described by 20 attributes, 13 categorical and 7 numeric, to be classified as good or bad
+  credit risks. The source requires a cost matrix (a bad customer classified as good costs 5,
+  a good customer classified as bad costs 1), which is written in the notes and on the page of
+  the dataset. The package does not apply it.
+
 0.10.0
 ------
 

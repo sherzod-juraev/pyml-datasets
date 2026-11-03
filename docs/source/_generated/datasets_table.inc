@@ -68,6 +68,12 @@
      - 8
      - No
      - CC BY 4.0
+   * - :doc:`German Credit </datasets/german_credit>`
+     - Classification
+     - 1000
+     - 20
+     - No
+     - CC BY 4.0
    * - :doc:`Iris </datasets/iris>`
      - Classification
      - 150
