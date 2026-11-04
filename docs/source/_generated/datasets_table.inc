@@ -68,6 +68,12 @@
      - 8
      - No
      - CC BY 4.0
+   * - :doc:`Forest Fires </datasets/forest_fires>`
+     - Regression
+     - 517
+     - 12
+     - No
+     - CC BY 4.0
    * - :doc:`German Credit </datasets/german_credit>`
      - Classification
      - 1000

@@ -60,6 +60,12 @@
       "target_names": "71bda74572274995c1db11991df94d7794196be8bab902c2ee3497cd8c424b69",
       "y": "d413f2f9b6bc9f01b15a28933e4d827b565e65d5f9e4e17c2f02fc6b5f78a3db"
     },
+    "forest_fires": {
+      "X": "cd3687ee5778f86f8505836eb17ecc28c45c86e171a0a785af434c06e9daceae",
+      "feature_names": "71a27c998d344d49639a0120f10d2c758bf57363419a5b2546ff1d2a6eb05287",
+      "target_names": "006591ee14f2f87221162ba437dd594ec6a6e3ef3edded390837cb647f621169",
+      "y": "5b91749610fd250b7ced4e1b7cc5a54d0154eef2e65697e57c080f4e7ec13d7f"
+    },
     "german_credit": {
       "X": "6a919e7c4fbf198571875bd0e6efef20d442034c6a54bab37cb3849183a87f28",
       "feature_names": "4c8c1688a481f02c0aa8b3d466b9a532cd478338b3ebdae28f37e987764e2236",

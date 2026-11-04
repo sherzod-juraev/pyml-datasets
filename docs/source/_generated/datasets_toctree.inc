@@ -11,6 +11,7 @@
    credit_card_default
    digits
    energy_efficiency
+   forest_fires
    german_credit
    iris
    penguins
