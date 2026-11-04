@@ -166,4 +166,5 @@ html_css_files = [
     "css/footer_nav.css",
     "css/code_blocks.css",
     "css/fonts.css",
+    "css/tabs.css",
 ]
