@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.12.0
+------
+
+Added
+~~~~~
+
+- Dataset ``forest_fires`` (UCI Forest Fires, CC BY 4.0): 517 forest fires in the northeast
+  region of Portugal, with the burned area in hectares predicted from the place on the map of
+  the Montesinho park, the month, the day of the week, four indices of the Fire Weather Index
+  system and four weather observations. The target is very skewed towards zero. It is stored
+  as released, without the logarithm transform that the source suggests.
+
 0.11.0
 ------
 
