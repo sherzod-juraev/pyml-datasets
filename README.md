@@ -92,9 +92,9 @@ print(model.score(X_test, y_test))  # accuracy on the test set
 ```
 
 > [!NOTE]
-> Importing `pyml_datasets` does not read any data. A dataset file is read from disk only when
-> its `load_*` function is called, so the import stays fast and you only load the datasets you
-> use.
+> Datasets are stored as plain NumPy `.npz` files. Importing `pyml_datasets` does not open any of
+> them: a file is opened and its arrays are read from disk only when the matching `load_*`
+> function is called. Nothing is cached, so each call reads the file again.
 
 ## Installation
 

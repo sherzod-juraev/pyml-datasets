@@ -68,6 +68,7 @@ pyml-datasets/
 │   └── new_dataset.py          # Scaffolds the files of a new dataset
 ├── tests/                      # Test suite, organised by concern
 │   └── expected/               # One module per dataset: independent facts
+├── .python-version             # Python version uv uses by default (the Nox default)
 ├── CONTRIBUTING.md             # This file
 ├── LICENSE                     # MIT License (the code)
 ├── NOTICE.md                   # Creators, sources, citations, changes (generated)
