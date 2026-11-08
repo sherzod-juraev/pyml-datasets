@@ -2,6 +2,7 @@
    :hidden:
 
    abalone
+   adult
    airfoil_self_noise
    auto_mpg
    bank_marketing

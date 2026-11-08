@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.13.0
+------
+
+Added
+~~~~~
+
+- Dataset ``adult`` (UCI Adult, CC BY 4.0): 48842 people from the 1994 Census database,
+  described by 14 features, 8 categorical and 6 whole numbers, to be classified by whether the
+  yearly income is above 50K (23.93 percent of the people are). Entries of ``workclass``,
+  ``occupation`` and ``native_country`` that the source marks as unknown are stored as ``NaN``.
+  The training part of the source (32561 rows) comes first and its test part (16281 rows) last.
+
 0.12.0
 ------
 

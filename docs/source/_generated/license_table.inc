@@ -8,6 +8,9 @@
    * - :doc:`Abalone </datasets/abalone>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/1/abalone>`__
+   * - :doc:`Adult </datasets/adult>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/2/adult>`__
    * - :doc:`Airfoil Self-Noise </datasets/airfoil_self_noise>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/291/airfoil+self+noise>`__

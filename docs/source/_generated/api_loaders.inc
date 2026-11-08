@@ -1,5 +1,7 @@
 .. autofunction:: pyml_datasets.load_abalone
 
+.. autofunction:: pyml_datasets.load_adult
+
 .. autofunction:: pyml_datasets.load_airfoil_self_noise
 
 .. autofunction:: pyml_datasets.load_auto_mpg
