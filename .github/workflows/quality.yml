@@ -24,7 +24,7 @@ jobs:
         session: [lint, types, docstrings, legal, package]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
