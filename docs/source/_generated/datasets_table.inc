@@ -14,6 +14,12 @@
      - 8
      - No
      - CC BY 4.0
+   * - :doc:`Adult </datasets/adult>`
+     - Classification
+     - 48842
+     - 14
+     - Yes
+     - CC BY 4.0
    * - :doc:`Airfoil Self-Noise </datasets/airfoil_self_noise>`
      - Regression
      - 1503
