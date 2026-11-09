@@ -28,6 +28,8 @@
 
 .. autofunction:: pyml_datasets.load_penguins
 
+.. autofunction:: pyml_datasets.load_real_estate_valuation
+
 .. autofunction:: pyml_datasets.load_wine
 
 .. autofunction:: pyml_datasets.load_wine_quality

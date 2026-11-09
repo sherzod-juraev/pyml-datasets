@@ -16,5 +16,6 @@
    german_credit
    iris
    penguins
+   real_estate_valuation
    wine
    wine_quality

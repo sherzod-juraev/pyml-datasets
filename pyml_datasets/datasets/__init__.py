@@ -23,6 +23,7 @@ from . import (
     german_credit,
     iris,
     penguins,
+    real_estate_valuation,
     wine,
     wine_quality,
 )
@@ -43,6 +44,7 @@ ENTRIES: Final[tuple[tuple[DatasetInfo, Callable[[], Dataset]], ...]] = (
     (german_credit.INFO, german_credit.load_german_credit),
     (iris.INFO, iris.load_iris),
     (penguins.INFO, penguins.load_penguins),
+    (real_estate_valuation.INFO, real_estate_valuation.load_real_estate_valuation),
     (wine.INFO, wine.load_wine),
     (wine_quality.INFO, wine_quality.load_wine_quality),
 )

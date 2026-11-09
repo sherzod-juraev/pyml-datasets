@@ -98,6 +98,12 @@
      - 7
      - Yes
      - CC0 1.0
+   * - :doc:`Real Estate Valuation </datasets/real_estate_valuation>`
+     - Regression
+     - 414
+     - 6
+     - No
+     - CC BY 4.0
    * - :doc:`Wine </datasets/wine>`
      - Classification
      - 178

@@ -50,6 +50,9 @@
    * - :doc:`Palmer Penguins </datasets/penguins>`
      - CC0 1.0
      - `palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman) <https://github.com/allisonhorst/palmerpenguins/tree/v0.1.0>`__
+   * - :doc:`Real Estate Valuation </datasets/real_estate_valuation>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/477/real+estate+valuation+data+set>`__
    * - :doc:`Wine </datasets/wine>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/109/wine>`__
