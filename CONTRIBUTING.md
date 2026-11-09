@@ -15,6 +15,10 @@ This project is open-source under the [MIT License](LICENSE), and you are **welc
 If you build something interesting, I would love to hear about it. The datasets keep their own
 licenses, see [Admission policy](#dataset-admission-policy) before you copy any of them.
 
+Everyone who takes part in the project is asked to follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+A security problem is reported privately, see the [Security policy](SECURITY.md).
+
 The rest of this file is a map of the project, written mostly for myself and for anyone who
 forks it: where things are, how to check them, and how to add a dataset or make a release.
 
@@ -69,12 +73,14 @@ pyml-datasets/
 ├── tests/                      # Test suite, organised by concern
 │   └── expected/               # One module per dataset: independent facts
 ├── .python-version             # Python version uv uses by default (the Nox default)
+├── CODE_OF_CONDUCT.md          # Contributor Covenant 3.0 (CC BY-SA 4.0), not the MIT code
 ├── CONTRIBUTING.md             # This file
 ├── LICENSE                     # MIT License (the code)
 ├── NOTICE.md                   # Creators, sources, citations, changes (generated)
 ├── noxfile.py                  # Nox sessions
 ├── pyproject.toml              # Project metadata, dependency groups and tool config
 ├── README.md                   # Project overview
+├── SECURITY.md                 # How to report a vulnerability privately
 └── uv.lock                     # Exact version of every locked dependency (committed)
 ```
 
