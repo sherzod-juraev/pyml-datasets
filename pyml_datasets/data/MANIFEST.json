@@ -90,6 +90,12 @@
       "target_names": "9354e47a0c1de246fc7af814fcd8288d6afb8b78447411f5708fb4bdbcf965b8",
       "y": "d8774803042f47feedc83a47af4c510ec7ee8c11315569f8cb553a64903899ed"
     },
+    "real_estate_valuation": {
+      "X": "daa9b02129249f242ad7c37f14050a64ceeb6f4f2df0f09ed4abc2716177ae3c",
+      "feature_names": "50e1305c491147938614f81b484cf3005578d5a5be57e1105ad3d4d2488ba281",
+      "target_names": "65111087ef68e71f0c6c1d42f4d3bfb093aedd4fb28f8e30ad39da9527fbcde4",
+      "y": "6168a323a785be39be2517b337a1c8c48bc41671431e683050c784fde177848f"
+    },
     "wine": {
       "X": "a7ac3c6956d60383aaa230121ceead57cb6f9529b0100e2f0213b906757f8953",
       "feature_names": "80be364ed7771d7ee3645d4a856a63e7674614dc4766d97b917ca8415959f560",

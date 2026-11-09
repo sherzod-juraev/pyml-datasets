@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.14.0
+------
+
+Added
+~~~~~
+
+- Dataset ``real_estate_valuation`` (UCI Real Estate Valuation, CC BY 4.0): 414 house sales in
+  the Sindian District of New Taipei City, Taiwan, described by 6 numeric features (the
+  transaction date, the house age, the distance to the nearest MRT station, the number of
+  convenience stores and the latitude and longitude), with the house price of unit area as
+  the target. The source says that the data was split randomly into a training and a testing
+  part, but its file does not tell which sample belongs to which, so the split is not
+  provided.
+
 0.13.0
 ------
 
