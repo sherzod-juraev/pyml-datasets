@@ -15,6 +15,7 @@
    forest_fires
    german_credit
    iris
+   mushroom
    penguins
    real_estate_valuation
    wine

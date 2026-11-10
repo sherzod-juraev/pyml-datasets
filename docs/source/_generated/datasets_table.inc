@@ -92,6 +92,12 @@
      - 4
      - No
      - CC BY 4.0
+   * - :doc:`Mushroom </datasets/mushroom>`
+     - Classification
+     - 8124
+     - 22
+     - Yes
+     - CC BY 4.0
    * - :doc:`Palmer Penguins </datasets/penguins>`
      - Classification
      - 344

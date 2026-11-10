@@ -84,6 +84,12 @@
       "target_names": "cf4ea1e8c91effa1b3cd2aff1f75967be8f3dc0150dffd904de29fc8280978d2",
       "y": "c1f255e4540a6464758737109edbf1b1599c88b01d433be9dad78cbf085c4c4e"
     },
+    "mushroom": {
+      "X": "8bed210ebd57fffccf02d64533383d270fb42080a3a32381bd7f080f0882e227",
+      "feature_names": "9249596936edabfc7f396d2deec082f3efcb8b65b6505d2f529b36499645cb95",
+      "target_names": "470aa469d00002247fd4627d3087d41815018c200f8f2ab1d5fda5c3ec747db7",
+      "y": "de0010ab92825e2761d87ecb66126b3e9ef9f9c42854ce7543b358d01468cf8c"
+    },
     "penguins": {
       "X": "61a590284281e66fe1752213fb4b2024cfdae1102b790d08b24ecad7e857a62f",
       "feature_names": "2f4c5b6722f6f7f945ab211bd729daf861eb0d14d93d7108fc26b8ecbe4b64a1",

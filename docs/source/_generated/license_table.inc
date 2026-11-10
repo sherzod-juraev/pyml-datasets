@@ -47,6 +47,9 @@
    * - :doc:`Iris </datasets/iris>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/53/iris>`__
+   * - :doc:`Mushroom </datasets/mushroom>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/73/mushroom>`__
    * - :doc:`Palmer Penguins </datasets/penguins>`
      - CC0 1.0
      - `palmerpenguins data package (Palmer Station Antarctica LTER and K. Gorman) <https://github.com/allisonhorst/palmerpenguins/tree/v0.1.0>`__

@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.15.0
+------
+
+Added
+~~~~~
+
+- Dataset ``mushroom`` (UCI Mushroom, CC BY 4.0): 8124 descriptions of hypothetical
+  mushrooms from a field guide, with 22 categorical features, to be classified as edible or
+  poisonous (48.2 percent are poisonous, and that class also holds mushrooms of unknown
+  edibility). Entries of ``stalk_root`` that the source marks as missing are stored as
+  ``NaN``.
+
 0.14.0
 ------
 

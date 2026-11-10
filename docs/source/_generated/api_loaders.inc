@@ -26,6 +26,8 @@
 
 .. autofunction:: pyml_datasets.load_iris
 
+.. autofunction:: pyml_datasets.load_mushroom
+
 .. autofunction:: pyml_datasets.load_penguins
 
 .. autofunction:: pyml_datasets.load_real_estate_valuation
