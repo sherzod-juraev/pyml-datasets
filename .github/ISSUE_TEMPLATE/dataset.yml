@@ -1,0 +1,47 @@
+name: Dataset
+description: Add a new dataset to the package
+title: "dataset: "
+labels: ["dataset"]
+body:
+  - type: input
+    id: source
+    attributes:
+      label: Source page
+      description: The page of the dataset on the official site.
+      placeholder: https://archive.ics.uci.edu/dataset/...
+    validations:
+      required: true
+  - type: dropdown
+    id: task
+    attributes:
+      label: Task
+      description: Classification and regression datasets alternate, so the counts stay equal.
+      options:
+        - classification
+        - regression
+    validations:
+      required: true
+  - type: dropdown
+    id: license
+    attributes:
+      label: License
+      description: The license stated on the official page. Datasets under other licenses, or without one, are not added.
+      options:
+        - CC0-1.0
+        - CC-BY-4.0
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Anything worth knowing before the work starts, such as the size, missing values or repeated rows.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: The license is read on the official page, not taken from memory.
+          required: true
+        - label: The task is the next one in the classification and regression order.
+          required: true

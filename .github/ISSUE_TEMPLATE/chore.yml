@@ -1,0 +1,19 @@
+name: Chore
+description: Tooling, tests, refactoring or other work that does not add a dataset
+title: "chore: "
+labels: ["chore"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: What should change.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: The problem it solves or the reason for the change.
+    validations:
+      required: true
