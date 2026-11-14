@@ -25,6 +25,7 @@ from . import (
     mushroom,
     penguins,
     real_estate_valuation,
+    superconductivity,
     wine,
     wine_quality,
 )
@@ -47,6 +48,7 @@ ENTRIES: Final[tuple[tuple[DatasetInfo, Callable[[], Dataset]], ...]] = (
     (mushroom.INFO, mushroom.load_mushroom),
     (penguins.INFO, penguins.load_penguins),
     (real_estate_valuation.INFO, real_estate_valuation.load_real_estate_valuation),
+    (superconductivity.INFO, superconductivity.load_superconductivity),
     (wine.INFO, wine.load_wine),
     (wine_quality.INFO, wine_quality.load_wine_quality),
 )

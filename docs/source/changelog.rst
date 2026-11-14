@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.16.0
+------
+
+Added
+~~~~~
+
+- Dataset ``superconductivity`` (UCI Superconductivty Data, CC BY 4.0): 21263 superconductors
+  described by 81 numeric features, with the critical temperature as the regression target.
+  66 rows of the source repeat another row and are kept, so equal rows can end up in both
+  parts of a split.
+
 0.15.0
 ------
 

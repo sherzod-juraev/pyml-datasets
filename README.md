@@ -144,6 +144,7 @@ the sources, the citations and the changes made to each dataset.
 | `load_mushroom` | Classification | 8124 × 22 | yes | CC BY 4.0 |
 | `load_penguins` | Classification | 344 × 7 | yes | CC0 1.0 |
 | `load_real_estate_valuation` | Regression | 414 × 6 | no | CC BY 4.0 |
+| `load_superconductivity` | Regression | 21263 × 81 | no | CC BY 4.0 |
 | `load_wine` | Classification | 178 × 13 | no | CC BY 4.0 |
 | `load_wine_quality` | Regression | 6497 × 11 | no | CC BY 4.0 |
 <!-- datasets:end -->

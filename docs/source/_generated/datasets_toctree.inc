@@ -18,5 +18,6 @@
    mushroom
    penguins
    real_estate_valuation
+   superconductivity
    wine
    wine_quality
