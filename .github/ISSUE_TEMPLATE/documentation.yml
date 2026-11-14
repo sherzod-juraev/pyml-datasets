@@ -1,0 +1,19 @@
+name: Documentation
+description: A change in the README, the docs or CONTRIBUTING.md
+title: "docs: "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: Which page or file, and what should change.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What is missing, wrong or unclear now.
+    validations:
+      required: true

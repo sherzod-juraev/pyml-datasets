@@ -49,7 +49,9 @@ uv run pytest       # run a command inside .venv, no activation needed
 
 ```text
 pyml-datasets/
+├── .github/ISSUE_TEMPLATE/     # Issue forms (dataset, chore, documentation)
 ├── .github/workflows/          # CI workflows, each one calls Nox through uv
+├── .github/PULL_REQUEST_TEMPLATE.md
 ├── assets/branding/            # Logos
 ├── docs/source/                # Sphinx documentation
 │   ├── _generated/             # Generated includes (do not edit)
