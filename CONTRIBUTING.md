@@ -242,6 +242,8 @@ Nox, so a failure in the CI is reproduced locally with the same command:
   lists the lines that no test reaches. The coverage is measured only when no arguments follow
   `--`, because a single test cannot reach the threshold of the whole package. To measure it by
   hand, run `uv run pytest --cov`. `scripts/` is not measured, its recipes need the network.
+  The coverage badge in `README.md` shows this threshold, not a measured value, so change it
+  together with `fail_under`.
 
 ### Dependencies
 

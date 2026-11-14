@@ -6,18 +6,12 @@
   </picture>
 </p>
 
-[![Release](https://img.shields.io/github/v/release/sherzod-juraev/pyml-datasets)](https://github.com/sherzod-juraev/pyml-datasets/releases)
-[![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](https://www.python.org/)
-[![Code: MIT](https://img.shields.io/badge/code-MIT-yellow.svg)](LICENSE)
-[![Data: per dataset](https://img.shields.io/badge/data-per%20dataset-lightgrey.svg)](#license)
-[![Tests](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/tests.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/tests.yml)
-[![Quality](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/quality.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/quality.yml)
-[![Docs](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/docs.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/docs.yml)
-[![Documentation](https://readthedocs.org/projects/pyml-datasets/badge/?version=latest)](https://pyml-datasets.readthedocs.io/en/latest/)
-[![Ruff](https://img.shields.io/badge/Ruff-enabled-brightgreen)](https://docs.astral.sh/ruff/)
-[![mypy: strict](https://img.shields.io/badge/mypy-strict-blue.svg)](https://mypy.readthedocs.io/)
-[![Interrogate](https://img.shields.io/badge/Interrogate-100%25-brightgreen)](https://interrogate.readthedocs.io/)
-[![Nox](https://img.shields.io/badge/nox-sessions-blue)](https://nox.thea.codes/)
+| Project | Badges |
+|:--------|:---------|
+| **Package** | [![Release](https://img.shields.io/github/v/release/sherzod-juraev/pyml-datasets)](https://github.com/sherzod-juraev/pyml-datasets/releases) [![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](https://www.python.org/) [![Code: MIT](https://img.shields.io/badge/code-MIT-yellow.svg)](LICENSE) [![Data: per dataset](https://img.shields.io/badge/data-per%20dataset-lightgrey.svg)](#license) |
+| **CI** | [![Tests](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/tests.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/tests.yml) [![Quality](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/quality.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/quality.yml) [![Docs](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/docs.yml/badge.svg)](https://github.com/sherzod-juraev/pyml-datasets/actions/workflows/docs.yml) |
+| **Docs** | [![Documentation](https://readthedocs.org/projects/pyml-datasets/badge/?version=latest)](https://pyml-datasets.readthedocs.io/en/latest/) |
+| **Quality** | [![Ruff](https://img.shields.io/badge/Ruff-enabled-brightgreen)](https://docs.astral.sh/ruff/) [![mypy: strict](https://img.shields.io/badge/mypy-strict-blue.svg)](https://mypy.readthedocs.io/) [![Interrogate](https://img.shields.io/badge/Interrogate-100%25-brightgreen)](https://interrogate.readthedocs.io/) [![Coverage: 99%+](https://img.shields.io/badge/coverage-99%25%2B-brightgreen)](https://pytest-cov.readthedocs.io/) [![Nox](https://img.shields.io/badge/nox-sessions-blue)](https://nox.thea.codes/) |
 
 Classic tabular datasets for machine learning, stored as NumPy `.npz` files and loaded with a
 single function call. No downloads at runtime, no network, no pandas: just NumPy arrays. Every
