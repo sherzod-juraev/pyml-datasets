@@ -102,6 +102,12 @@
       "target_names": "65111087ef68e71f0c6c1d42f4d3bfb093aedd4fb28f8e30ad39da9527fbcde4",
       "y": "6168a323a785be39be2517b337a1c8c48bc41671431e683050c784fde177848f"
     },
+    "superconductivity": {
+      "X": "e739d37a594921ba97d47bfe7e176423f83f9652b334ac62feff871d923fcf5c",
+      "feature_names": "72f4e0fd13e58f175a61d46c18020c083bbaeb86e9ae732e894352a6acba4cfd",
+      "target_names": "1c509152559fd0db33b7a17bb68a2cb6fbfe934e022dd907269138643ed2bdc0",
+      "y": "2829eebce73015cba6add5c7f73630fc1892f4f9398d44f092a44fa6891a990a"
+    },
     "wine": {
       "X": "a7ac3c6956d60383aaa230121ceead57cb6f9529b0100e2f0213b906757f8953",
       "feature_names": "80be364ed7771d7ee3645d4a856a63e7674614dc4766d97b917ca8415959f560",

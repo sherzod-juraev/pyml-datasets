@@ -110,6 +110,12 @@
      - 6
      - No
      - CC BY 4.0
+   * - :doc:`Superconductivity Data </datasets/superconductivity>`
+     - Regression
+     - 21263
+     - 81
+     - No
+     - CC BY 4.0
    * - :doc:`Wine </datasets/wine>`
      - Classification
      - 178

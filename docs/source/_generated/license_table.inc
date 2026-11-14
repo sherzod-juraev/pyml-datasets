@@ -56,6 +56,9 @@
    * - :doc:`Real Estate Valuation </datasets/real_estate_valuation>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/477/real+estate+valuation+data+set>`__
+   * - :doc:`Superconductivity Data </datasets/superconductivity>`
+     - CC BY 4.0
+     - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/464/superconductivty+data>`__
    * - :doc:`Wine </datasets/wine>`
      - CC BY 4.0
      - `UCI Machine Learning Repository <https://archive.ics.uci.edu/dataset/109/wine>`__
