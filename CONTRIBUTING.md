@@ -171,8 +171,8 @@ groups it needs.
 | `types`      |       3.13       | `dev-types`, `dev-test`         |        mypy (strict) on `pyml_datasets`, `scripts`, `tests`    |
 | `docstrings` |       3.13       | `dev-docstring`, `dev-test`     |  interrogate (100% coverage) and the doctests of the package   |
 | `legal`      |       3.13       | `dev`                           |        `scripts.check_legal` and `scripts.generate --check`    |
-| `tests`      | 3.12, 3.13, 3.14 | `dev-test`                      |                             pytest                             |
-| `tests-min`  |       3.12       | `dev-test`                      |  pytest with the oldest supported NumPy installed on top       |
+| `tests`      | 3.12, 3.13, 3.14 | `dev-test`                      |           pytest and the coverage of `pyml_datasets`           |
+| `tests-min`  |       3.12       | `dev-test`                      |  as `tests`, with the oldest supported NumPy installed on top  |
 | `docs`       |       3.13       | `docs`                          |        sphinx-lint, doc8, rstcheck, `sphinx-build -W`          |
 | `linkcheck`  |       3.13       | `docs-build`                    |        Sphinx linkcheck, validity of every link in the docs    |
 | `package`    |       3.13       | `dev-package`                   | builds the wheel, checks its contents, imports an installed copy |
@@ -237,6 +237,11 @@ Nox, so a failure in the CI is reproduced locally with the same command:
   (shape, class counts, published means), never copied from the file under test.
 - A warning is a failure (`filterwarnings = ["error"]`). Fix its cause, or filter that one
   warning in `pyproject.toml` with a comment that says why.
+- The `tests` and `tests-min` sessions measure the coverage of `pyml_datasets` with
+  `pytest-cov`, branches included, and fail below `fail_under` in `pyproject.toml`. The output
+  lists the lines that no test reaches. The coverage is measured only when no arguments follow
+  `--`, because a single test cannot reach the threshold of the whole package. To measure it by
+  hand, run `uv run pytest --cov`. `scripts/` is not measured, its recipes need the network.
 
 ### Dependencies
 

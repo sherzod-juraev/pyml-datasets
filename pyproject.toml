@@ -115,6 +115,15 @@ python_functions = ["test_*"]
 addopts = "-v --tb=short --strict-markers --strict-config"
 filterwarnings = ["error"]
 
+[tool.coverage.run]
+source_pkgs = ["pyml_datasets"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 99
+
 # --- Ruff --- #
 [tool.ruff]
 target-version = "py312"

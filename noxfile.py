@@ -114,6 +114,22 @@ def _sync(session: nox.Session, *flags: str) -> None:
     )
 
 
+def _pytest(session: nox.Session) -> None:
+    """Run pytest and check the coverage of the package.
+
+    The coverage is measured, with the settings of ``pyproject.toml``, only when no arguments
+    follow ``--``. A single test or a selection of tests cannot reach the threshold of the
+    whole package, so with arguments the session runs plain pytest.
+
+    Parameters
+    ----------
+    session : nox.Session
+        Session that runs pytest. Its arguments after ``--`` are passed to pytest.
+    """
+    coverage = [] if session.posargs else ["--cov"]
+    session.run("pytest", *coverage, *session.posargs)
+
+
 def _minimum_requirements() -> list[str]:
     """Return the runtime dependencies with every lower bound pinned exactly.
 
@@ -199,12 +215,13 @@ def legal(session: nox.Session) -> None:
 
 @nox.session(python=PYTHON_VERSIONS)
 def tests(session: nox.Session) -> None:
-    """Run the test suite on every supported Python version.
+    """Run the test suite on every supported Python version and check the coverage.
 
-    Arguments after ``--`` are passed to pytest, for example ``nox -s tests -- -k wine``.
+    Arguments after ``--`` are passed to pytest, for example ``nox -s tests -- -k wine``. The
+    coverage is not measured then, see ``_pytest``.
     """
     _sync(session, "--group", "dev-test")
-    session.run("pytest", *session.posargs)
+    _pytest(session)
 
 
 @nox.session(name="tests-min", python=PYTHON_VERSIONS[0])
@@ -214,7 +231,7 @@ def tests_min(session: nox.Session) -> None:
     minimum = _minimum_requirements()
     session.install(*minimum)
     session.run("python", "-c", _CHECK_VERSIONS, *minimum)
-    session.run("pytest", *session.posargs)
+    _pytest(session)
 
 
 @nox.session(python=DEFAULT_PYTHON)
