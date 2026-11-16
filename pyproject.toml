@@ -67,10 +67,10 @@ docs-lint = [
 ]
 docs-build = [
     "pydata-sphinx-theme>=0.15.0",
-    "sphinx>=7.0.0",
+    "sphinx>=7.2.0",
     "sphinx-autodoc-typehints>=2.2.0",
     "sphinx-copybutton>=0.5.0",
-    "sphinx-design>=0.5.0",
+    "sphinx-design>=0.8.0",
     "sphinx-notfound-page>=1.1.0",
     "sphinxext-opengraph>=0.13.0",
     "sphinx-sitemap>=2.6.0",
@@ -202,7 +202,7 @@ ignore-nested-classes = false
 ignore_directives = [
     "autoclass", "autofunction",
     "button-link", "button-ref",
-    "card",
+    "card", "card-header", "card-footer",
     "doctest", "dropdown",
     "grid", "grid-item-card",
     "only",
