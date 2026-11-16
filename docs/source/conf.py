@@ -123,6 +123,11 @@ sitemap_excludes = [
 linkcheck_allowed_redirects = {
     r"https://doi\.org/.*": r".*",
 }
+linkcheck_ignore = [
+    # The address that the UCI page of the superconductivity dataset gives for the original
+    # data. The host no longer resolves, but the text quotes the UCI page as it is.
+    r"http://supercon\.nims\.go\.jp/index_en\.html",
+]
 
 # --- Options For Html Output --- #
 templates_path = [
