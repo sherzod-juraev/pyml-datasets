@@ -30,65 +30,77 @@ project, but it is a standalone package with no dependency on pyml.
       :text-align: center
       :shadow: sm
 
-      Quick start
-      ^^^^^^^^^^^
+      .. card-header::
+
+         Quick start
+
       Load a dataset, inspect it and train a pyml model in a few lines.
 
-      +++
-      .. button-ref:: quick_start
-         :ref-type: doc
-         :color: primary
-         :expand:
+      .. card-footer::
 
-         Get started
+         .. button-ref:: quick_start
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Get started
 
    .. grid-item-card::
       :text-align: center
       :shadow: sm
 
-      Datasets
-      ^^^^^^^^
+      .. card-header::
+
+         Datasets
+
       What each dataset contains, where it comes from and how to cite it.
 
-      +++
-      .. button-ref:: datasets/index
-         :ref-type: doc
-         :color: primary
-         :expand:
+      .. card-footer::
 
-         Browse the datasets
+         .. button-ref:: datasets/index
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Browse the datasets
 
    .. grid-item-card::
       :text-align: center
       :shadow: sm
 
-      License and citation
-      ^^^^^^^^^^^^^^^^^^^^
+      .. card-header::
+
+         License and citation
+
       Which license applies to the code and to each dataset.
 
-      +++
-      .. button-ref:: license
-         :ref-type: doc
-         :color: primary
-         :expand:
+      .. card-footer::
 
-         Read the license
+         .. button-ref:: license
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Read the license
 
    .. grid-item-card::
       :text-align: center
       :shadow: sm
 
-      API reference
-      ^^^^^^^^^^^^^
+      .. card-header::
+
+         API reference
+
       The ``Dataset`` class and the ``load_*`` functions.
 
-      +++
-      .. button-ref:: api
-         :ref-type: doc
-         :color: primary
-         :expand:
+      .. card-footer::
 
-         Browse the API
+         .. button-ref:: api
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Browse the API
 
 .. toctree::
    :hidden:

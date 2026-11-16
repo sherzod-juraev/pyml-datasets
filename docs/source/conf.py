@@ -91,6 +91,11 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable/", None),
 }
 
+# --- Design --- #
+# Every card uses the card-header and card-footer directives, so the deprecated
+# ^^^ and +++ separators are not scanned for.
+sd_card_legacy_separators = False
+
 # --- CopyButton --- #
 copybutton_prompt_text = r">>> |\$ "
 copybutton_prompt_is_regexp = True

@@ -12,49 +12,58 @@ one place, how the legal rules are enforced, and how missing values are stored.
       :text-align: center
       :shadow: sm
 
-      Single source of truth
-      ^^^^^^^^^^^^^^^^^^^^^^
+      .. card-header::
+
+         Single source of truth
+
       Why ``DatasetInfo`` is the only place where a fact about a dataset is written.
 
-      +++
-      .. button-ref:: single_source
-         :ref-type: doc
-         :color: primary
-         :expand:
+      .. card-footer::
 
-         Read the note
+         .. button-ref:: single_source
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Read the note
 
    .. grid-item-card::
       :text-align: center
       :shadow: sm
 
-      The legal gate
-      ^^^^^^^^^^^^^^
+      .. card-header::
+
+         The legal gate
+
       Which licenses are accepted, and what fails when evidence is missing.
 
-      +++
-      .. button-ref:: legal_gate
-         :ref-type: doc
-         :color: primary
-         :expand:
+      .. card-footer::
 
-         Read the note
+         .. button-ref:: legal_gate
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Read the note
 
    .. grid-item-card::
       :text-align: center
       :shadow: sm
 
-      Missing values
-      ^^^^^^^^^^^^^^
+      .. card-header::
+
+         Missing values
+
       Why ``NaN`` and integer codes, and what the package does not do.
 
-      +++
-      .. button-ref:: missing_values
-         :ref-type: doc
-         :color: primary
-         :expand:
+      .. card-footer::
 
-         Read the note
+         .. button-ref:: missing_values
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Read the note
 
 .. toctree::
    :maxdepth: 1
