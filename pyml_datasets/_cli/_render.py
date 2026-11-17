@@ -54,7 +54,7 @@ def list_table(rows: Sequence[ListRow], totals: Mapping[str, int]) -> Table:
     rows : sequence of ListRow
         One row for every dataset, in the order they are shown.
     totals : mapping of str to int
-        Number of datasets of every task, shown below the table.
+        Number of shown datasets of every task, shown below the table.
 
     Returns
     -------
@@ -70,9 +70,9 @@ def list_table(rows: Sequence[ListRow], totals: Mapping[str, int]) -> Table:
         caption=f"{len(rows)} datasets: {counts}",
         caption_justify="left",
     )
-    table.add_column("Dataset", no_wrap=True)
-    table.add_column("Task", no_wrap=True)
-    table.add_column("License", no_wrap=True)
+    table.add_column("Dataset", justify="left", no_wrap=True)
+    table.add_column("Task", justify="center", no_wrap=True)
+    table.add_column("License", justify="center", no_wrap=True)
     table.add_column("Samples", justify="right", no_wrap=True)
     table.add_column("Features", justify="right", no_wrap=True)
     for row in rows:

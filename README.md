@@ -120,8 +120,9 @@ The package installs a command that prints the license, the source and the citat
 dataset, so you do not have to write any Python to look them up:
 
 ```bash
-pyml-datasets list         # a table of all datasets
-pyml-datasets show iris    # the facts about one dataset
+pyml-datasets list                                    # a table of all datasets
+pyml-datasets list --task regression --sort samples   # one task, ordered by size
+pyml-datasets show iris                               # the facts about one dataset
 ```
 
 It also runs as `python -m pyml_datasets`. The output is meant for people, it is not a stable

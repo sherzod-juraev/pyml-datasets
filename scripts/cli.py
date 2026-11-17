@@ -27,6 +27,7 @@ from typing import Final
 from rich_argparse import RawDescriptionRichHelpFormatter
 
 from pyml_datasets._cli import main as package_cli
+from pyml_datasets._cli._parser import add_list_options
 from pyml_datasets._types import LICENSE_IDS, TASKS
 from scripts import ROOT, _console, build_datasets, check_legal, generate, new_dataset, utc_today
 from scripts._console import Cell
@@ -265,7 +266,12 @@ def _refresh(args: argparse.Namespace) -> int:
 
 def _list(args: argparse.Namespace) -> int:
     """Run ``pyml-datasets list`` of the package."""
-    return package_cli(["list"])
+    argv = ["list", "--sort", args.sort]
+    if args.task is not None:
+        argv += ["--task", args.task]
+    if args.reverse:
+        argv.append("--reverse")
+    return package_cli(argv)
 
 
 def _show(args: argparse.Namespace) -> int:
@@ -358,7 +364,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     gen.set_defaults(handler=_gen)
 
-    listing = add_command("list", help="show a table of all datasets (pyml-datasets list)")
+    listing = add_command("list", help="show a table of the datasets (pyml-datasets list)")
+    add_list_options(listing)
     listing.set_defaults(handler=_list)
 
     show = add_command("show", help="show the facts about one dataset (pyml-datasets show)")
