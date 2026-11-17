@@ -19,6 +19,7 @@ _DOCS_SOURCE = "docs/source"
 _DOCS_HTML = "docs/build/html"
 _DOCS_DOCTEST = "docs/build/doctest"
 _DOCS_LINKCHECK = "docs/build/linkcheck"
+_MARKDOWN_LINKS_REPORT = "docs/build/markdown-links/report.md"
 
 _DATA_DIR = Path(_PACKAGE) / "data"
 _WHEEL_REQUIRED = [
@@ -85,6 +86,7 @@ nox.options.sessions = [
     "types",
     "docstrings",
     "legal",
+    "markdown",
     "tests",
     "tests-min",
     "docs",
@@ -227,6 +229,13 @@ def legal(session: nox.Session) -> None:
     session.run("python", "-m", "scripts", "check")
 
 
+@nox.session(python=DEFAULT_PYTHON)
+def markdown(session: nox.Session) -> None:
+    """Check the syntax and the style of the Markdown files with rumdl (settings: .rumdl.toml)."""
+    _sync(session, "--only-group", "md-lint")
+    session.run("rumdl", "check", ".")
+
+
 @nox.session(python=PYTHON_VERSIONS)
 def tests(session: nox.Session) -> None:
     """Run the test suite on every supported Python version and check the coverage.
@@ -269,6 +278,28 @@ def linkcheck(session: nox.Session) -> None:
     """Check that every link in the documentation is valid (needs the network, so it is slow)."""
     _sync(session, "--group", "docs-build")
     session.run("sphinx-build", "-b", "linkcheck", "-E", _DOCS_SOURCE, _DOCS_LINKCHECK)
+
+
+@nox.session(name="markdown-links", python=DEFAULT_PYTHON)
+def markdown_links(session: nox.Session) -> None:
+    """Check the external links of the Markdown files with lychee (needs the network, slow).
+
+    Only ``http`` and ``https`` addresses are checked. Links between the files and anchors are
+    not. The report is written to ``docs/build/markdown-links/report.md``.
+    """
+    _sync(session, "--only-group", "md-links")
+    listing = session.run("git", "ls-files", "*.md", external=True, silent=True)
+    files = (listing or "").split()
+    if not files:
+        session.error("git lists no Markdown files.")
+    Path(_MARKDOWN_LINKS_REPORT).parent.mkdir(parents=True, exist_ok=True)
+    session.run(
+        "lychee",
+        *("--scheme", "https", "--scheme", "http"),
+        *("--no-progress", "--format", "markdown"),
+        *("--output", _MARKDOWN_LINKS_REPORT),
+        *files,
+    )
 
 
 @nox.session(python=DEFAULT_PYTHON)

@@ -14,6 +14,9 @@ htmlcov/
 # Ruff
 .ruff_cache/
 
+# rumdl
+.rumdl_cache/
+
 # Mypy
 .mypy_cache/
 

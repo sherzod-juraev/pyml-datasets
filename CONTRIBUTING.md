@@ -124,6 +124,8 @@ package of every group.
 | `docs-build`    |        Sphinx, its theme and extensions        |
 | `docs`          |          `docs-lint` and `docs-build`          |
 | `docs-live`     |       `docs-build` and sphinx-autobuild        |
+| `md-lint`       |                     rumdl                      |
+| `md-links`      |       lychee (the `lychee-bin` package)        |
 | `nox`           |              Nox, to run sessions              |
 
 scikit-learn and ucimlrepo are needed only to rebuild data files, never to use the package.
@@ -177,20 +179,22 @@ The logos and the social preview image are read from `assets/branding`, so add
 Every session installs its own environment from `uv.lock` (`uv sync --locked`) and only the
 groups it needs.
 
-| Session      |      Python      | Groups                      |                                     What it runs                                     |
-|:-------------|:----------------:|:----------------------------|:------------------------------------------------------------------------------------:|
-| `lint`       |       3.13       | `dev-lint`                  |                          ruff check and ruff format --check                          |
-| `types`      |       3.13       | `dev-types`, `dev-test`     |                 mypy (strict) on `pyml_datasets`, `scripts`, `tests`                 |
-| `docstrings` |       3.13       | `dev-docstring`, `dev-test` |             interrogate (100% coverage) and the doctests of the package              |
-| `legal`      |       3.13       | `dev`                       |                              `python -m scripts check`                               |
-| `tests`      | 3.12, 3.13, 3.14 | `dev-test`                  |                      pytest and the coverage of `pyml_datasets`                      |
-| `tests-min`  |       3.12       | `dev-test`                  | as `tests`, with the oldest supported NumPy, rich and rich-argparse installed on top |
-| `docs`       |       3.13       | `docs`                      |                    sphinx-lint, doc8, rstcheck, `sphinx-build -W`                    |
-| `linkcheck`  |       3.13       | `docs-build`                |                 Sphinx linkcheck, validity of every link in the docs                 |
-| `package`    |       3.13       | `dev-package`               |  builds the wheel, checks its contents, imports an installed copy, runs its command  |
+| Session          |      Python      | Groups                      |                                     What it runs                                     |
+|:-----------------|:----------------:|:----------------------------|:------------------------------------------------------------------------------------:|
+| `lint`           |       3.13       | `dev-lint`                  |                          ruff check and ruff format --check                          |
+| `types`          |       3.13       | `dev-types`, `dev-test`     |                 mypy (strict) on `pyml_datasets`, `scripts`, `tests`                 |
+| `docstrings`     |       3.13       | `dev-docstring`, `dev-test` |             interrogate (100% coverage) and the doctests of the package              |
+| `legal`          |       3.13       | `dev`                       |                              `python -m scripts check`                               |
+| `markdown`       |       3.13       | `md-lint`                   |                    rumdl: syntax and style of the Markdown files                     |
+| `tests`          | 3.12, 3.13, 3.14 | `dev-test`                  |                      pytest and the coverage of `pyml_datasets`                      |
+| `tests-min`      |       3.12       | `dev-test`                  | as `tests`, with the oldest supported NumPy, rich and rich-argparse installed on top |
+| `docs`           |       3.13       | `docs`                      |                    sphinx-lint, doc8, rstcheck, `sphinx-build -W`                    |
+| `linkcheck`      |       3.13       | `docs-build`                |                 Sphinx linkcheck, validity of every link in the docs                 |
+| `markdown-links` |       3.13       | `md-links`                  |       lychee: external links of the Markdown files, not the links between them       |
+| `package`        |       3.13       | `dev-package`               |  builds the wheel, checks its contents, imports an installed copy, runs its command  |
 
-`nox` without arguments runs every session except `linkcheck`, which needs the network and is
-slow.
+`nox` without arguments runs every session except `linkcheck` and `markdown-links`, which need
+the network and are slow.
 
 ```bash
 uv run --locked --only-group nox nox -l                    # list all sessions
@@ -209,12 +213,13 @@ Every workflow installs uv (`astral-sh/setup-uv`, with the cache keyed on `uv.lo
 Nox, so a failure in the CI is reproduced locally with the same command:
 `uv run --locked --only-group nox nox -s <session>`.
 
-| Workflow        | Runs on                     | Nox sessions                                            |
-|:----------------|:----------------------------|:--------------------------------------------------------|
-| `quality.yml`   | push, pull request          | `lint`, `types`, `docstrings`, `legal`, `package`       |
-| `tests.yml`     | push, pull request          | `tests` on 3.12, 3.13, 3.14 (and 3.13 on Windows), `tests-min` |
-| `docs.yml`      | push, pull request          | `docs`                                                  |
-| `linkcheck.yml` | weekly schedule, manual run | `linkcheck`                                             |
+| Workflow             | Runs on                     | Nox sessions                                                   |
+|:---------------------|:----------------------------|:---------------------------------------------------------------|
+| `quality.yml`        | push, pull request          | `lint`, `types`, `docstrings`, `legal`, `markdown`, `package`  |
+| `tests.yml`          | push, pull request          | `tests` on 3.12, 3.13, 3.14 (and 3.13 on Windows), `tests-min` |
+| `docs.yml`           | push, pull request          | `docs`                                                         |
+| `linkcheck.yml`      | weekly schedule, manual run | `linkcheck`                                                    |
+| `markdown-links.yml` | weekly schedule, manual run | `markdown-links`                                               |
 
 "Push" means a push to `main`, and a pull request means one that targets `main`.
 
@@ -323,7 +328,7 @@ Rules for a dataset that is accepted:
    policy, a citation request). Put it in `notes`.
 
 If a license changes, or somebody tells me it is wrong, the dataset is removed from the next
-version immediately and the history is cleaned if asked. Contact: juraevsherzod9943@gmail.com.
+version immediately and the history is cleaned if asked. Contact: <juraevsherzod9943@gmail.com>.
 
 ## Adding a dataset
 
@@ -382,11 +387,11 @@ uv run -m scripts gen
 facts about one dataset. They run the `pyml-datasets` command of the package.
 
 The first command combines the recipe and `INFO`, validates the arrays and saves
-`pyml_datasets/data/seeds.npz`. The second updates the index of the datasets (`DATASET_TASKS`), the exports,
-`NOTICE.md`, the README table, the toctree of the datasets index, the other documentation
-includes and `MANIFEST.json`. Never edit those by hand; `generate --check` fails if you do.
-A dataset module is imported when the dataset is first used, not by `import pyml_datasets`,
-so the new dataset costs nothing at import time. Running `generate` again changes nothing when nothing changed.
+`pyml_datasets/data/seeds.npz`. The second updates the index of the datasets (`DATASET_TASKS`), the
+exports, `NOTICE.md`, the README table, the toctree of the datasets index, the other documentation
+includes and `MANIFEST.json`. Never edit those by hand; `generate --check` fails if you do. A
+dataset module is imported when the dataset is first used, not by `import pyml_datasets`, so the new
+dataset costs nothing at import time. Running `generate` again changes nothing when nothing changed.
 
 **6. Fill in the facts and the evidence.** Write `tests/expected/seeds.py` from the source
 documentation. A fact that is not on the page of the source (for example class counts) is
@@ -404,7 +409,7 @@ of them is missing or `pending`.
 ```bash
 uv run -m scripts check    # fails on TODO, missing evidence, license mismatch, missing archive or
                            # maintainer check, and on generated files that are out of date
-uv run --locked --only-group nox nox    # lint, types, docstrings, legal, tests, docs, package
+uv run --locked --only-group nox nox    # lint, types, docstrings, legal, markdown, tests, docs, package
 ```
 
 You do not write tests for a normal dataset: the contract, integrity, missing-value and

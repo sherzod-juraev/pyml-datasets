@@ -87,6 +87,8 @@ docs-live = [
     "sphinx-autobuild>=2025.8.25",
 ]
 nox = ["nox>=2026.2.9"]
+md-lint = ["rumdl>=0.3.4"]
+md-links = ["lychee-bin>=0.24.2"]
 
 # --- Command line --- #
 [project.scripts]

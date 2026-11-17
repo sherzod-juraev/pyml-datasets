@@ -1,4 +1,4 @@
-# Evidence: <Title> (`<name>`)
+# Evidence: `<Title>` (`<name>`)
 
 - **License:** <CC0-1.0 or CC-BY-4.0, exactly as in INFO.license>
 - **License page:** <https address of the page that states the license>
