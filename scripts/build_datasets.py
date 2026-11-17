@@ -1,23 +1,23 @@
 """Build the bundled NPZ datasets.
 
-Run it from the repository root and commit the resulting files::
+Run it from the repository root with the ``build`` command and commit the resulting
+files::
 
-    python -m scripts.build_datasets
-    python -m scripts.build_datasets iris wine --overwrite
+    python -m scripts build
+    python -m scripts build iris wine --force
 
 Every dataset has a recipe in ``scripts/recipes/`` that loads or downloads the raw data, and
 an ``INFO`` in ``pyml_datasets/datasets/`` that says where the data comes from and under
 which license. ``scripts/_npz.py`` combines both, validates the result and saves it. Existing
-files are skipped unless ``--overwrite`` is given, because NPZ files are not byte-for-byte
+files are skipped unless ``--force`` is given, because NPZ files are not byte-for-byte
 reproducible and every rebuild adds a new binary file to the git history. Some recipes
 download data, so they need an internet connection.
 
-After building, run ``python -m scripts.generate`` to refresh the manifest, the notice and
+After building, run ``python -m scripts gen`` to refresh the manifest, the notice and
 the documentation.
 """
 
-import argparse
-from collections.abc import Sequence
+from dataclasses import dataclass
 from importlib import import_module
 from pathlib import Path
 from typing import Final
@@ -25,16 +25,16 @@ from typing import Final
 from pyml_datasets import DatasetInfo
 from scripts import ROOT
 from scripts._npz import save, to_arrays, validate
-from scripts.recipes import get_recipe, recipe_names
+from scripts.recipes import get_recipe
 
-_OUTPUT_DIR: Final = ROOT / "pyml_datasets" / "data"
+OUTPUT_DIR: Final = ROOT / "pyml_datasets" / "data"
 
 
 def _info_of(name: str) -> DatasetInfo:
     """Import the dataset module and return its ``INFO``.
 
     The module is imported directly and not through the registry, so a dataset that was
-    just scaffolded can be built before ``scripts.generate`` has registered it.
+    just scaffolded can be built before ``python -m scripts gen`` has registered it.
 
     Parameters
     ----------
@@ -50,7 +50,29 @@ def _info_of(name: str) -> DatasetInfo:
     return info
 
 
-def build_dataset(name: str, output_dir: Path, overwrite: bool = False) -> None:
+@dataclass(frozen=True)
+class BuildResult:
+    """What happened to one dataset in :func:`build_dataset`.
+
+    Attributes
+    ----------
+    name : str
+        Dataset name.
+    built : bool
+        ``True`` if the file was written, ``False`` if an existing file was kept.
+    shape : tuple of int or None
+        Shape of ``X`` of the new file, ``None`` if the file was kept.
+    size_kib : float
+        Size of the file in KiB.
+    """
+
+    name: str
+    built: bool
+    shape: tuple[int, ...] | None
+    size_kib: float
+
+
+def build_dataset(name: str, output_dir: Path, overwrite: bool = False) -> BuildResult:
     """Build one dataset and save it as ``<name>.npz``.
 
     Parameters
@@ -60,66 +82,19 @@ def build_dataset(name: str, output_dir: Path, overwrite: bool = False) -> None:
     output_dir : Path
         Directory where the file is written, created if missing.
     overwrite : bool, default=False
-        Replace the file if it already exists, otherwise it is skipped.
+        Replace the file if it already exists, otherwise it is kept.
+
+    Returns
+    -------
+    BuildResult
+        Whether the file was written, and its shape and size.
     """
     path = output_dir / f"{name}.npz"
     if path.exists() and not overwrite:
-        print(f"skip   {name}: {path.name} already exists (use --overwrite)")
-        return
+        return BuildResult(name, False, None, path.stat().st_size / 1024)
 
     info = _info_of(name)
     arrays = to_arrays(get_recipe(name)(), info)
     validate(info, arrays)
     save(path, arrays)
-
-    size_kib = path.stat().st_size / 1024
-    print(f"built  {name}: X{arrays['X'].shape} -> {path.name} ({size_kib:.1f} KiB)")
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    """Run the command line interface.
-
-    Parameters
-    ----------
-    argv : sequence of str, optional
-        Command line arguments, ``sys.argv[1:]`` if not given.
-
-    Returns
-    -------
-    int
-        Exit code, 0 on success.
-    """
-    available = recipe_names()
-    parser = argparse.ArgumentParser(description="Build the bundled NPZ datasets.")
-    parser.add_argument(
-        "names",
-        nargs="*",
-        metavar="NAME",
-        help=f"datasets to build, all by default: {', '.join(available)}",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=_OUTPUT_DIR,
-        help="directory for the NPZ files (default: pyml_datasets/data)",
-    )
-    parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="replace files that already exist",
-    )
-    args = parser.parse_args(argv)
-
-    names: list[str] = args.names or list(available)
-    unknown = [name for name in names if name not in available]
-    if unknown:
-        parser.error(f"unknown dataset(s): {', '.join(unknown)}")
-
-    for name in names:
-        build_dataset(name, args.output_dir, args.overwrite)
-    print("Next: python -m scripts.generate")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+    return BuildResult(name, True, tuple(arrays["X"].shape), path.stat().st_size / 1024)

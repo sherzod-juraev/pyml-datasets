@@ -10,7 +10,7 @@ from numpy.typing import NDArray
 
 import scripts
 from pyml_datasets import get_info, list_datasets
-from scripts import new_dataset
+from scripts import cli, new_dataset
 from scripts._npz import array_digest, to_arrays, validate
 from scripts._render import render_datasets_toctree
 from scripts.generate import replace_block
@@ -123,11 +123,12 @@ def test_new_dataset_writes_the_utc_date(tmp_path: Path, monkeypatch: pytest.Mon
     ):
         (tmp_path / folder).mkdir(parents=True)
     monkeypatch.setattr(new_dataset, "ROOT", tmp_path)
-    monkeypatch.setattr(new_dataset, "utc_today", lambda: date(2026, 10, 24))
-    argv = ["seeds", "--license", "CC0-1.0", "--task", "classification"]
-    assert new_dataset.main(argv) == 0
+    monkeypatch.setattr(cli, "ROOT", tmp_path)
+    monkeypatch.setattr(cli, "utc_today", lambda: date(2026, 10, 24))
+    assert cli.main(["new", "seeds", "-l", "cc0", "-t", "clf"]) == 0
     evidence = (tmp_path / "legal/evidence/seeds.md").read_text("utf-8")
     assert "**Checked:** 2026-10-24" in evidence
+    assert "**License:** CC0-1.0" in evidence
 
 
 def test_utc_today_uses_the_utc_clock(monkeypatch: pytest.MonkeyPatch) -> None:

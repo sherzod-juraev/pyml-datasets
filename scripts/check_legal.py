@@ -2,7 +2,7 @@
 
 Run it from the repository root, locally and in CI::
 
-    python -m scripts.check_legal
+    python -m scripts legal
 
 Errors make the command fail. A dataset is complete only when its evidence file has an
 archived copy of the license page and the confirmation of the maintainer, so a missing or
@@ -16,7 +16,6 @@ and each dataset needs an evidence file in ``legal/evidence/`` that states the s
 
 import json
 import re
-import sys
 import tomllib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
@@ -336,25 +335,86 @@ def collect_problems(today: date | None = None) -> Problems:
     return problems
 
 
-def main() -> int:
-    """Run the command line interface.
+@dataclass(frozen=True)
+class DatasetRow:
+    """What the legal check knows about one dataset, for a summary table.
+
+    The row only shows the state of the evidence. Whether the dataset passes is decided by
+    the errors and warnings of :func:`collect_problems`.
+
+    Attributes
+    ----------
+    name : str
+        Dataset name.
+    license : str
+        License identifier from ``INFO``.
+    verified_on : str
+        Date of the verification from ``INFO``, ``YYYY-MM-DD`` in UTC.
+    age : int
+        Days between ``verified_on`` and today.
+    has_evidence : bool
+        Whether ``legal/evidence/<name>.md`` exists.
+    has_archive : bool
+        Whether the evidence has a valid link to an archived copy of the license page.
+    has_maintainer_check : bool
+        Whether the evidence has a maintainer confirmation.
+    """
+
+    name: str
+    license: str
+    verified_on: str
+    age: int
+    has_evidence: bool
+    has_archive: bool
+    has_maintainer_check: bool
+
+
+def summarize(today: date | None = None) -> list[DatasetRow]:
+    """Collect the state of the evidence of every dataset.
+
+    Parameters
+    ----------
+    today : date, optional
+        Current date, today's date in UTC if not given.
 
     Returns
     -------
-    int
-        1 if there are errors, 0 otherwise.
+    list of DatasetRow
+        One row for every dataset, in the order of the registry.
     """
-    problems = collect_problems()
-    for warning in problems.warnings:
-        print(f"warning: {warning}")
-    for error in problems.errors:
-        print(f"error: {error}", file=sys.stderr)
-    if problems.errors:
-        print(f"{len(problems.errors)} legal problem(s).", file=sys.stderr)
-        return 1
-    print("Legal check passed.")
-    return 0
+    from pyml_datasets import get_info
+
+    now = today or utc_today()
+    rows: list[DatasetRow] = []
+    for name in dataset_names():
+        info = get_info(name)
+        path = EVIDENCE_DIR / f"{name}.md"
+        fields = read_evidence(path) if path.exists() else {}
+        rows.append(
+            DatasetRow(
+                name=name,
+                license=info.license,
+                verified_on=info.verified_on,
+                age=(now - date.fromisoformat(info.verified_on)).days,
+                has_evidence=path.exists(),
+                has_archive=_ARCHIVE.fullmatch(fields.get("Archive", "")) is not None,
+                has_maintainer_check=fields.get("Maintainer check", "").lower() not in _PENDING,
+            )
+        )
+    return rows
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+def owner_of(message: str) -> str:
+    """Return what an error or a warning is about, the part before the first ``": "``.
+
+    Parameters
+    ----------
+    message : str
+        A message of :class:`Problems`, such as ``"iris: the evidence file is missing."``.
+
+    Returns
+    -------
+    str
+        The dataset name, or ``"pyproject.toml"`` for the messages about that file.
+    """
+    return message.partition(": ")[0]

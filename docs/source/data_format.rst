@@ -61,11 +61,11 @@ root:
 
 .. code-block:: console
 
-   $ uv run python -m scripts.build_datasets
-   $ uv run python -m scripts.build_datasets iris wine --overwrite
-   $ uv run python -m scripts.generate
+   $ uv run -m scripts build
+   $ uv run -m scripts build iris wine --force
+   $ uv run -m scripts gen
 
-Existing files are skipped unless ``--overwrite`` is given. ``.npz`` files are not
+Existing files are skipped unless ``--force`` is given. ``.npz`` files are not
 byte-for-byte reproducible, so every rebuild would add a new binary file to the git history.
 That is why ``pyml_datasets/data/MANIFEST.json`` stores a digest of the arrays (not of the
 file), and why a test compares every file with it. Before saving, the script checks that
@@ -76,5 +76,5 @@ Adding a dataset
 ----------------
 
 The steps are in ``CONTRIBUTING.md``, section *Adding a dataset*. In short:
-``uv run python -m scripts.new_dataset`` creates the files, you fill in the facts, build the
-file and run ``uv run python -m scripts.generate``, then the Nox sessions.
+``uv run -m scripts new`` creates the files, you fill in the facts, build the file and run
+``uv run -m scripts gen`` (or ``uv run -m scripts refresh``), then the Nox sessions.

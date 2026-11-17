@@ -1,23 +1,21 @@
 """Create the files for a new dataset, with TODO markers where the facts must be written.
 
-Run it from the repository root::
+Run it from the repository root with the ``new`` command::
 
-    python -m scripts.new_dataset my_dataset --license CC-BY-4.0 --task classification
+    python -m scripts new my_dataset --license CC-BY-4.0 --task classification
 
 It creates the dataset module, the build recipe, the expected facts for the tests, the
 documentation page and the legal evidence file. It never overwrites an existing file. The
-files contain ``TODO`` markers that ``python -m scripts.check_legal`` rejects, so a dataset
+files contain ``TODO`` markers that ``python -m scripts legal`` rejects, so a dataset
 cannot be finished by accident. The steps that follow are in ``CONTRIBUTING.md``.
 """
 
-import argparse
 import re
-from collections.abc import Sequence
 from pathlib import Path
 from typing import Final
 
 from pyml_datasets._types import LICENSE_IDS, TASKS
-from scripts import ROOT, utc_today
+from scripts import ROOT
 
 _NAME: Final = re.compile(r"[a-z][a-z0-9_]*")
 
@@ -202,33 +200,3 @@ def create(name: str, license_id: str, task: str, today: str) -> list[Path]:
     for path, template in plan.items():
         path.write_text(template.format(**values), "utf-8")
     return list(plan)
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    """Run the command line interface.
-
-    Parameters
-    ----------
-    argv : sequence of str, optional
-        Command line arguments, ``sys.argv[1:]`` if not given.
-
-    Returns
-    -------
-    int
-        Exit code, 0 on success.
-    """
-    parser = argparse.ArgumentParser(description="Scaffold a new dataset.")
-    parser.add_argument("name", help="dataset name, for example 'seeds'")
-    parser.add_argument("--license", required=True, choices=LICENSE_IDS, dest="license_id")
-    parser.add_argument("--task", required=True, choices=TASKS)
-    args = parser.parse_args(argv)
-
-    created = create(args.name, args.license_id, args.task, utc_today().isoformat())
-    for path in created:
-        print(f"created {path.relative_to(ROOT)}")
-    print("Now search for TODO, fill the files in, then see CONTRIBUTING.md, 'Adding a dataset'.")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
