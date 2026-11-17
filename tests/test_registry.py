@@ -2,7 +2,7 @@ import pytest
 
 import pyml_datasets
 from pyml_datasets import DatasetInfo, get_info, list_datasets, load_dataset
-from pyml_datasets._registry import REGISTRY
+from pyml_datasets.datasets import DATASET_TASKS
 
 
 def test_list_datasets_is_sorted_and_not_empty() -> None:
@@ -18,8 +18,18 @@ def test_list_by_task_partitions_the_datasets() -> None:
     assert not classification & regression
 
 
-def test_registry_matches_list() -> None:
-    assert tuple(sorted(REGISTRY)) == list_datasets()
+def test_index_matches_list() -> None:
+    assert tuple(sorted(DATASET_TASKS)) == list_datasets()
+
+
+def test_index_task_matches_the_info(name: str) -> None:
+    assert DATASET_TASKS[name] == get_info(name).task
+
+
+def test_index_mismatch_is_reported(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(DATASET_TASKS, "iris", "regression")
+    with pytest.raises(RuntimeError, match="python -m scripts gen"):
+        get_info("iris")
 
 
 def test_get_info_returns_the_info(name: str) -> None:

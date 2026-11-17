@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.18.0
+------
+
+Changed
+~~~~~~~
+
+- ``import pyml_datasets`` and ``list_datasets`` no longer import the module of every dataset.
+  A ``load_<name>`` function, ``get_info`` and ``load_dataset`` import only the module of the
+  dataset they are asked for, so the import time does not grow with the number of datasets.
+  ``from pyml_datasets import load_iris``, ``from pyml_datasets import *`` and ``dir()`` work
+  as before, and type checkers still report a misspelled loader name.
+- ``pyml_datasets.datasets`` holds an index of the dataset names and tasks, ``DATASET_TASKS``,
+  in place of ``ENTRIES``. Both are internal.
+
 0.17.0
 ------
 

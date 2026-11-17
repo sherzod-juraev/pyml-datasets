@@ -14,7 +14,8 @@ creators or changes.
 
 Everything else is *generated* from ``INFO`` by ``python -m scripts gen``:
 
-* the registry (``pyml_datasets/datasets/__init__.py``) and the public exports,
+* the index of the datasets (``pyml_datasets/datasets/__init__.py``, name and task of every
+  dataset, no dataset module is imported by it) and the public exports,
 * the description stored in the data file, and the ``meta`` array,
 * ``NOTICE.md``, the table in the README, and the documentation tables and includes (also
   the toctree of the datasets index),

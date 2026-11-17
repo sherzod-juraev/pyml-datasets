@@ -2,8 +2,7 @@
 
 import numpy as np
 
-from pyml_datasets import load_dataset, load_penguins
-from pyml_datasets.datasets import ENTRIES
+from pyml_datasets import get_info, list_datasets, load_dataset, load_penguins
 
 
 def test_has_missing_in_info_matches_the_data(name: str) -> None:
@@ -39,4 +38,4 @@ def test_penguins_example() -> None:
 
 
 def test_some_dataset_without_missing_values_exists() -> None:
-    assert any(not info.has_missing for info, _ in ENTRIES)
+    assert any(not get_info(name).has_missing for name in list_datasets())

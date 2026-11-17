@@ -27,7 +27,7 @@ from urllib.parse import unquote, urlsplit
 from pyml_datasets import DatasetInfo
 from pyml_datasets._types import LICENSE_IDS
 from scripts import ROOT, utc_today
-from scripts.generate import DATA_DIR, dataset_names
+from scripts.generate import DATA_DIR, dataset_names, info_of
 
 EVIDENCE_DIR: Final = ROOT / "legal" / "evidence"
 LICENSES_DIR: Final = ROOT / "LICENSES"
@@ -323,12 +323,10 @@ def collect_problems(today: date | None = None) -> Problems:
     Problems
         The errors and warnings of the whole repository.
     """
-    from pyml_datasets import get_info
-
     problems = Problems()
     names = dataset_names()
     check_files(names, problems)
-    infos = [get_info(name) for name in names]
+    infos = [info_of(name) for name in names]
     for info in infos:
         check_info(info, problems, today or utc_today())
     check_pyproject(infos, problems)
@@ -382,12 +380,10 @@ def summarize(today: date | None = None) -> list[DatasetRow]:
     list of DatasetRow
         One row for every dataset, in the order of the registry.
     """
-    from pyml_datasets import get_info
-
     now = today or utc_today()
     rows: list[DatasetRow] = []
     for name in dataset_names():
-        info = get_info(name)
+        info = info_of(name)
         path = EVIDENCE_DIR / f"{name}.md"
         fields = read_evidence(path) if path.exists() else {}
         rows.append(
