@@ -186,16 +186,17 @@ def test_list_has_the_shape_of_every_dataset(capsys: pytest.CaptureFixture[str])
 def test_show_has_the_attribution_of_every_dataset(
     name: str, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    assert main(["show", name]) == 0
+    assert main(["show", name, "--full"]) == 0
     output = _words(capsys.readouterr().out)
     info = get_info(name)
     for fact in (info.title, info.license, info.license_url, info.source_url, info.verified_on):
         assert fact in output
-    # The panel draws a border at the edge of every line, so compare piece by piece.
     for line in info.citation.split():
         assert line in output
     for change in info.changes:
         assert change.split()[0] in output
+    for note in info.notes:
+        assert note.split()[0] in output
 
 
 def test_show_names_the_classes_or_the_targets(capsys: pytest.CaptureFixture[str]) -> None:
@@ -204,7 +205,8 @@ def test_show_names_the_classes_or_the_targets(capsys: pytest.CaptureFixture[str
     main(["show", "abalone"])
     output = capsys.readouterr().out
     assert "Classes" not in output
-    assert "Shape" in output
+    assert "Targets" in output
+    assert "Samples" in output
 
 
 def test_show_marks_missing_values(capsys: pytest.CaptureFixture[str]) -> None:
@@ -302,18 +304,20 @@ def test_text_of_a_dataset_is_never_taken_for_markup() -> None:
         verified_on="2026-11-17",
         notes=(odd,),
     )
-    panel = _render.show_panel(
-        info, shape=(2, 1), size=2048, feature_names=(odd,), target_names=(odd, "b")
+    report = _render.show_report(
+        info, shape=(2, 1), size=2048, feature_names=(odd,), target_names=(odd, "b"), full=True
     )
     console = Console(width=200, record=True, file=io.StringIO(), highlight=False)
-    console.print(panel)
+    console.print(report)
     assert console.export_text().count(odd) >= 6
 
 
-def test_long_lists_of_names_are_shortened(capsys: pytest.CaptureFixture[str]) -> None:
+def test_no_name_of_a_feature_is_cut(capsys: pytest.CaptureFixture[str]) -> None:
     main(["show", "superconductivity"])
     output = capsys.readouterr().out
-    assert "(71 more)" in output
+    assert "more)" not in output
+    for name in load_dataset("superconductivity").feature_names:
+        assert name in output
 
 
 def test_sizes_are_shown_in_kib_and_mib() -> None:
@@ -365,16 +369,148 @@ def test_a_dataset_without_class_names_has_no_classes_line() -> None:
         verified_on="2026-11-17",
         categorical={"colour": ("red", "blue")},
     )
-    panel = _render.show_panel(
-        info, shape=(3, 1), size=100, feature_names=("x",), target_names=None
+    report = _render.show_report(
+        info, shape=(3, 2), size=100, feature_names=("x", "colour"), target_names=None
     )
     console = Console(width=100, record=True, file=io.StringIO(), highlight=False)
-    console.print(panel)
+    console.print(report)
     text = console.export_text()
     assert "Classes" not in text
     assert "Targets" not in text
-    assert "colour" in text
+    assert "Numeric (1)" in text
+    assert "Categorical (1)" in text
+    assert "2 (1 categorical, 1 numeric)" in text
     assert "10.1234/abc" in text
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_show_has_every_section_and_leaves_the_long_parts_out(
+    name: str, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["show", name]) == 0
+    output = capsys.readouterr().out
+    for heading in ("Overview", "Provenance", "Features", "Citation"):
+        assert heading in output
+    assert "Changes made to the data" not in output
+    assert "\nNotes " not in output
+    assert "Run with --full" in output
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_show_full_adds_the_changes_and_the_notes(
+    name: str, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["show", name, "--full"]) == 0
+    output = capsys.readouterr().out
+    assert "Changes made to the data" in output
+    assert ("\nNotes " in output) == bool(get_info(name).notes)
+    assert "Run with --full" not in output
+
+
+def test_the_line_after_the_report_counts_what_is_left_out(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    main(["show", "german_credit"])
+    output = _words(capsys.readouterr().out)
+    info = get_info("german_credit")
+    expected = f"{len(info.changes)} changes and {len(info.notes)} notes are not shown."
+    assert expected in output
+    assert "Run with --full to read them." in output
+
+
+def test_the_count_line_has_no_notes_when_there_are_none(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    (name,) = [name for name in NAMES if not get_info(name).notes][:1]
+    main(["show", name])
+    output = _words(capsys.readouterr().out)
+    assert "note" not in output.split("Citation")[-1]
+    assert "not shown" in output
+
+
+def test_the_count_line_uses_the_singular() -> None:
+    info = DatasetInfo(
+        name="one",
+        title="One",
+        task="regression",
+        summary="A summary.",
+        license="CC0-1.0",
+        license_url="https://example.org/license",
+        source="Source",
+        source_url="https://example.org/data",
+        doi=None,
+        creators=("Someone",),
+        citation="Someone (2026). One.",
+        obtained_from="Source",
+        changes=("Converted.",),
+        verified_on="2026-11-17",
+    )
+    text = _render._hidden_parts(info).plain
+    assert text == "1 change is not shown. Run with --full to read it."
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_the_kinds_of_the_features_add_up(name: str, capsys: pytest.CaptureFixture[str]) -> None:
+    main(["show", name])
+    output = _words(capsys.readouterr().out)
+    data = load_dataset(name)
+    categorical = len(data.categorical_features)
+    n_features = data.X.shape[1]
+    if categorical:
+        assert (
+            f"{n_features} ({categorical} categorical, {n_features - categorical} numeric)"
+            in output
+        )
+        assert f"Categorical ({categorical})" in output
+    else:
+        assert f"{n_features} (all numeric)" in output
+        assert "Categorical" not in output
+
+
+def test_the_header_has_the_title_the_task_and_the_license(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    main(["show", "german_credit"])
+    first = capsys.readouterr().out.splitlines()[0]
+    assert "German Credit" in first
+    assert "classification" in first
+    assert "CC-BY-4.0" in first
+
+
+def test_the_name_is_not_repeated_as_a_fact(capsys: pytest.CaptureFixture[str]) -> None:
+    main(["show", "iris"])
+    assert "german_credit" not in capsys.readouterr().out
+    main(["show", "german_credit"])
+    lines = capsys.readouterr().out.splitlines()
+    assert not [line for line in lines if line.strip().startswith("Name ")]
+
+
+def test_the_links_are_drawn_when_the_terminal_shows_colors(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    main(["show", "iris"])
+    output = capsys.readouterr().out
+    info = get_info("iris")
+    assert "\x1b]8;" in output
+    assert info.source_url in output
+    assert f"https://doi.org/{info.doi}" in output
+
+
+def test_the_urls_are_plain_text_when_it_is_not_a_terminal(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    main(["show", "iris"])
+    output = capsys.readouterr().out
+    info = get_info("iris")
+    assert "\x1b" not in output
+    assert info.source_url in output
+    assert info.license_url in output
+
+
+def test_the_parser_reads_full() -> None:
+    assert build_parser().parse_args(["show", "iris"]).full is False
+    assert build_parser().parse_args(["show", "iris", "--full"]).full is True
 
 
 def test_a_missing_file_is_reported(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

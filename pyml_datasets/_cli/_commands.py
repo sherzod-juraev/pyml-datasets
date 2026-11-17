@@ -92,12 +92,13 @@ def show_command(args: argparse.Namespace) -> int:
     Parameters
     ----------
     args : argparse.Namespace
-        Parsed arguments, with the dataset name in ``name``.
+        Parsed arguments: the dataset name in ``name`` and ``full``, which adds the changes
+        made to the data and the notes.
 
     Returns
     -------
     int
-        0 if the panel was printed, 2 if no dataset has this name, 1 if its data file is
+        0 if the report was printed, 2 if no dataset has this name, 1 if its data file is
         missing or unreadable.
     """
     try:
@@ -111,12 +112,13 @@ def show_command(args: argparse.Namespace) -> int:
     except (FileNotFoundError, ValueError) as error:
         _fail(str(error))
         return 1
-    panel = _render.show_panel(
+    report = _render.show_report(
         info,
         shape=(data.X.shape[0], data.X.shape[1]),
         size=size,
         feature_names=data.feature_names,
         target_names=data.target_names,
+        full=args.full,
     )
-    Console(highlight=False).print(panel)
+    Console(highlight=False).print(report)
     return 0

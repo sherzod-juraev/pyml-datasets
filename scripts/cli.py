@@ -27,7 +27,7 @@ from typing import Final
 from rich_argparse import RawDescriptionRichHelpFormatter
 
 from pyml_datasets._cli import main as package_cli
-from pyml_datasets._cli._parser import add_list_options
+from pyml_datasets._cli._parser import add_list_options, add_show_options
 from pyml_datasets._types import LICENSE_IDS, TASKS
 from scripts import ROOT, _console, build_datasets, check_legal, generate, new_dataset, utc_today
 from scripts._console import Cell
@@ -276,7 +276,7 @@ def _list(args: argparse.Namespace) -> int:
 
 def _show(args: argparse.Namespace) -> int:
     """Run ``pyml-datasets show`` of the package."""
-    return package_cli(["show", args.name])
+    return package_cli(["show", args.name, *(["--full"] if args.full else [])])
 
 
 def _check(args: argparse.Namespace) -> int:
@@ -369,7 +369,7 @@ def build_parser() -> argparse.ArgumentParser:
     listing.set_defaults(handler=_list)
 
     show = add_command("show", help="show the facts about one dataset (pyml-datasets show)")
-    show.add_argument("name", help="dataset name, for example 'iris'")
+    add_show_options(show)
     show.set_defaults(handler=_show)
 
     legal = add_command("legal", help="check licenses and evidence")

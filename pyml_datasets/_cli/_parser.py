@@ -45,6 +45,24 @@ def add_list_options(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def add_show_options(parser: argparse.ArgumentParser) -> None:
+    """Add the arguments of ``show`` to a parser.
+
+    The ``scripts`` command line adds the same arguments to its own ``show``.
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        Parser of the ``show`` command.
+    """
+    parser.add_argument("name", help="dataset name, for example 'iris'")
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="also show the changes made to the data and the notes",
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Create the parser of the ``pyml-datasets`` command.
 
@@ -62,7 +80,8 @@ def build_parser() -> argparse.ArgumentParser:
             "examples:\n"
             "  pyml-datasets list\n"
             "  pyml-datasets list --task regression --sort samples --reverse\n"
-            "  pyml-datasets show iris"
+            "  pyml-datasets show iris\n"
+            "  pyml-datasets show german_credit --full"
         ),
     )
     commands = parser.add_subparsers(dest="command", metavar="COMMAND", required=True)
@@ -73,6 +92,6 @@ def build_parser() -> argparse.ArgumentParser:
     listing.set_defaults(handler=list_command)
 
     show = add_command("show", help="show the facts about one dataset")
-    show.add_argument("name", help="dataset name, for example 'iris'")
+    add_show_options(show)
     show.set_defaults(handler=show_command)
     return parser
