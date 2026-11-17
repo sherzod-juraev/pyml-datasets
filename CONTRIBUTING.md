@@ -52,7 +52,7 @@ pyml-datasets/
 ├── .github/ISSUE_TEMPLATE/     # Issue forms (dataset, chore, documentation)
 ├── .github/workflows/          # CI workflows, each one calls Nox through uv
 ├── .github/PULL_REQUEST_TEMPLATE.md
-├── assets/branding/            # Logos
+├── assets/branding/            # Logos and the social preview image
 ├── docs/source/                # Sphinx documentation
 │   ├── _generated/             # Generated includes (do not edit)
 │   ├── datasets/               # One page per dataset
@@ -161,6 +161,9 @@ To see the documentation while you edit it:
 ```bash
 uv run --group docs-live sphinx-autobuild docs/source docs/build/html
 ```
+
+The logos and the social preview image are read from `assets/branding`, so add
+`--watch assets` to the command if you change them.
 
 ## Nox sessions
 
