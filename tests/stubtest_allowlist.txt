@@ -1,0 +1,5 @@
+# stubtest reads the modules that have no stub as if they were stubs. It does not understand
+# the "type" statement, so these two aliases of _types.py are reported although they are fine.
+# The stub that matters is pyml_datasets/__init__.pyi.
+pyml_datasets._types.LicenseId
+pyml_datasets._types.Task

@@ -23,6 +23,7 @@ _DOCS_LINKCHECK = "docs/build/linkcheck"
 _DATA_DIR = Path(_PACKAGE) / "data"
 _WHEEL_REQUIRED = [
     f"{_PACKAGE}/py.typed",
+    f"{_PACKAGE}/__init__.pyi",
     f"{_PACKAGE}/__init__.py",
     f"{_PACKAGE}/__main__.py",
     f"{_PACKAGE}/_cli/__init__.py",
@@ -207,6 +208,8 @@ def types(session: nox.Session) -> None:
     _sync(session, "--group", "dev-types", "--group", "dev-test")
     session.run("mypy", _PACKAGE, "scripts")
     session.run("mypy", "tests")
+    # The stub names every loader; stubtest fails when it differs from the real module.
+    session.run("stubtest", "--allowlist", "tests/stubtest_allowlist.txt", _PACKAGE)
 
 
 @nox.session(python=DEFAULT_PYTHON)

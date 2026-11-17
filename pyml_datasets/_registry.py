@@ -1,16 +1,19 @@
-"""Registry of the bundled datasets: listing, lookup by name and loading by name."""
+"""Registry of the bundled datasets: listing, lookup by name and loading by name.
 
-from collections.abc import Callable, Mapping
+The names and the tasks of the datasets come from ``datasets/__init__.py``, which is generated
+and imports no dataset module. A dataset module is imported when that dataset is asked for,
+so the cost of ``import pyml_datasets`` does not grow with the number of datasets.
+"""
+
+import importlib
+from collections.abc import Callable
+from types import ModuleType
 from typing import Final
 
 from ._types import Dataset, DatasetInfo, Task
-from .datasets import ENTRIES
+from .datasets import DATASET_TASKS
 
-REGISTRY: Final[Mapping[str, DatasetInfo]] = {info.name: info for info, _ in ENTRIES}
-_LOADERS: Final[Mapping[str, Callable[[], Dataset]]] = {info.name: load for info, load in ENTRIES}
-
-if len(REGISTRY) != len(ENTRIES):
-    raise RuntimeError("Two bundled datasets share the same name.")
+_PACKAGE: Final = "pyml_datasets"
 
 
 def _unknown(name: str) -> ValueError:
@@ -26,12 +29,46 @@ def _unknown(name: str) -> ValueError:
     ValueError
         Error that lists the available names.
     """
-    available = ", ".join(REGISTRY)
+    available = ", ".join(sorted(DATASET_TASKS))
     return ValueError(f"Unknown dataset {name!r}. Available datasets: {available}.")
+
+
+def _module(name: str) -> ModuleType:
+    """Import the module of a bundled dataset and check it against the generated index.
+
+    Parameters
+    ----------
+    name : str
+        Dataset name.
+
+    Returns
+    -------
+    types.ModuleType
+        The module ``pyml_datasets.datasets.<name>``.
+
+    Raises
+    ------
+    ValueError
+        If no dataset has this name.
+    RuntimeError
+        If the name or the task in the ``INFO`` of the module differs from the generated
+        index, which means ``python -m scripts gen`` was not run after a change.
+    """
+    if name not in DATASET_TASKS:
+        raise _unknown(name)
+    module = importlib.import_module(f".datasets.{name}", _PACKAGE)
+    info: DatasetInfo = module.INFO
+    if info.name != name or info.task != DATASET_TASKS[name]:
+        raise RuntimeError(
+            f"The index of datasets does not match the INFO of {name!r}. Run python -m scripts gen."
+        )
+    return module
 
 
 def list_datasets(task: Task | None = None) -> tuple[str, ...]:
     """List the names of the bundled datasets.
+
+    No dataset module is imported to answer this.
 
     Parameters
     ----------
@@ -52,7 +89,7 @@ def list_datasets(task: Task | None = None) -> tuple[str, ...]:
     False
     """
     return tuple(
-        sorted(name for name, info in REGISTRY.items() if task is None or info.task == task)
+        sorted(name for name, kind in DATASET_TASKS.items() if task is None or kind == task)
     )
 
 
@@ -80,10 +117,8 @@ def get_info(name: str) -> DatasetInfo:
     >>> get_info("iris").license
     'CC-BY-4.0'
     """
-    try:
-        return REGISTRY[name]
-    except KeyError:
-        raise _unknown(name) from None
+    info: DatasetInfo = _module(name).INFO
+    return info
 
 
 def load_dataset(name: str) -> Dataset:
@@ -113,8 +148,5 @@ def load_dataset(name: str) -> Dataset:
     >>> X.shape
     (150, 4)
     """
-    try:
-        loader = _LOADERS[name]
-    except KeyError:
-        raise _unknown(name) from None
+    loader: Callable[[], Dataset] = getattr(_module(name), f"load_{name}")
     return loader()

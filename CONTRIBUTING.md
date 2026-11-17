@@ -63,7 +63,8 @@ pyml-datasets/
 │   ├── _cli/                   # The pyml-datasets command: list and show (private)
 │   ├── data/                   # <name>.npz files and MANIFEST.json (generated)
 │   ├── datasets/               # One module per dataset: INFO + load_<name>()
-│   │   └── __init__.py         # ENTRIES, the registry input (generated)
+│   │   └── __init__.py         # DATASET_TASKS, the index of the datasets (generated)
+│   ├── __init__.pyi            # Type information of the package, names every loader (generated)
 │   ├── __main__.py             # python -m pyml_datasets
 │   ├── _loader.py              # Reads an npz file into a Dataset
 │   ├── _registry.py            # list_datasets, get_info, load_dataset
@@ -381,10 +382,11 @@ uv run -m scripts gen
 facts about one dataset. They run the `pyml-datasets` command of the package.
 
 The first command combines the recipe and `INFO`, validates the arrays and saves
-`pyml_datasets/data/seeds.npz`. The second updates the registry (`ENTRIES`), the exports,
+`pyml_datasets/data/seeds.npz`. The second updates the index of the datasets (`DATASET_TASKS`), the exports,
 `NOTICE.md`, the README table, the toctree of the datasets index, the other documentation
 includes and `MANIFEST.json`. Never edit those by hand; `generate --check` fails if you do.
-Running `generate` again changes nothing when nothing changed.
+A dataset module is imported when the dataset is first used, not by `import pyml_datasets`,
+so the new dataset costs nothing at import time. Running `generate` again changes nothing when nothing changed.
 
 **6. Fill in the facts and the evidence.** Write `tests/expected/seeds.py` from the source
 documentation. A fact that is not on the page of the source (for example class counts) is
