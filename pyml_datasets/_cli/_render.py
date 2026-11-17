@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import Final
 
 from rich import box
-from rich.console import Group, RenderableType
+from rich.console import Console, ConsoleOptions, Group, RenderableType, RenderResult
 from rich.padding import Padding
 from rich.rule import Rule
 from rich.style import Style
@@ -125,6 +125,32 @@ def _plural(count: int, word: str) -> str:
     return f"{count} {word}" if count == 1 else f"{count} {word}s"
 
 
+class _Divider:
+    """A thin line across the terminal.
+
+    ``rich.rule.Rule`` without a title draws ``─`` even when the output cannot encode it, for
+    example a pipe on Windows that uses cp1252, and printing then fails. This line draws a
+    hyphen there.
+    """
+
+    def __rich_console__(self, console: Console, options: ConsoleOptions) -> RenderResult:
+        """Draw the line with a character that the output can encode.
+
+        Parameters
+        ----------
+        console : rich.console.Console
+            The console that prints the line.
+        options : rich.console.ConsoleOptions
+            The options of the console, which say whether the output is ASCII only.
+
+        Yields
+        ------
+        rich.rule.Rule
+            The line.
+        """
+        yield Rule(characters="-" if options.ascii_only else "─", style="dim")
+
+
 def _heading(title: str) -> RenderableType:
     """Build the heading of a section: the title and a thin line after it.
 
@@ -225,7 +251,7 @@ def _header(info: DatasetInfo) -> RenderableType:
     line.add_column(ratio=1)
     line.add_column(justify="right", no_wrap=True)
     line.add_row(Text(info.title, style="bold"), labels)
-    return Group(line, Rule(style="dim"))
+    return Group(line, _Divider())
 
 
 def _hidden_parts(info: DatasetInfo) -> Text:

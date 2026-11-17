@@ -332,6 +332,56 @@ def test_the_parser_stores_the_handler() -> None:
     assert args.handler is _commands.show_command
 
 
+@pytest.mark.parametrize("argv", [["list"], ["show", "iris"], ["show", "german_credit", "--full"]])
+def test_the_output_survives_a_console_that_is_not_utf8(
+    argv: list[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # A pipe on Windows uses cp1252, which has no box drawing characters.
+    buffer = io.BytesIO()
+    stream = io.TextIOWrapper(buffer, encoding="cp1252", newline="")
+    monkeypatch.setattr(sys, "stdout", stream)
+    assert main(argv) == 0
+    stream.flush()
+    text = buffer.getvalue().decode("cp1252")
+    assert "\u2500" not in text
+    assert "-" * 10 in text
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_every_dataset_can_be_shown_on_a_console_that_is_not_utf8(
+    name: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    buffer = io.BytesIO()
+    stream = io.TextIOWrapper(buffer, encoding="cp1252", newline="")
+    monkeypatch.setattr(sys, "stdout", stream)
+    assert main(["show", name, "--full"]) == 0
+    stream.flush()
+    assert get_info(name).title.encode("cp1252", errors="replace").decode("cp1252") in (
+        buffer.getvalue().decode("cp1252")
+    )
+
+
+def test_a_character_that_the_output_cannot_encode_becomes_a_question_mark(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    buffer = io.BytesIO()
+    stream = io.TextIOWrapper(buffer, encoding="cp1252", newline="")
+    monkeypatch.setattr(sys, "stdout", stream)
+    assert main(["show", "combined_cycle_power_plant"]) == 0
+    stream.flush()
+    assert "P?nar T" in buffer.getvalue().decode("cp1252")
+
+
+def test_a_stream_that_cannot_be_reconfigured_is_left_alone(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class Plain(io.StringIO):
+        reconfigure = None
+
+    monkeypatch.setattr(sys, "stderr", Plain())
+    assert main(["list"]) == 0
+
+
 def test_the_package_runs_as_a_module() -> None:
     result = subprocess.run(
         [sys.executable, "-m", "pyml_datasets", "show", "iris"],
@@ -485,13 +535,28 @@ def test_the_name_is_not_repeated_as_a_fact(capsys: pytest.CaptureFixture[str]) 
     assert not [line for line in lines if line.strip().startswith("Name ")]
 
 
-def test_the_links_are_drawn_when_the_terminal_shows_colors(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
-) -> None:
-    monkeypatch.setenv("FORCE_COLOR", "1")
-    main(["show", "iris"])
-    output = capsys.readouterr().out
+def test_the_links_are_drawn_when_the_terminal_supports_them() -> None:
+    # The console is built here and not by the command: a Windows console without escape
+    # codes draws no links, so going through the command would depend on the platform.
     info = get_info("iris")
+    data = load_dataset("iris")
+    report = _render.show_report(
+        info,
+        shape=(data.X.shape[0], data.X.shape[1]),
+        size=1,
+        feature_names=data.feature_names,
+        target_names=data.target_names,
+    )
+    console = Console(
+        file=io.StringIO(),
+        force_terminal=True,
+        color_system="standard",
+        legacy_windows=False,
+        width=200,
+        highlight=False,
+    )
+    console.print(report)
+    output = console.file.getvalue()  # type: ignore[attr-defined]
     assert "\x1b]8;" in output
     assert info.source_url in output
     assert f"https://doi.org/{info.doi}" in output
