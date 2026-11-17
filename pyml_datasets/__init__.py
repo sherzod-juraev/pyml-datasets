@@ -6,7 +6,7 @@ and no data is read until a ``load_*`` function or ``load_dataset`` is called.
 Every dataset carries its license, its source and its citation in ``Dataset.info``.
 """
 
-__version__: str = "0.16.0"
+__version__: str = "0.17.0"
 __author__: str = "Sherzod Juraev"
 
 from ._registry import get_info, list_datasets, load_dataset

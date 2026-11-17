@@ -24,8 +24,13 @@ _DATA_DIR = Path(_PACKAGE) / "data"
 _WHEEL_REQUIRED = [
     f"{_PACKAGE}/py.typed",
     f"{_PACKAGE}/__init__.py",
+    f"{_PACKAGE}/__main__.py",
+    f"{_PACKAGE}/_cli/__init__.py",
     f"{_PACKAGE}/data/MANIFEST.json",
 ]
+# The command that the wheel installs, as ``entry_points.txt`` has to say it.
+_WHEEL_ENTRY_POINTS = ".dist-info/entry_points.txt"
+_WHEEL_COMMAND = "pyml-datasets = pyml_datasets._cli:main"
 # The notice and the text of every license the data is under must travel with the wheel.
 _WHEEL_LICENSES = [
     ".dist-info/licenses/LICENSE",
@@ -156,8 +161,15 @@ def _check_wheel_contents(session: nox.Session, wheel: Path) -> None:
     """
     with zipfile.ZipFile(wheel) as archive:
         names = archive.namelist()
+        entry_points = "".join(
+            archive.read(name).decode("utf-8")
+            for name in names
+            if name.endswith(_WHEEL_ENTRY_POINTS)
+        )
 
     problems = [f"missing {name}" for name in _WHEEL_REQUIRED if name not in names]
+    if _WHEEL_COMMAND not in entry_points:
+        problems.append(f"the metadata does not declare the command {_WHEEL_COMMAND!r}")
 
     data_files = sorted(path.name for path in _DATA_DIR.glob("*.npz"))
     if not data_files:
@@ -192,7 +204,7 @@ def lint(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def types(session: nox.Session) -> None:
     """Check the types with mypy in strict mode."""
-    _sync(session, "--group", "dev-types", "--group", "dev-test", "--group", "dev-scripts")
+    _sync(session, "--group", "dev-types", "--group", "dev-test")
     session.run("mypy", _PACKAGE, "scripts")
     session.run("mypy", "tests")
 
@@ -219,14 +231,14 @@ def tests(session: nox.Session) -> None:
     Arguments after ``--`` are passed to pytest, for example ``nox -s tests -- -k wine``. The
     coverage is not measured then, see ``_pytest``.
     """
-    _sync(session, "--group", "dev-test", "--group", "dev-scripts")
+    _sync(session, "--group", "dev-test")
     _pytest(session)
 
 
 @nox.session(name="tests-min", python=PYTHON_VERSIONS[0])
 def tests_min(session: nox.Session) -> None:
     """Run the test suite with the oldest NumPy that pyml-datasets claims to support."""
-    _sync(session, "--group", "dev-test", "--group", "dev-scripts")
+    _sync(session, "--group", "dev-test")
     minimum = _minimum_requirements()
     session.install(*minimum)
     session.run("python", "-c", _CHECK_VERSIONS, *minimum)
@@ -258,7 +270,7 @@ def linkcheck(session: nox.Session) -> None:
 
 @nox.session(python=DEFAULT_PYTHON)
 def package(session: nox.Session) -> None:
-    """Build the wheel, check its contents and load every dataset from an installed copy."""
+    """Build the wheel, check its contents, load every dataset and run the installed command."""
     _sync(session, "--group", "dev-package")
     dist = Path(session.create_tmp()) / "dist"
     # Leftovers of an earlier build would be packed into the new wheel as they are.
@@ -274,3 +286,7 @@ def package(session: nox.Session) -> None:
     session.install(str(wheels[0]))
     session.chdir(session.create_tmp())
     session.run("python", "-c", _SMOKE_TEST)
+    # The command of the wheel, as a user starts it: by its name and as a module.
+    session.run("pyml-datasets", "list")
+    session.run("pyml-datasets", "show", "iris")
+    session.run("python", "-m", "pyml_datasets", "list")

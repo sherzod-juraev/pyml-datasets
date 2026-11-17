@@ -60,16 +60,18 @@ pyml-datasets/
 ├── legal/evidence/             # One evidence file per dataset: where the license was read
 ├── LICENSES/                   # Full text of every license the data is under
 ├── pyml_datasets/              # Source code
+│   ├── _cli/                   # The pyml-datasets command: list and show (private)
 │   ├── data/                   # <name>.npz files and MANIFEST.json (generated)
 │   ├── datasets/               # One module per dataset: INFO + load_<name>()
 │   │   └── __init__.py         # ENTRIES, the registry input (generated)
+│   ├── __main__.py             # python -m pyml_datasets
 │   ├── _loader.py              # Reads an npz file into a Dataset
 │   ├── _registry.py            # list_datasets, get_info, load_dataset
 │   └── _types.py               # DatasetInfo and Dataset
 ├── scripts/                    # Development tools, not shipped in the wheel
 │   ├── recipes/                # One recipe per dataset: how to get the arrays
 │   ├── __main__.py             # Entry point of `python -m scripts`
-│   ├── cli.py                  # The commands: new, build, gen, legal, refresh, check
+│   ├── cli.py                  # The commands: new, build, gen, legal, refresh, check, list, show
 │   ├── _console.py             # Colored output of the commands, with rich
 │   ├── build_datasets.py       # recipe + INFO -> data/<name>.npz
 │   ├── generate.py             # INFO -> registry, NOTICE, README table, docs, manifest
@@ -105,23 +107,23 @@ distributed is generated from that. See `docs/source/design/single_source.rst`.
 
 The development tools are **dependency groups** ([PEP 735](https://peps.python.org/pep-0735/))
 in `pyproject.toml`, not extras. They are not part of the published package: `pip install
-pyml-datasets` installs NumPy and nothing else. `uv.lock` pins the exact version of every
+pyml-datasets` installs the packages of `dependencies` in `pyproject.toml` (NumPy, and rich and
+rich-argparse for the command line) and no group. `uv.lock` pins the exact version of every
 package of every group.
 
-| Group           |                       Purpose                       |
-|:----------------|:---------------------------------------------------:|
-| `dev-test`      |           pytest, pytest-sugar, pytest-cov          |
-| `dev-lint`      |                         ruff                        |
-| `dev-types`     |                         mypy                        |
-| `dev-docstring` |                     interrogate                     |
-| `dev-package`   |                  build (the wheel)                  |
-| `dev-scripts`   | rich, rich-argparse (the command line of `scripts`) |
-| `dev`           |    all `dev-*` groups, scikit-learn and ucimlrepo   |
-| `docs-lint`     |             doc8, rstcheck, sphinx-lint             |
-| `docs-build`    |           Sphinx, its theme and extensions          |
-| `docs`          |             `docs-lint` and `docs-build`            |
-| `docs-live`     |          `docs-build` and sphinx-autobuild          |
-| `nox`           |                 Nox, to run sessions                |
+| Group           |                    Purpose                     |
+|:----------------|:----------------------------------------------:|
+| `dev-test`      |        pytest, pytest-sugar, pytest-cov        |
+| `dev-lint`      |                      ruff                      |
+| `dev-types`     |                      mypy                      |
+| `dev-docstring` |                  interrogate                   |
+| `dev-package`   |               build (the wheel)                |
+| `dev`           | all `dev-*` groups, scikit-learn and ucimlrepo |
+| `docs-lint`     |          doc8, rstcheck, sphinx-lint           |
+| `docs-build`    |        Sphinx, its theme and extensions        |
+| `docs`          |          `docs-lint` and `docs-build`          |
+| `docs-live`     |       `docs-build` and sphinx-autobuild        |
+| `nox`           |              Nox, to run sessions              |
 
 scikit-learn and ucimlrepo are needed only to rebuild data files, never to use the package.
 
@@ -174,17 +176,17 @@ The logos and the social preview image are read from `assets/branding`, so add
 Every session installs its own environment from `uv.lock` (`uv sync --locked`) and only the
 groups it needs.
 
-| Session      |      Python      | Groups                                 |                           What it runs                           |
-|:-------------|:----------------:|:---------------------------------------|:----------------------------------------------------------------:|
-| `lint`       |       3.13       | `dev-lint`                             |                ruff check and ruff format --check                |
-| `types`      |       3.13       | `dev-types`, `dev-test`, `dev-scripts` |       mypy (strict) on `pyml_datasets`, `scripts`, `tests`       |
-| `docstrings` |       3.13       | `dev-docstring`, `dev-test`            |   interrogate (100% coverage) and the doctests of the package    |
-| `legal`      |       3.13       | `dev`                                  |                    `python -m scripts check`                     |
-| `tests`      | 3.12, 3.13, 3.14 | `dev-test`, `dev-scripts`              |            pytest and the coverage of `pyml_datasets`            |
-| `tests-min`  |       3.12       | `dev-test`, `dev-scripts`              |   as `tests`, with the oldest supported NumPy installed on top   |
-| `docs`       |       3.13       | `docs`                                 |          sphinx-lint, doc8, rstcheck, `sphinx-build -W`          |
-| `linkcheck`  |       3.13       | `docs-build`                           |       Sphinx linkcheck, validity of every link in the docs       |
-| `package`    |       3.13       | `dev-package`                          | builds the wheel, checks its contents, imports an installed copy |
+| Session      |      Python      | Groups                      |                                     What it runs                                     |
+|:-------------|:----------------:|:----------------------------|:------------------------------------------------------------------------------------:|
+| `lint`       |       3.13       | `dev-lint`                  |                          ruff check and ruff format --check                          |
+| `types`      |       3.13       | `dev-types`, `dev-test`     |                 mypy (strict) on `pyml_datasets`, `scripts`, `tests`                 |
+| `docstrings` |       3.13       | `dev-docstring`, `dev-test` |             interrogate (100% coverage) and the doctests of the package              |
+| `legal`      |       3.13       | `dev`                       |                              `python -m scripts check`                               |
+| `tests`      | 3.12, 3.13, 3.14 | `dev-test`                  |                      pytest and the coverage of `pyml_datasets`                      |
+| `tests-min`  |       3.12       | `dev-test`                  | as `tests`, with the oldest supported NumPy, rich and rich-argparse installed on top |
+| `docs`       |       3.13       | `docs`                      |                    sphinx-lint, doc8, rstcheck, `sphinx-build -W`                    |
+| `linkcheck`  |       3.13       | `docs-build`                |                 Sphinx linkcheck, validity of every link in the docs                 |
+| `package`    |       3.13       | `dev-package`               |  builds the wheel, checks its contents, imports an installed copy, runs its command  |
 
 `nox` without arguments runs every session except `linkcheck`, which needs the network and is
 slow.
@@ -374,6 +376,9 @@ uv run -m scripts gen
 ```
 
 `uv run -m scripts refresh seeds` runs both and the legal check in a row.
+
+`uv run -m scripts list` and `uv run -m scripts show seeds` print the table of the datasets and the
+facts about one dataset. They run the `pyml-datasets` command of the package.
 
 The first command combines the recipe and `INFO`, validates the arrays and saves
 `pyml_datasets/data/seeds.npz`. The second updates the registry (`ENTRIES`), the exports,
