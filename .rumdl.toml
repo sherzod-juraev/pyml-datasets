@@ -1,0 +1,23 @@
+# Markdown lint (rumdl). Run it with ``uv run nox -s markdown``.
+
+[global]
+line_length = 100
+
+[MD013]
+line-length = 100
+# The generated tables of the README are wider than a line and cannot be wrapped.
+tables = false
+
+[MD033]
+# The logo of the README is the only HTML in the Markdown files.
+allowed-elements = ["p", "picture", "source", "img"]
+
+[per-file-ignores]
+# The README starts with the logo and the PR template with its first section.
+"README.md" = ["MD041"]
+".github/PULL_REQUEST_TEMPLATE.md" = ["MD041"]
+# The evidence files are read field by field by ``scripts.check_legal``: every field is one
+# line, and the address of the page is read as written, so neither a wrapped line nor an
+# address in angle brackets would do. The files checked earlier by a tool stay unchanged.
+# Every other rule applies to them.
+"legal/evidence/*.md" = ["MD013", "MD034"]

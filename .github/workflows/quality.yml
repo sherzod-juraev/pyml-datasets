@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        session: [lint, types, docstrings, legal, package]
+        session: [lint, types, docstrings, legal, markdown, package]
 
     steps:
       - uses: actions/checkout@v7

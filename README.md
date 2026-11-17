@@ -17,8 +17,8 @@ Classic tabular datasets for machine learning, stored as NumPy `.npz` files and 
 single function call. No downloads at runtime, no network, no pandas: just NumPy arrays. Every
 dataset carries its license, its source and its citation with it.
 
-- **Documentation**: https://pyml-datasets.readthedocs.io
-- **Source code**: https://github.com/sherzod-juraev/pyml-datasets
+- **Documentation**: <https://pyml-datasets.readthedocs.io>
+- **Source code**: <https://github.com/sherzod-juraev/pyml-datasets>
 - **Main library**: [pyml](https://github.com/sherzod-juraev/pyml), a from-scratch machine
   learning library that uses these datasets in its examples
 
@@ -176,7 +176,7 @@ also change at the source, so please check yourself if it matters for your use.
 
 If you are the creator or the rights holder of a dataset here and the license, the
 attribution or the changes listed for it are wrong, or you do not want it distributed, write
-to 📧 juraevsherzod9943@gmail.com. I will fix or remove it. Removing a dataset from the current
+to 📧 <juraevsherzod9943@gmail.com>. I will fix or remove it. Removing a dataset from the current
 version is quick; removing it from the git history of the repository is something I can do
 too, and I will if you ask.
 

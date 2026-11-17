@@ -1,0 +1,35 @@
+name: Markdown links
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-links:
+    name: nox -s markdown-links
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Check the external links of the Markdown files
+        run: uv run --locked --only-group nox nox -s markdown-links
+
+      - name: Upload the report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: markdown-links-report
+          path: docs/build/markdown-links/report.md
+          if-no-files-found: ignore
