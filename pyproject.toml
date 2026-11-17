@@ -36,6 +36,8 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.26.0",
+    "rich>=12.6.0",
+    "rich-argparse>=1.0.0",
 ]
 
 # --- Dependency groups --- #
@@ -50,18 +52,12 @@ dev-lint = ["ruff>=0.6.0"]
 dev-types = ["mypy>=1.11"]
 dev-docstring = ["interrogate>=1.7.0"]
 dev-package = ["build>=1.2"]
-# The command line of the scripts folder, which the tests and mypy import.
-dev-scripts = [
-    "rich>=15.0.0",
-    "rich-argparse>=1.8.0",
-]
 dev = [
     {include-group = "dev-test"},
     {include-group = "dev-lint"},
     {include-group = "dev-types"},
     {include-group = "dev-docstring"},
     {include-group = "dev-package"},
-    {include-group = "dev-scripts"},
     "scikit-learn>=1.4.0",
     "ucimlrepo>=0.0.7",
 ]
@@ -80,6 +76,7 @@ docs-build = [
     "sphinx-notfound-page>=1.1.0",
     "sphinxext-opengraph>=0.13.0",
     "sphinx-sitemap>=2.6.0",
+    "sphinxcontrib-programoutput>=0.20",
 ]
 docs = [
     {include-group = "docs-lint"},
@@ -90,6 +87,10 @@ docs-live = [
     "sphinx-autobuild>=2025.8.25",
 ]
 nox = ["nox>=2026.2.9"]
+
+# --- Command line --- #
+[project.scripts]
+pyml-datasets = "pyml_datasets._cli:main"
 
 # --- Urls --- #
 [project.urls]
@@ -209,6 +210,7 @@ ignore_directives = [
     "autoclass", "autofunction",
     "button-link", "button-ref",
     "card", "card-header", "card-footer",
+    "command-output",
     "doctest", "dropdown",
     "grid", "grid-item-card",
     "only",

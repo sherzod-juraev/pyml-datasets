@@ -1,6 +1,23 @@
 Changelog
 =========
 
+0.17.0
+------
+
+Added
+~~~~~
+
+- The ``pyml-datasets`` command, also run as ``python -m pyml_datasets``, with two
+  sub-commands. ``list`` prints a table of the datasets with their task, license and shape.
+  ``show NAME`` prints the facts about one dataset: its license, source, citation and the
+  changes made to the data. The output is meant for people and is not a stable interface.
+
+Changed
+~~~~~~~
+
+- ``rich`` and ``rich-argparse`` are now dependencies of the package. They are used only by the
+  command and are not imported by ``import pyml_datasets``.
+
 0.16.0
 ------
 

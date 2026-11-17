@@ -8,10 +8,14 @@ Run it from the repository root::
     python -m scripts legal                    # license and evidence check
     python -m scripts refresh seeds            # build, gen and legal in a row
     python -m scripts check                    # legal and ``gen --check``, as in CI
+    python -m scripts list                     # the table of the datasets
+    python -m scripts show iris                # the facts about one dataset
 
-Every command returns 0 if it succeeded and 1 if not, and the errors go to ``stderr``, so CI
-can use it as a gate. The commands call the modules of this package, which only compute and
-return results; everything is printed here, through :mod:`scripts._console`.
+Every command returns 0 if it succeeded and 1 if not (2 for an unknown dataset name), and the
+errors go to ``stderr``, so CI can use it as a gate. The commands call the modules of this
+package, which only compute and return results; everything is printed here, through
+:mod:`scripts._console`. ``list`` and ``show`` are the ``pyml-datasets`` command of the
+package, called in the same process, so the output is the one users see.
 """
 
 import argparse
@@ -22,6 +26,7 @@ from typing import Final
 
 from rich_argparse import RawDescriptionRichHelpFormatter
 
+from pyml_datasets._cli import main as package_cli
 from pyml_datasets._types import LICENSE_IDS, TASKS
 from scripts import ROOT, _console, build_datasets, check_legal, generate, new_dataset, utc_today
 from scripts._console import Cell
@@ -258,6 +263,16 @@ def _refresh(args: argparse.Namespace) -> int:
     return _legal_check()
 
 
+def _list(args: argparse.Namespace) -> int:
+    """Run ``pyml-datasets list`` of the package."""
+    return package_cli(["list"])
+
+
+def _show(args: argparse.Namespace) -> int:
+    """Run ``pyml-datasets show`` of the package."""
+    return package_cli(["show", args.name])
+
+
 def _check(args: argparse.Namespace) -> int:
     """Run the checks of the ``legal`` Nox session."""
     _console.step("Check licenses and evidence")
@@ -342,6 +357,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="do not write, fail if a generated file is out of date",
     )
     gen.set_defaults(handler=_gen)
+
+    listing = add_command("list", help="show a table of all datasets (pyml-datasets list)")
+    listing.set_defaults(handler=_list)
+
+    show = add_command("show", help="show the facts about one dataset (pyml-datasets show)")
+    show.add_argument("name", help="dataset name, for example 'iris'")
+    show.set_defaults(handler=_show)
 
     legal = add_command("legal", help="check licenses and evidence")
     legal.set_defaults(handler=_legal)

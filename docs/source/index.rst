@@ -11,9 +11,11 @@ original license, citation and a list of the changes made to it.
 This is a personal project of a student, made for pyml. It is not looking for contributors,
 see the `README <https://github.com/sherzod-juraev/pyml-datasets>`_.
 
-The package depends only on NumPy. The tools used to download and convert the
-original data, for example scikit-learn and ucimlrepo, are needed only to
-rebuild the data files, never to use them.
+The data is read with NumPy alone. The :doc:`command line <cli>` also uses rich and
+rich-argparse, which are installed with the package but are not loaded by
+``import pyml_datasets``. The tools used to download and convert the original data, for
+example scikit-learn and ucimlrepo, are needed only to rebuild the data files, never to use
+them.
 
 Each dataset is described in the :doc:`datasets/index` section, with its
 source, citation, and license. A file is read from disk only when its
@@ -108,6 +110,7 @@ project, but it is a standalone package with no dependency on pyml.
 
    installation
    quick_start
+   cli
    datasets/index
    data_format
    api

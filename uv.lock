@@ -1274,6 +1274,8 @@ name = "pyml-datasets"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
+    { name = "rich" },
+    { name = "rich-argparse" },
 ]
 
 [package.dev-dependencies]
@@ -1284,8 +1286,6 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-sugar" },
-    { name = "rich" },
-    { name = "rich-argparse" },
     { name = "ruff" },
     { name = "scikit-learn" },
     { name = "ucimlrepo" },
@@ -1298,10 +1298,6 @@ dev-lint = [
 ]
 dev-package = [
     { name = "build" },
-]
-dev-scripts = [
-    { name = "rich" },
-    { name = "rich-argparse" },
 ]
 dev-test = [
     { name = "pytest" },
@@ -1323,6 +1319,7 @@ docs = [
     { name = "sphinx-lint" },
     { name = "sphinx-notfound-page" },
     { name = "sphinx-sitemap" },
+    { name = "sphinxcontrib-programoutput" },
     { name = "sphinxext-opengraph" },
 ]
 docs-build = [
@@ -1334,6 +1331,7 @@ docs-build = [
     { name = "sphinx-design" },
     { name = "sphinx-notfound-page" },
     { name = "sphinx-sitemap" },
+    { name = "sphinxcontrib-programoutput" },
     { name = "sphinxext-opengraph" },
 ]
 docs-lint = [
@@ -1351,6 +1349,7 @@ docs-live = [
     { name = "sphinx-design" },
     { name = "sphinx-notfound-page" },
     { name = "sphinx-sitemap" },
+    { name = "sphinxcontrib-programoutput" },
     { name = "sphinxext-opengraph" },
 ]
 nox = [
@@ -1358,7 +1357,11 @@ nox = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "numpy", specifier = ">=1.26.0" }]
+requires-dist = [
+    { name = "numpy", specifier = ">=1.26.0" },
+    { name = "rich", specifier = ">=12.6.0" },
+    { name = "rich-argparse", specifier = ">=1.0.0" },
+]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1368,8 +1371,6 @@ dev = [
     { name = "pytest", specifier = ">=8.0" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "pytest-sugar", specifier = ">=1.0" },
-    { name = "rich", specifier = ">=15.0.0" },
-    { name = "rich-argparse", specifier = ">=1.8.0" },
     { name = "ruff", specifier = ">=0.6.0" },
     { name = "scikit-learn", specifier = ">=1.4.0" },
     { name = "ucimlrepo", specifier = ">=0.0.7" },
@@ -1377,10 +1378,6 @@ dev = [
 dev-docstring = [{ name = "interrogate", specifier = ">=1.7.0" }]
 dev-lint = [{ name = "ruff", specifier = ">=0.6.0" }]
 dev-package = [{ name = "build", specifier = ">=1.2" }]
-dev-scripts = [
-    { name = "rich", specifier = ">=15.0.0" },
-    { name = "rich-argparse", specifier = ">=1.8.0" },
-]
 dev-test = [
     { name = "pytest", specifier = ">=8.0" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
@@ -1398,6 +1395,7 @@ docs = [
     { name = "sphinx-lint", specifier = ">=1.0.0" },
     { name = "sphinx-notfound-page", specifier = ">=1.1.0" },
     { name = "sphinx-sitemap", specifier = ">=2.6.0" },
+    { name = "sphinxcontrib-programoutput", specifier = ">=0.20" },
     { name = "sphinxext-opengraph", specifier = ">=0.13.0" },
 ]
 docs-build = [
@@ -1408,6 +1406,7 @@ docs-build = [
     { name = "sphinx-design", specifier = ">=0.8.0" },
     { name = "sphinx-notfound-page", specifier = ">=1.1.0" },
     { name = "sphinx-sitemap", specifier = ">=2.6.0" },
+    { name = "sphinxcontrib-programoutput", specifier = ">=0.20" },
     { name = "sphinxext-opengraph", specifier = ">=0.13.0" },
 ]
 docs-lint = [
@@ -1424,6 +1423,7 @@ docs-live = [
     { name = "sphinx-design", specifier = ">=0.8.0" },
     { name = "sphinx-notfound-page", specifier = ">=1.1.0" },
     { name = "sphinx-sitemap", specifier = ">=2.6.0" },
+    { name = "sphinxcontrib-programoutput", specifier = ">=0.20" },
     { name = "sphinxext-opengraph", specifier = ">=0.13.0" },
 ]
 nox = [{ name = "nox", specifier = ">=2026.2.9" }]
@@ -2094,6 +2094,20 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/59/02/4f334c7fc3e54c51d2364575a41cd2fae6847e7f53001949f0be5f32e18b/sphinxcontrib_jsmath-2.0.0.tar.gz", hash = "sha256:551f780cf9687f9c3c74f0cf9f18aca06e0d6958853453f3803fe4d357c5b924", size = 14511, upload-time = "2026-10-20T18:22:05.514Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/da/c2/2965c35b39587d4b7a397f65a9c7d4b942b031061e7ac1ce91782f394a0d/sphinxcontrib_jsmath-2.0.0-py3-none-any.whl", hash = "sha256:15ca92fe0eec82f0baf91a7efcc51ffacdb605924be6327683a52ebdacb6744c", size = 78095, upload-time = "2026-10-20T18:22:04.42Z" },
+]
+
+[[package]]
+name = "sphinxcontrib-programoutput"
+version = "0.20"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "docutils" },
+    { name = "sphinx", version = "9.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
+    { name = "sphinx", version = "9.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1b/e5/0549d81b4144a1cc8464d368bd2d7a3482fd185399d9430c548978f13036/sphinxcontrib_programoutput-0.20.tar.gz", hash = "sha256:5c4282c1c7fc9b5a23febe16ae038b6392d7ce068d186ad4870ba22e74db0711", size = 28235, upload-time = "2026-06-16T15:55:52.243Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/aa/02/bb155d4a570d7ceaf48e81f1412093ecf066437bfcb56f34c1407bf14f50/sphinxcontrib_programoutput-0.20-py3-none-any.whl", hash = "sha256:f473f9e7992879358efdeb9962fbec2103f6ba1cb6a738eb7f81dae554bc5ec7", size = 20722, upload-time = "2026-06-16T15:55:51.353Z" },
 ]
 
 [[package]]

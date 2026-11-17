@@ -92,8 +92,9 @@ print(model.score(X_test, y_test))  # accuracy on the test set
 
 ## Installation
 
-pyml-datasets is not published on PyPI. It requires Python 3.12 or newer (NumPy is the only
-dependency) and is installed directly from GitHub. With pip:
+pyml-datasets is not published on PyPI. It requires Python 3.12 or newer and is installed
+directly from GitHub. The data is read with NumPy alone; rich and rich-argparse are installed
+too, but only the command line uses them. With pip:
 
 ```bash
 pip install git+https://github.com/sherzod-juraev/pyml-datasets.git
@@ -112,6 +113,19 @@ To install a fixed release, add its tag, replacing `vX.Y.Z` with a tag from the
 pip install git+https://github.com/sherzod-juraev/pyml-datasets.git@vX.Y.Z
 uv add git+https://github.com/sherzod-juraev/pyml-datasets.git --tag vX.Y.Z
 ```
+
+## Command line
+
+The package installs a command that prints the license, the source and the citation of a
+dataset, so you do not have to write any Python to look them up:
+
+```bash
+pyml-datasets list         # a table of all datasets
+pyml-datasets show iris    # the facts about one dataset
+```
+
+It also runs as `python -m pyml_datasets`. The output is meant for people, it is not a stable
+interface. See the documentation for the details.
 
 ## What's inside
 

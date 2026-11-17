@@ -35,6 +35,18 @@ rst_prolog = f"""
 _READTHEDOCS_CANONICAL_URL = os.environ.get("READTHEDOCS_CANONICAL_URL")
 _CANONICAL_URL = _READTHEDOCS_CANONICAL_URL or "https://pyml-datasets.readthedocs.io/en/latest/"
 
+# --- Program output --- #
+# The command-output directive runs the commands of the docs and prints what they write, so the
+# examples can never drift from the real output. The commands inherit this environment, which
+# makes the output the same on every machine: the scripts of this Python are found first, the
+# lines are 80 characters wide, there are no colors (a CI that sets FORCE_COLOR would put escape
+# codes into the page) and the text is UTF-8 (a Windows pipe would draw the boxes with ASCII).
+os.environ["PATH"] = os.pathsep.join([str(Path(sys.executable).parent), os.environ["PATH"]])
+os.environ["COLUMNS"] = "80"
+os.environ["NO_COLOR"] = "1"
+os.environ.pop("FORCE_COLOR", None)
+os.environ["PYTHONUTF8"] = "1"
+
 # --- Extensions --- #
 sys.path.insert(0, str(Path(__file__).parent / "_ext"))
 
@@ -50,6 +62,7 @@ extensions = [
     "notfound.extension",
     "sphinxext.opengraph",
     "sphinx_sitemap",
+    "sphinxcontrib.programoutput",
     "hide_empty_sidebar",
 ]
 
@@ -100,6 +113,9 @@ sd_card_legacy_separators = False
 copybutton_prompt_text = r">>> |\$ "
 copybutton_prompt_is_regexp = True
 copybutton_only_copy_prompt_lines = True
+# The output of a command has blank lines, for example above the caption of a table. They are not
+# part of the command, so they must not be copied after it.
+copybutton_copy_empty_lines = False
 
 # --- OpenGraph --- #
 ogp_site_url = _CANONICAL_URL
