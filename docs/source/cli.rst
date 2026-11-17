@@ -15,8 +15,19 @@ Commands
 --------
 
 ``pyml-datasets list``
-   Prints a table of all datasets with their task, license, number of samples and number of
-   features. The line below the table counts the datasets of every task.
+   Prints a table of the datasets with their task, license, number of samples and number of
+   features. The line below the table counts the datasets that are shown, by task. Three
+   options choose the rows and their order:
+
+   ``--task {classification,regression}``
+      Show only the datasets of this task.
+
+   ``--sort {name,samples,features}``
+      The column to order the rows by. The default is ``name``.
+
+   ``--reverse``
+      Reverse the order, for example to see the largest dataset first. Datasets with an equal
+      value stay in the order of their names.
 
 ``pyml-datasets show NAME``
    Prints the facts about one dataset: the summary, the license, the source, the DOI, the
@@ -28,6 +39,11 @@ The examples below are not copied: they are the output of the commands, produced
 documentation is built.
 
 .. command-output:: pyml-datasets list
+   :prompt:
+
+The regression datasets, the one with the most samples first:
+
+.. command-output:: pyml-datasets list --task regression --sort samples --reverse
    :prompt:
 
 .. command-output:: pyml-datasets show iris

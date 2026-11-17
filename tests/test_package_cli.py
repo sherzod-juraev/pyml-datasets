@@ -45,6 +45,122 @@ def test_list_prints_every_dataset_and_the_totals(capsys: pytest.CaptureFixture[
     assert expected in output
 
 
+def _listed(capsys: pytest.CaptureFixture[str]) -> list[str]:
+    """Return the dataset names of the ``list`` table in the order they are printed."""
+    lines = capsys.readouterr().out.splitlines()
+    return [line.split()[0] for line in lines if line.split()[:1] and line.split()[0] in NAMES]
+
+
+def _shape(name: str) -> tuple[int, int]:
+    n_samples, n_features = load_dataset(name).X.shape
+    return n_samples, n_features
+
+
+@pytest.mark.parametrize("task", ["classification", "regression"])
+def test_list_task_shows_only_the_datasets_of_that_task(
+    task: str, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["list", "--task", task]) == 0
+    shown = _listed(capsys)
+    assert set(shown) == set(list_datasets(task))  # type: ignore[arg-type]
+    assert set(shown) < set(NAMES)
+
+
+@pytest.mark.parametrize("task", ["classification", "regression"])
+def test_the_footer_counts_only_the_shown_datasets(
+    task: str, capsys: pytest.CaptureFixture[str]
+) -> None:
+    main(["list", "--task", task])
+    output = capsys.readouterr().out
+    count = len(list_datasets(task))  # type: ignore[arg-type]
+    assert f"{count} datasets: {task} {count}" in output
+    other = "regression" if task == "classification" else "classification"
+    assert other not in output
+
+
+def test_the_default_order_is_by_name(capsys: pytest.CaptureFixture[str]) -> None:
+    main(["list"])
+    assert _listed(capsys) == sorted(NAMES)
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    ("key", "value"),
+    [
+        ("name", lambda name: name),
+        ("samples", lambda n: _shape(n)[0]),
+        ("features", lambda n: _shape(n)[1]),
+    ],
+)
+def test_list_sort_orders_the_rows(
+    key: str, value: Any, reverse: bool, capsys: pytest.CaptureFixture[str]
+) -> None:
+    argv = ["list", "--sort", key] + (["--reverse"] if reverse else [])
+    assert main(argv) == 0
+    shown = _listed(capsys)
+    assert sorted(shown) == sorted(NAMES)
+    values = [value(name) for name in shown]
+    assert values == sorted(values, reverse=reverse)
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_equal_values_stay_in_the_order_of_their_names(
+    reverse: bool, capsys: pytest.CaptureFixture[str]
+) -> None:
+    features = [_shape(name)[1] for name in NAMES]
+    assert len(set(features)) < len(features), "the test needs two datasets with equal values"
+    main(["list", "--sort", "features"] + (["--reverse"] if reverse else []))
+    shown = _listed(capsys)
+    for count in set(features):
+        group = [name for name in shown if _shape(name)[1] == count]
+        assert group == sorted(group)
+
+
+def test_reverse_alone_reverses_the_names(capsys: pytest.CaptureFixture[str]) -> None:
+    main(["list", "--reverse"])
+    assert _listed(capsys) == sorted(NAMES, reverse=True)
+
+
+def test_task_sort_and_reverse_work_together(capsys: pytest.CaptureFixture[str]) -> None:
+    main(["list", "--task", "regression", "--sort", "samples", "--reverse"])
+    shown = _listed(capsys)
+    sizes = [_shape(name)[0] for name in shown]
+    assert sizes == sorted(sizes, reverse=True)
+    assert set(shown) == set(list_datasets("regression"))
+
+
+@pytest.mark.parametrize(
+    "argv", [["list", "--task", "clustering"], ["list", "--sort", "size"], ["list", "--sort"]]
+)
+def test_list_rejects_a_wrong_option(argv: list[str], capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as stop:
+        main(argv)
+    assert stop.value.code == 2
+    assert "error:" in capsys.readouterr().err
+
+
+def test_list_columns_are_aligned_as_designed() -> None:
+    table = _render.list_table([], {})
+    justify = {str(column.header): column.justify for column in table.columns}
+    assert justify == {
+        "Dataset": "left",
+        "Task": "center",
+        "License": "center",
+        "Samples": "right",
+        "Features": "right",
+    }
+
+
+def test_sort_rows_does_not_change_its_argument() -> None:
+    rows = [
+        _render.ListRow("b", "regression", "CC0-1.0", 5, 2),
+        _render.ListRow("a", "regression", "CC0-1.0", 5, 3),
+    ]
+    ordered = _commands.sort_rows(rows, "samples", reverse=True)
+    assert [row.name for row in ordered] == ["a", "b"]
+    assert [row.name for row in rows] == ["b", "a"]
+
+
 @pytest.mark.parametrize("name", NAMES)
 def test_the_shape_is_read_from_the_header(name: str) -> None:
     data = load_dataset(name)

@@ -1,6 +1,24 @@
 Changelog
 =========
 
+0.19.0
+------
+
+Added
+~~~~~
+
+- Options of ``pyml-datasets list``: ``--task`` shows only the datasets of one task,
+  ``--sort`` orders the rows by name, number of samples or number of features, and
+  ``--reverse`` reverses the order. Datasets with an equal value stay in the order of their
+  names. The line below the table counts the datasets that are shown. ``python -m scripts
+  list`` takes the same options.
+
+Changed
+~~~~~~~
+
+- The columns ``Task`` and ``License`` of the table are centered. The output is meant for
+  people and is not a stable interface.
+
 0.18.0
 ------
 

@@ -272,3 +272,33 @@ def test_help_is_plain_text_when_it_is_not_a_terminal(
     output = capsys.readouterr().out
     assert "\x1b" not in output
     assert "python -m scripts" in output
+
+
+@pytest.mark.parametrize(
+    ("argv", "expected"),
+    [
+        (["list"], ["list", "--sort", "name"]),
+        (
+            ["list", "--task", "regression", "--sort", "samples", "--reverse"],
+            ["list", "--sort", "samples", "--task", "regression", "--reverse"],
+        ),
+    ],
+)
+def test_list_passes_its_options_to_the_package_command(
+    argv: list[str], expected: list[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[list[str]] = []
+
+    def package_cli(arguments: list[str]) -> int:
+        calls.append(arguments)
+        return 0
+
+    monkeypatch.setattr(cli, "package_cli", package_cli)
+    assert cli.main(argv) == 0
+    assert calls == [expected]
+
+
+def test_list_rejects_a_wrong_option_like_the_package_command() -> None:
+    with pytest.raises(SystemExit) as stop:
+        cli.main(["list", "--sort", "size"])
+    assert stop.value.code == 2

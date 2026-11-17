@@ -11,7 +11,7 @@ Type checkers and IDEs read ``__init__.pyi`` (generated), which names every load
 ``__getattr__`` below does not hide a misspelled name from them.
 """
 
-__version__: str = "0.18.0"
+__version__: str = "0.19.0"
 __author__: str = "Sherzod Juraev"
 
 import importlib
