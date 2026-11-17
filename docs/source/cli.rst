@@ -30,10 +30,17 @@ Commands
       value stay in the order of their names.
 
 ``pyml-datasets show NAME``
-   Prints the facts about one dataset: the summary, the license, the source, the DOI, the
-   creators, the shape, the size of the data file, the feature and class names, the citation
-   and the changes made to the data. Lists of more than ten names are shortened, the
-   ``feature_names`` attribute of the loaded :class:`~pyml_datasets.Dataset` has them all.
+   Prints the facts about one dataset in sections. The header has the title, the task and
+   the license. *Overview* has the number of samples and features, the class or target
+   names, whether values are missing and the size of the data file. *Provenance* has the
+   source, the license with the date it was checked, the DOI and the creators, and the
+   addresses are links in terminals that support links. *Features* lists every feature name,
+   numeric and categorical ones apart, and *Citation* has the text to cite.
+
+   ``--full``
+      Also print the changes made to the data and the notes. Without it a line below the
+      report counts them. The notes can hold a warning, for example about a cost matrix or
+      about features that describe people, so read them before you use a dataset.
 
 The examples below are not copied: they are the output of the commands, produced when this
 documentation is built.
@@ -47,6 +54,14 @@ The regression datasets, the one with the most samples first:
    :prompt:
 
 .. command-output:: pyml-datasets show iris
+   :prompt:
+
+A dataset with notes, and the changes and the notes in full:
+
+.. command-output:: pyml-datasets show german_credit
+   :prompt:
+
+.. command-output:: pyml-datasets show iris --full
    :prompt:
 
 .. command-output:: pyml-datasets --help

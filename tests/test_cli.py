@@ -302,3 +302,24 @@ def test_list_rejects_a_wrong_option_like_the_package_command() -> None:
     with pytest.raises(SystemExit) as stop:
         cli.main(["list", "--sort", "size"])
     assert stop.value.code == 2
+
+
+@pytest.mark.parametrize(
+    ("argv", "expected"),
+    [
+        (["show", "iris"], ["show", "iris"]),
+        (["show", "iris", "--full"], ["show", "iris", "--full"]),
+    ],
+)
+def test_show_passes_its_arguments_to_the_package_command(
+    argv: list[str], expected: list[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[list[str]] = []
+
+    def package_cli(arguments: list[str]) -> int:
+        calls.append(arguments)
+        return 0
+
+    monkeypatch.setattr(cli, "package_cli", package_cli)
+    assert cli.main(argv) == 0
+    assert calls == [expected]

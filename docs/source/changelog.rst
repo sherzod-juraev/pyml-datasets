@@ -1,6 +1,33 @@
 Changelog
 =========
 
+0.20.0
+------
+
+Added
+~~~~~
+
+- ``pyml-datasets show NAME --full`` also prints the changes made to the data and the notes.
+  ``python -m scripts show`` takes the same option.
+
+Changed
+~~~~~~~
+
+- ``pyml-datasets show`` prints sections: the header with the task and the license, then
+  *Overview*, *Provenance*, *Features* and *Citation*. Every feature name is listed, the
+  numeric and the categorical ones apart, where the lists were cut after ten names. The
+  addresses are links in terminals that support links. The changes made to the data and the
+  notes moved to ``--full``, and a line below the report says how many there are. The
+  output is meant for people and is not a stable interface.
+
+Fixed
+~~~~~
+
+- ``pyml-datasets`` no longer fails when the output cannot encode a character, for example
+  when it goes through a pipe on Windows, which uses cp1252: ``show combined_cycle_power_plant``
+  failed on the letter ``ı`` in the name of a creator. Such a character is now printed as
+  ``?``.
+
 0.19.0
 ------
 
