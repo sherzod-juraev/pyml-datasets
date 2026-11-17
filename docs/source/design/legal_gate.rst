@@ -11,7 +11,7 @@ dataset is treated like a test: it can fail the build.
   ``NOTICE.md``.
 * Every dataset has an evidence file in ``legal/evidence/``: the license, the page that
   states it, the date, who checked it and an archived copy of the page.
-* ``python -m scripts.check_legal`` fails on a missing evidence file, a mismatch between the
+* ``python -m scripts legal`` fails on a missing evidence file, a mismatch between the
   evidence and ``INFO``, a DOI that is missing from the citation, a ``TODO`` left in the
   files, an orphan data file and a license expression that does not match the data. It fails
   as well when the evidence is not complete: the ``Archive`` must be a Wayback Machine link

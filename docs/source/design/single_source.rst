@@ -12,7 +12,7 @@ categorical features and the date the license was checked. Its constructor refus
 values: a license outside the allowed list, a URL that is not https, a malformed DOI, empty
 creators or changes.
 
-Everything else is *generated* from ``INFO`` by ``python -m scripts.generate``:
+Everything else is *generated* from ``INFO`` by ``python -m scripts gen``:
 
 * the registry (``pyml_datasets/datasets/__init__.py``) and the public exports,
 * the description stored in the data file, and the ``meta`` array,
@@ -20,7 +20,7 @@ Everything else is *generated* from ``INFO`` by ``python -m scripts.generate``:
   the toctree of the datasets index),
 * ``MANIFEST.json``, the digests of the arrays.
 
-``python -m scripts.generate --check`` fails when any generated file is out of date, so CI
+``python -m scripts gen --check`` fails when any generated file is out of date, so CI
 catches a hand edit. Adding a dataset therefore means writing one module, one recipe, the
 expected facts, the evidence file and one page of prose, not editing seven files. A recipe
 describes *how to get the arrays*; it knows nothing about licenses.

@@ -34,7 +34,7 @@ with no license, with a non-commercial or share-alike license, with an "educatio
 statement or with an unclear origin is not bundled, even if it is very well known.
 For each dataset the repository keeps a short evidence file (``legal/evidence/<name>.md``)
 with the page that states the license and the date it was checked, and the automated check
-``python -m scripts.check_legal`` fails if any dataset lacks one. The rules are written in
+``python -m scripts legal`` fails if any dataset lacks one. The rules are written in
 the contributing guide of the repository.
 
 .. important::

@@ -68,6 +68,9 @@ pyml-datasets/
 │   └── _types.py               # DatasetInfo and Dataset
 ├── scripts/                    # Development tools, not shipped in the wheel
 │   ├── recipes/                # One recipe per dataset: how to get the arrays
+│   ├── __main__.py             # Entry point of `python -m scripts`
+│   ├── cli.py                  # The commands: new, build, gen, legal, refresh, check
+│   ├── _console.py             # Colored output of the commands, with rich
 │   ├── build_datasets.py       # recipe + INFO -> data/<name>.npz
 │   ├── generate.py             # INFO -> registry, NOTICE, README table, docs, manifest
 │   ├── check_legal.py          # The legal gate
@@ -105,19 +108,20 @@ in `pyproject.toml`, not extras. They are not part of the published package: `pi
 pyml-datasets` installs NumPy and nothing else. `uv.lock` pins the exact version of every
 package of every group.
 
-| Group           |                      Purpose                       |
-|:----------------|:--------------------------------------------------:|
-| `dev-test`      |           pytest, pytest-sugar, pytest-cov         |
-| `dev-lint`      |                        ruff                        |
-| `dev-types`     |                        mypy                        |
-| `dev-docstring` |                     interrogate                    |
-| `dev-package`   |                  build (the wheel)                 |
-| `dev`           | all `dev-*` groups, scikit-learn and ucimlrepo     |
-| `docs-lint`     |            doc8, rstcheck, sphinx-lint             |
-| `docs-build`    |           Sphinx, its theme and extensions         |
-| `docs`          |             `docs-lint` and `docs-build`           |
-| `docs-live`     |       `docs-build` and sphinx-autobuild            |
-| `nox`           |                  Nox, to run sessions              |
+| Group           |                       Purpose                       |
+|:----------------|:---------------------------------------------------:|
+| `dev-test`      |           pytest, pytest-sugar, pytest-cov          |
+| `dev-lint`      |                         ruff                        |
+| `dev-types`     |                         mypy                        |
+| `dev-docstring` |                     interrogate                     |
+| `dev-package`   |                  build (the wheel)                  |
+| `dev-scripts`   | rich, rich-argparse (the command line of `scripts`) |
+| `dev`           |    all `dev-*` groups, scikit-learn and ucimlrepo   |
+| `docs-lint`     |             doc8, rstcheck, sphinx-lint             |
+| `docs-build`    |           Sphinx, its theme and extensions          |
+| `docs`          |             `docs-lint` and `docs-build`            |
+| `docs-live`     |          `docs-build` and sphinx-autobuild          |
+| `nox`           |                 Nox, to run sessions                |
 
 scikit-learn and ucimlrepo are needed only to rebuild data files, never to use the package.
 
@@ -170,17 +174,17 @@ The logos and the social preview image are read from `assets/branding`, so add
 Every session installs its own environment from `uv.lock` (`uv sync --locked`) and only the
 groups it needs.
 
-| Session      |      Python      | Groups                          |                          What it runs                          |
-|:-------------|:----------------:|:--------------------------------|:--------------------------------------------------------------:|
-| `lint`       |       3.13       | `dev-lint`                      |               ruff check and ruff format --check               |
-| `types`      |       3.13       | `dev-types`, `dev-test`         |        mypy (strict) on `pyml_datasets`, `scripts`, `tests`    |
-| `docstrings` |       3.13       | `dev-docstring`, `dev-test`     |  interrogate (100% coverage) and the doctests of the package   |
-| `legal`      |       3.13       | `dev`                           |        `scripts.check_legal` and `scripts.generate --check`    |
-| `tests`      | 3.12, 3.13, 3.14 | `dev-test`                      |           pytest and the coverage of `pyml_datasets`           |
-| `tests-min`  |       3.12       | `dev-test`                      |  as `tests`, with the oldest supported NumPy installed on top  |
-| `docs`       |       3.13       | `docs`                          |        sphinx-lint, doc8, rstcheck, `sphinx-build -W`          |
-| `linkcheck`  |       3.13       | `docs-build`                    |        Sphinx linkcheck, validity of every link in the docs    |
-| `package`    |       3.13       | `dev-package`                   | builds the wheel, checks its contents, imports an installed copy |
+| Session      |      Python      | Groups                                 |                           What it runs                           |
+|:-------------|:----------------:|:---------------------------------------|:----------------------------------------------------------------:|
+| `lint`       |       3.13       | `dev-lint`                             |                ruff check and ruff format --check                |
+| `types`      |       3.13       | `dev-types`, `dev-test`, `dev-scripts` |       mypy (strict) on `pyml_datasets`, `scripts`, `tests`       |
+| `docstrings` |       3.13       | `dev-docstring`, `dev-test`            |   interrogate (100% coverage) and the doctests of the package    |
+| `legal`      |       3.13       | `dev`                                  |                    `python -m scripts check`                     |
+| `tests`      | 3.12, 3.13, 3.14 | `dev-test`, `dev-scripts`              |            pytest and the coverage of `pyml_datasets`            |
+| `tests-min`  |       3.12       | `dev-test`, `dev-scripts`              |   as `tests`, with the oldest supported NumPy installed on top   |
+| `docs`       |       3.13       | `docs`                                 |          sphinx-lint, doc8, rstcheck, `sphinx-build -W`          |
+| `linkcheck`  |       3.13       | `docs-build`                           |       Sphinx linkcheck, validity of every link in the docs       |
+| `package`    |       3.13       | `dev-package`                          | builds the wheel, checks its contents, imports an installed copy |
 
 `nox` without arguments runs every session except `linkcheck`, which needs the network and is
 slow.
@@ -330,8 +334,11 @@ page is not clear, stop here.
 **2. Scaffold.**
 
 ```bash
-uv run python -m scripts.new_dataset seeds --license CC-BY-4.0 --task classification
+uv run -m scripts new seeds -l by -t clf
 ```
+
+`-l` takes `CC0-1.0` (`cc0`) or `CC-BY-4.0` (`by`), `-t` takes `classification` (`clf`) or
+`regression` (`reg`). The full names work as well.
 
 This creates five files and refuses to overwrite anything:
 
@@ -362,9 +369,11 @@ expect, so a silent change at the source is noticed. A recipe knows nothing abou
 **5. Build the data file and generate.**
 
 ```bash
-uv run python -m scripts.build_datasets seeds
-uv run python -m scripts.generate
+uv run -m scripts build seeds
+uv run -m scripts gen
 ```
+
+`uv run -m scripts refresh seeds` runs both and the legal check in a row.
 
 The first command combines the recipe and `INFO`, validates the arrays and saves
 `pyml_datasets/data/seeds.npz`. The second updates the registry (`ENTRIES`), the exports,
@@ -380,14 +389,14 @@ and finish the evidence: open the license page in a browser, save it to the Wayb
 open the saved copy to see that it shows the license, put the link in `Archive` and your
 name and the date in `Maintainer check`. Write the date in UTC (rule 1 of the legal rules
 above): `date -u +%F` on Linux and macOS, `(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd")`
-in PowerShell. Do this before you open the pull request: `check_legal` fails while either
+in PowerShell. Do this before you open the pull request: `legal` fails while either
 of them is missing or `pending`.
 
 **7. Check everything.**
 
 ```bash
-uv run python -m scripts.check_legal    # fails on TODO, missing evidence, license mismatch,
-                                        # missing archive or maintainer check
+uv run -m scripts check    # fails on TODO, missing evidence, license mismatch, missing archive or
+                           # maintainer check, and on generated files that are out of date
 uv run --locked --only-group nox nox    # lint, types, docstrings, legal, tests, docs, package
 ```
 
@@ -405,12 +414,12 @@ legal tests run for it automatically. Add a test only for something special abou
 | add a new generated file               | A function in `scripts/_render.py`, and one line in `expected_files()` of `scripts/generate.py` |
 | add a legal rule                       | `scripts/check_legal.py` and a test in `tests/test_legal.py` or `tests/test_legal_evidence.py` |
 | add a development tool                 | A group in `[dependency-groups]`, `uv lock`, then `_sync(session, "--group", ...)` in `noxfile.py` |
-| rebuild a data file                    | `uv run python -m scripts.build_datasets NAME --overwrite`, then `generate`; compare the new manifest digest with the old one |
+| rebuild a data file                    | `uv run -m scripts refresh NAME --force`; compare the new manifest digest with the old one |
 
 ## Removing a dataset
 
 Delete its module, recipe, data file, expected facts, documentation page and evidence file,
-run `uv run python -m scripts.generate`, add a "Removed" entry to the changelog and bump the
+run `uv run -m scripts gen`, add a "Removed" entry to the changelog and bump the
 version. If the reason is legal, also purge the files from the git history
 (`git filter-repo --invert-paths --path pyml_datasets/data/NAME.npz ...`) and replace the
 affected tags and releases.
@@ -418,7 +427,7 @@ affected tags and releases.
 ## Releasing
 
 1. Run `nox` on the branch of the release, and make sure the CI is green. Read the warnings of
-   `uv run python -m scripts.check_legal`: they are reminders, for example a license that
+   `uv run -m scripts legal`: they are reminders, for example a license that
    was verified more than a year ago. Check that `uv lock --check` passes.
 2. Bump `__version__` in `pyml_datasets/__init__.py` and add the entry to
    `docs/source/changelog.rst`.

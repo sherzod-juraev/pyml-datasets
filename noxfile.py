@@ -192,7 +192,7 @@ def lint(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def types(session: nox.Session) -> None:
     """Check the types with mypy in strict mode."""
-    _sync(session, "--group", "dev-types", "--group", "dev-test")
+    _sync(session, "--group", "dev-types", "--group", "dev-test", "--group", "dev-scripts")
     session.run("mypy", _PACKAGE, "scripts")
     session.run("mypy", "tests")
 
@@ -209,8 +209,7 @@ def docstrings(session: nox.Session) -> None:
 def legal(session: nox.Session) -> None:
     """Check licenses and evidence, and that the generated files are up to date."""
     _sync(session, "--group", "dev")
-    session.run("python", "-m", "scripts.check_legal")
-    session.run("python", "-m", "scripts.generate", "--check")
+    session.run("python", "-m", "scripts", "check")
 
 
 @nox.session(python=PYTHON_VERSIONS)
@@ -220,14 +219,14 @@ def tests(session: nox.Session) -> None:
     Arguments after ``--`` are passed to pytest, for example ``nox -s tests -- -k wine``. The
     coverage is not measured then, see ``_pytest``.
     """
-    _sync(session, "--group", "dev-test")
+    _sync(session, "--group", "dev-test", "--group", "dev-scripts")
     _pytest(session)
 
 
 @nox.session(name="tests-min", python=PYTHON_VERSIONS[0])
 def tests_min(session: nox.Session) -> None:
     """Run the test suite with the oldest NumPy that pyml-datasets claims to support."""
-    _sync(session, "--group", "dev-test")
+    _sync(session, "--group", "dev-test", "--group", "dev-scripts")
     minimum = _minimum_requirements()
     session.install(*minimum)
     session.run("python", "-c", _CHECK_VERSIONS, *minimum)

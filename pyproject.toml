@@ -50,12 +50,18 @@ dev-lint = ["ruff>=0.6.0"]
 dev-types = ["mypy>=1.11"]
 dev-docstring = ["interrogate>=1.7.0"]
 dev-package = ["build>=1.2"]
+# The command line of the scripts folder, which the tests and mypy import.
+dev-scripts = [
+    "rich>=15.0.0",
+    "rich-argparse>=1.8.0",
+]
 dev = [
     {include-group = "dev-test"},
     {include-group = "dev-lint"},
     {include-group = "dev-types"},
     {include-group = "dev-docstring"},
     {include-group = "dev-package"},
+    {include-group = "dev-scripts"},
     "scikit-learn>=1.4.0",
     "ucimlrepo>=0.0.7",
 ]
