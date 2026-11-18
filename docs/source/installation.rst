@@ -7,7 +7,7 @@ Requirements
 * Python 3.12, 3.13 or 3.14
 * NumPy 1.26 or newer (installed automatically)
 
-The command line also uses rich and rich-argparse, which are installed automatically as well.
+The command line also needs rich and rich-argparse, see `Command line`_ below.
 
 .. note::
 
@@ -60,6 +60,29 @@ Install from GitHub
       .. code-block:: console
 
          $ uv pip install git+https://github.com/sherzod-juraev/pyml-datasets.git
+
+Command line
+------------
+
+The ``pyml-datasets`` command (see :doc:`cli`) needs rich and rich-argparse. They belong to the
+optional ``cli`` extra and are not installed by the commands above. Ask for the extra to
+install them too:
+
+.. tab-set::
+
+   .. tab-item:: pip
+
+      .. code-block:: console
+
+         $ pip install "pyml-datasets[cli] @ git+https://github.com/sherzod-juraev/pyml-datasets.git"
+
+   .. tab-item:: uv
+
+      .. code-block:: console
+
+         $ uv add "pyml-datasets[cli] @ git+https://github.com/sherzod-juraev/pyml-datasets.git"
+
+Without the extra the command prints which package is missing and ends with exit code 3.
 
 Check the installation
 ----------------------

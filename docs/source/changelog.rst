@@ -1,6 +1,25 @@
 Changelog
 =========
 
+0.23.0
+------
+
+Added
+~~~~~
+
+- If ``rich`` or ``rich-argparse`` is not installed, the ``pyml-datasets`` command tells which
+  package is missing and how to install it, and ends with exit code 3, instead of failing with
+  a traceback.
+
+Changed
+~~~~~~~
+
+- ``rich`` and ``rich-argparse`` are no longer installed with the package. They are the
+  optional ``cli`` extra now, so a plain installation needs NumPy alone. The ``pyml-datasets``
+  command and ``python -m pyml_datasets`` need the extra, for example
+  ``pip install "pyml-datasets[cli] @ git+https://github.com/sherzod-juraev/pyml-datasets.git"``. Loading the datasets
+  never used them.
+
 0.22.0
 ------
 

@@ -108,9 +108,9 @@ distributed is generated from that. See `docs/source/design/single_source.rst`.
 
 The development tools are **dependency groups** ([PEP 735](https://peps.python.org/pep-0735/))
 in `pyproject.toml`, not extras. They are not part of the published package: `pip install
-pyml-datasets` installs the packages of `dependencies` in `pyproject.toml` (NumPy, and rich and
-rich-argparse for the command line) and no group. `uv.lock` pins the exact version of every
-package of every group.
+pyml-datasets` installs the packages of `dependencies` in `pyproject.toml` (NumPy alone) and no
+group. The package has one extra, `cli`, with rich and rich-argparse for the command line.
+`uv.lock` pins the exact version of every package of every group and of the extra.
 
 | Group           |                    Purpose                     |
 |:----------------|:----------------------------------------------:|
@@ -119,6 +119,7 @@ package of every group.
 | `dev-types`     |                      mypy                      |
 | `dev-docstring` |                  interrogate                   |
 | `dev-package`   |               build (the wheel)                |
+| `dev-scripts`  |     rich and rich-argparse (for `scripts`)     |
 | `dev`           | all `dev-*` groups, scikit-learn and ucimlrepo |
 | `docs-lint`     |          doc8, rstcheck, sphinx-lint           |
 | `docs-build`    |        Sphinx, its theme and extensions        |
@@ -192,6 +193,11 @@ groups it needs.
 | `linkcheck`      |       3.13       | `docs-build`                |                 Sphinx linkcheck, validity of every link in the docs                 |
 | `markdown-links` |       3.13       | `md-links`                  |       lychee: external links of the Markdown files, not the links between them       |
 | `package`        |       3.13       | `dev-package`               |  builds the wheel, checks its contents, imports an installed copy, runs its command  |
+
+The sessions that import the command line (`types`, `docstrings`, `tests`, `tests-min`, `docs`
+and `linkcheck`) install the `cli` extra on top of their groups. `package` installs the wheel
+without the extra first and checks that the command refuses to start with a message and exit
+code 3, then installs it with the extra and runs the command.
 
 `nox` without arguments runs every session except `linkcheck` and `markdown-links`, which need
 the network and are slow.
