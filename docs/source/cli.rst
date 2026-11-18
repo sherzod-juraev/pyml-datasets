@@ -56,7 +56,10 @@ Commands
       Show every row, without a limit. It cannot be used together with ``--limit``.
 
    When no dataset matches the filters, or ``--offset`` is past the last row, a message says
-   so and the exit code is 0.
+   so and the exit code is 0 (the JSON is an empty array).
+
+   ``--format {text,md,json}`` and ``--output PATH`` choose the format and the file, see
+   `Format and file`_. The default limit does not cut the JSON.
 
 ``pyml-datasets show NAME``
    Prints the facts about one dataset in sections. The header has the title, the task and
@@ -69,7 +72,11 @@ Commands
    ``--full``
       Also print the changes made to the data and the notes. Without it a line below the
       report counts them. The notes can hold a warning, for example about a cost matrix or
-      about features that describe people, so read them before you use a dataset.
+      about features that describe people, so read them before you use a dataset. The JSON
+      always has the changes and the notes.
+
+   ``--format {text,md,json}`` and ``--output PATH`` choose the format and the file, see
+   `Format and file`_.
 
 The examples below are not copied: they are the output of the commands, produced when this
 documentation is built.
@@ -106,6 +113,50 @@ A dataset with notes, and the changes and the notes in full:
    :prompt:
 
 Both commands only read what is bundled with the package, nothing is downloaded or written.
+
+Format and file
+---------------
+
+``list`` and ``show`` take the same three options.
+
+``--format {text,md,json}``
+   ``text`` is the output for the terminal and the default. ``md`` is Markdown: a table for
+   ``list``, and for ``show`` sections in the style of ``NOTICE.md``, with the addresses in
+   angle brackets. ``json`` is for programs: ``list`` gives an array of objects (``name``,
+   ``task``, ``license``, ``samples``, ``features`` and ``has_missing``) and ``show`` gives
+   one object with every field of :class:`~pyml_datasets.DatasetInfo` and also
+   ``n_samples``, ``n_features``, ``feature_names``, ``target_names`` and ``size_bytes``.
+   The JSON of ``list`` is not cut by the default limit. On the terminal it is plain ASCII, so
+   a console with another code page, such as cp1252 on Windows, still gets valid JSON.
+
+``--output PATH``, ``-o PATH``
+   Write the result to a file instead of the terminal. Without ``--format`` the extension
+   chooses the format: ``.md``, ``.txt`` or ``.json``. Another extension needs ``--format``,
+   and a ``--format`` that does not fit the extension is an error.
+
+   A file is always written in UTF-8, without a byte order mark and with ``\n`` at the end of
+   every line, whatever the console, the locale and the platform are, so the same command
+   gives the same bytes everywhere. A character is never replaced with ``?`` in a file. A text
+   file has no colors and no links and is wrapped at 100 characters, not at the width of the
+   terminal.
+
+   A name alone is a file in the current directory of the terminal, a relative path is taken
+   from there, and a full path is used as it is. ``~`` is expanded. The directory must
+   exist, it is not created. After the file is written, its full path is printed to the
+   standard error, so the standard output stays clean. ``-o -`` means the terminal.
+
+``--force``
+   Overwrite the file of ``--output`` if it exists. Without it an existing file is an
+   error, and nothing is written.
+
+.. code-block:: console
+
+   $ pyml-datasets show german_credit --full -o german_credit.md
+   $ pyml-datasets list --format json --task classification -o classification.json
+   $ pyml-datasets list --format md --name "wine*"
+
+The wrong options (a format that does not fit the extension, a missing directory, a file that
+exists) end with exit code 2, and a file that cannot be written with exit code 1.
 
 Colors
 ------

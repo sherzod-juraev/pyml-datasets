@@ -264,6 +264,29 @@ def _refresh(args: argparse.Namespace) -> int:
     return _legal_check()
 
 
+def _output_arguments(args: argparse.Namespace) -> list[str]:
+    """Return the arguments that choose the format and the file of the output.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed arguments of ``list`` or ``show``.
+
+    Returns
+    -------
+    list of str
+        ``--format``, ``--output`` and ``--force`` as the user gave them.
+    """
+    argv: list[str] = []
+    if args.format is not None:
+        argv += ["--format", args.format]
+    if args.output is not None:
+        argv += ["--output", args.output]
+    if args.force:
+        argv.append("--force")
+    return argv
+
+
 def _list(args: argparse.Namespace) -> int:
     """Run ``pyml-datasets list`` of the package."""
     argv = ["list", "--sort", args.sort]
@@ -281,12 +304,13 @@ def _list(args: argparse.Namespace) -> int:
         argv += ["--limit", str(args.limit)]
     if args.show_all:
         argv.append("--all")
-    return package_cli(argv)
+    return package_cli([*argv, *_output_arguments(args)])
 
 
 def _show(args: argparse.Namespace) -> int:
     """Run ``pyml-datasets show`` of the package."""
-    return package_cli(["show", args.name, *(["--full"] if args.full else [])])
+    argv = ["show", args.name, *(["--full"] if args.full else [])]
+    return package_cli([*argv, *_output_arguments(args)])
 
 
 def _check(args: argparse.Namespace) -> int:

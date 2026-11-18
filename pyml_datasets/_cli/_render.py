@@ -40,6 +40,8 @@ class ListRow:
         Number of rows of ``X``.
     n_features : int
         Number of columns of ``X``.
+    has_missing : bool, default=False
+        Whether ``X`` holds missing values.
     """
 
     name: str
@@ -47,6 +49,26 @@ class ListRow:
     license: str
     n_samples: int
     n_features: int
+    has_missing: bool = False
+
+
+def counts_line(count: int, totals: Mapping[str, int]) -> str:
+    """Write the line that counts the datasets of a table, by task.
+
+    Parameters
+    ----------
+    count : int
+        Number of datasets in the table.
+    totals : mapping of str to int
+        Number of datasets of every task.
+
+    Returns
+    -------
+    str
+        For example ``"3 datasets: classification 2, regression 1"``.
+    """
+    counts = ", ".join(f"{task} {number}" for task, number in totals.items())
+    return f"{_plural(count, 'dataset')}: {counts}"
 
 
 def list_table(
@@ -69,8 +91,7 @@ def list_table(
     rich.table.Table
         The table, ready to be printed.
     """
-    counts = ", ".join(f"{task} {count}" for task, count in totals.items())
-    caption = f"{_plural(len(rows), 'dataset')}: {counts}" + (f"\n{note}" if note else "")
+    caption = counts_line(len(rows), totals) + (f"\n{note}" if note else "")
     table = Table(
         box=box.SIMPLE_HEAD,
         header_style="bold",
@@ -95,7 +116,7 @@ def list_table(
     return table
 
 
-def _size(size: int) -> str:
+def size_text(size: int) -> str:
     """Format a number of bytes as KiB or MiB.
 
     Parameters
@@ -260,7 +281,7 @@ def _header(info: DatasetInfo) -> RenderableType:
     return Group(line, _Divider())
 
 
-def _hidden_parts(info: DatasetInfo) -> Text:
+def hidden_message(info: DatasetInfo) -> str:
     """Tell what the default output leaves out and how to read it.
 
     Parameters
@@ -270,19 +291,33 @@ def _hidden_parts(info: DatasetInfo) -> Text:
 
     Returns
     -------
-    rich.text.Text
-        A line that counts the changes and the notes. It stands out when there are notes,
-        because a note can hold a warning.
+    str
+        A sentence that counts the changes and the notes.
     """
     parts = [_plural(len(info.changes), "change")]
     if info.notes:
         parts.append(_plural(len(info.notes), "note"))
     many = len(parts) > 1 or len(info.changes) > 1
-    message = (
+    return (
         f"{' and '.join(parts)} {'are' if many else 'is'} not shown. "
         f"Run with --full to read {'them' if many else 'it'}."
     )
-    return Text(message, style="yellow" if info.notes else "dim")
+
+
+def _hidden_parts(info: DatasetInfo) -> Text:
+    """Style the sentence that tells what the default output leaves out.
+
+    Parameters
+    ----------
+    info : DatasetInfo
+        Provenance and license of the dataset.
+
+    Returns
+    -------
+    rich.text.Text
+        The sentence. It stands out when there are notes, because a note can hold a warning.
+    """
+    return Text(hidden_message(info), style="yellow" if info.notes else "dim")
 
 
 def show_report(
@@ -332,7 +367,7 @@ def show_report(
         label = "Classes" if info.task == "classification" else "Targets"
         overview.append((label, Text(", ".join(target_names))))
     overview.append(("Missing", Text("yes, stored as NaN" if info.has_missing else "no")))
-    overview.append(("File size", Text(_size(size))))
+    overview.append(("File size", Text(size_text(size))))
 
     provenance: list[tuple[str, RenderableType]] = [
         ("Source", Text.assemble(info.source, "\n", _link(info.source_url))),

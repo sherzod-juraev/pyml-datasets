@@ -7,6 +7,7 @@ from rich_argparse import RawDescriptionRichHelpFormatter
 
 from .._types import TASKS
 from ._commands import DEFAULT_LIMIT, SORT_KEYS, list_command, show_command
+from ._output import FORMATS
 
 
 def _positive_int(text: str) -> int:
@@ -60,6 +61,38 @@ class _HelpFormatter(RawDescriptionRichHelpFormatter):
 
     help_markup = False
     text_markup = False
+
+
+def add_output_options(parser: argparse.ArgumentParser) -> None:
+    """Add the options that choose the format and the file of the output.
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        Parser of a command that prints a table or a report.
+    """
+    parser.add_argument(
+        "--format",
+        choices=FORMATS,
+        help=(
+            "format of the output: text (default), md (Markdown) or json. With --output the "
+            "extension .md, .txt or .json chooses it"
+        ),
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        metavar="PATH",
+        help=(
+            "write the output to this file, always in UTF-8, instead of the terminal. '-' is "
+            "the terminal"
+        ),
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="overwrite the file of --output if it exists",
+    )
 
 
 def add_list_options(parser: argparse.ArgumentParser) -> None:
@@ -125,6 +158,7 @@ def add_list_options(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="show every row, without a limit",
     )
+    add_output_options(parser)
 
 
 def add_show_options(parser: argparse.ArgumentParser) -> None:
@@ -143,6 +177,7 @@ def add_show_options(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="also show the changes made to the data and the notes",
     )
+    add_output_options(parser)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -164,8 +199,10 @@ def build_parser() -> argparse.ArgumentParser:
             "  pyml-datasets list --task regression --sort samples --reverse\n"
             "  pyml-datasets list --name 'wine*' --no-missing\n"
             "  pyml-datasets list --limit 5 --offset 10\n"
+            "  pyml-datasets list --format json\n"
             "  pyml-datasets show iris\n"
-            "  pyml-datasets show german_credit --full"
+            "  pyml-datasets show german_credit --full\n"
+            "  pyml-datasets show german_credit --full -o german_credit.md"
         ),
     )
     commands = parser.add_subparsers(dest="command", metavar="COMMAND", required=True)

@@ -1,6 +1,33 @@
 Changelog
 =========
 
+0.22.0
+------
+
+Added
+~~~~~
+
+- ``pyml-datasets list`` and ``pyml-datasets show`` take ``--format {text,md,json}``.
+  ``text`` is the output as before. ``md`` is Markdown: a table for ``list``, and sections in
+  the style of ``NOTICE.md`` for ``show``. ``json`` is for programs: ``list`` gives an array
+  of objects and ``show`` gives one object with every fact, whether ``--full`` is given or
+  not. The default limit of ``list`` does not cut the JSON, only ``--limit`` does.
+- ``--output PATH`` (``-o``) writes the result to a file instead of the terminal, and
+  ``--force`` overwrites a file that exists. A file is always written in UTF-8, without a
+  byte order mark and with ``\n`` at the end of every line, whatever the console, the locale
+  and the platform are, and a character is never replaced. A text file has no colors and no
+  links and is wrapped at 100 characters, not at the width of the terminal. Without
+  ``--format`` the extension ``.md``, ``.txt`` or ``.json`` chooses the format. The path is
+  taken from the current directory, ``~`` is expanded, and its directory must exist. ``-o -``
+  is the terminal. ``python -m scripts list`` and ``show`` take the same options.
+
+Changed
+~~~~~~~
+
+- ``--format json`` on the terminal writes every character outside ASCII as an escape
+  (``\u0131``), so a console with another code page, such as cp1252 on Windows, still gets
+  valid JSON. A JSON file keeps the characters, in UTF-8.
+
 0.21.0
 ------
 
