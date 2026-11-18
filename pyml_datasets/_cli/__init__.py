@@ -10,10 +10,13 @@ should use ``list_datasets``, ``get_info`` and ``load_dataset`` instead of parsi
 
 import sys
 from collections.abc import Sequence
-
-from ._parser import build_parser
+from typing import Final
 
 __all__ = ["main"]
+
+# The packages that only the command line needs, they are the ``cli`` extra of the package.
+_CLI_PACKAGES: Final = frozenset({"rich", "rich_argparse"})
+_MISSING_DEPENDENCY_CODE: Final = 3
 
 
 def _keep_going_on_unencodable_text() -> None:
@@ -29,6 +32,34 @@ def _keep_going_on_unencodable_text() -> None:
             reconfigure(errors="replace")
 
 
+def _missing_dependency(error: ModuleNotFoundError) -> int | None:
+    """Report a missing package of the ``cli`` extra on the standard error stream.
+
+    Parameters
+    ----------
+    error : ModuleNotFoundError
+        The error raised while the parser was imported.
+
+    Returns
+    -------
+    int or None
+        The exit code of the program if ``error`` is about ``rich`` or ``rich_argparse``,
+        ``None`` for any other module. An error about another module is a bug, so the caller
+        raises it again with its traceback.
+    """
+    name = error.name or ""
+    if name.partition(".")[0] not in _CLI_PACKAGES:
+        return None
+    print(
+        "pyml-datasets: the command line needs the packages rich and rich-argparse, "
+        f"and {name!r} cannot be imported.\n"
+        'Install them with "pip install rich rich-argparse", or install pyml-datasets '
+        'with its "cli" extra.',
+        file=sys.stderr,
+    )
+    return _MISSING_DEPENDENCY_CODE
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the command line.
 
@@ -40,15 +71,27 @@ def main(argv: Sequence[str] | None = None) -> int:
     Returns
     -------
     int
-        Exit code: 0 on success, 1 if a data file cannot be read and 2 for an unknown
-        dataset name. A wrong command line makes the parser exit with code 2.
+        Exit code: 0 on success, 1 if a data file cannot be read, 2 for an unknown
+        dataset name and 3 if ``rich`` or ``rich-argparse`` is not installed. A wrong command
+        line makes the parser exit with code 2.
 
     Notes
     -----
     A character that the standard output cannot encode is printed as ``?``. For this the
     ``errors`` setting of ``sys.stdout`` and ``sys.stderr`` is changed to ``"replace"``.
+
+    ``rich`` and ``rich-argparse`` belong to the ``cli`` extra, so they are imported here and
+    not at the top of the module. If they are missing, a short message tells what to install,
+    instead of a traceback.
     """
     _keep_going_on_unencodable_text()
+    try:
+        from ._parser import build_parser
+    except ModuleNotFoundError as error:
+        missing = _missing_dependency(error)
+        if missing is None:
+            raise
+        return missing
     args = build_parser().parse_args(argv)
     code: int = args.handler(args)
     return code

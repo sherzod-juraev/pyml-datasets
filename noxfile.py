@@ -33,6 +33,8 @@ _WHEEL_REQUIRED = [
 # The command that the wheel installs, as ``entry_points.txt`` has to say it.
 _WHEEL_ENTRY_POINTS = ".dist-info/entry_points.txt"
 _WHEEL_COMMAND = "pyml-datasets = pyml_datasets._cli:main"
+# The metadata of the wheel has to name the ``cli`` extra, which holds rich and rich-argparse.
+_WHEEL_METADATA = ".dist-info/METADATA"
 # The notice and the text of every license the data is under must travel with the wheel.
 _WHEEL_LICENSES = [
     ".dist-info/licenses/LICENSE",
@@ -109,7 +111,8 @@ def _sync(session: nox.Session, *flags: str) -> None:
         Session whose virtual environment receives the packages.
     *flags : str
         Extra arguments for ``uv sync``, for example ``"--group", "dev"`` or
-        ``"--only-group", "dev-lint"``.
+        ``"--only-group", "dev-lint"``. The packages of the command line (``rich`` and
+        ``rich-argparse``) are installed with ``"--extra", "cli"``.
     """
     session.run_install(
         "uv",
@@ -139,14 +142,15 @@ def _pytest(session: nox.Session) -> None:
 
 
 def _minimum_requirements() -> list[str]:
-    """Return the runtime dependencies with every lower bound pinned exactly.
+    """Return the runtime dependencies and the ``cli`` extra with every lower bound pinned.
 
     The dependencies are read from ``pyproject.toml``, so the lowest supported versions are
     written in one place only. Only simple ``name>=version`` requirements are supported.
     """
     with Path("pyproject.toml").open("rb") as file:
-        dependencies: list[str] = tomllib.load(file)["project"]["dependencies"]
-    return [requirement.replace(">=", "==") for requirement in dependencies]
+        project = tomllib.load(file)["project"]
+    requirements: list[str] = [*project["dependencies"], *project["optional-dependencies"]["cli"]]
+    return [requirement.replace(">=", "==") for requirement in requirements]
 
 
 def _check_wheel_contents(session: nox.Session, wheel: Path) -> None:
@@ -169,8 +173,13 @@ def _check_wheel_contents(session: nox.Session, wheel: Path) -> None:
             for name in names
             if name.endswith(_WHEEL_ENTRY_POINTS)
         )
+        metadata = "".join(
+            archive.read(name).decode("utf-8") for name in names if name.endswith(_WHEEL_METADATA)
+        )
 
     problems = [f"missing {name}" for name in _WHEEL_REQUIRED if name not in names]
+    if "Provides-Extra: cli" not in metadata:
+        problems.append("the metadata does not declare the extra 'cli'")
     if _WHEEL_COMMAND not in entry_points:
         problems.append(f"the metadata does not declare the command {_WHEEL_COMMAND!r}")
 
@@ -207,7 +216,7 @@ def lint(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def types(session: nox.Session) -> None:
     """Check the types with mypy in strict mode."""
-    _sync(session, "--group", "dev-types", "--group", "dev-test")
+    _sync(session, "--extra", "cli", "--group", "dev-types", "--group", "dev-test")
     session.run("mypy", _PACKAGE, "scripts")
     session.run("mypy", "tests")
     # The stub names every loader; stubtest fails when it differs from the real module.
@@ -217,7 +226,7 @@ def types(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def docstrings(session: nox.Session) -> None:
     """Check that the docstring coverage is 100% and that the examples in them run."""
-    _sync(session, "--group", "dev-docstring", "--group", "dev-test")
+    _sync(session, "--extra", "cli", "--group", "dev-docstring", "--group", "dev-test")
     session.run("interrogate", _PACKAGE, "scripts")
     session.run("pytest", "--doctest-modules", _PACKAGE)
 
@@ -243,14 +252,14 @@ def tests(session: nox.Session) -> None:
     Arguments after ``--`` are passed to pytest, for example ``nox -s tests -- -k wine``. The
     coverage is not measured then, see ``_pytest``.
     """
-    _sync(session, "--group", "dev-test")
+    _sync(session, "--extra", "cli", "--group", "dev-test")
     _pytest(session)
 
 
 @nox.session(name="tests-min", python=PYTHON_VERSIONS[0])
 def tests_min(session: nox.Session) -> None:
-    """Run the test suite with the oldest NumPy that pyml-datasets claims to support."""
-    _sync(session, "--group", "dev-test")
+    """Run the test suite with the oldest NumPy, rich and rich-argparse that are supported."""
+    _sync(session, "--extra", "cli", "--group", "dev-test")
     minimum = _minimum_requirements()
     session.install(*minimum)
     session.run("python", "-c", _CHECK_VERSIONS, *minimum)
@@ -260,7 +269,7 @@ def tests_min(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def docs(session: nox.Session) -> None:
     """Check the documentation style, run its doctests and build it with warnings as errors."""
-    _sync(session, "--group", "docs")
+    _sync(session, "--extra", "cli", "--group", "docs")
     session.run("sphinx-lint", _DOCS_SOURCE)
     session.run("doc8", _DOCS_SOURCE)
     session.run("rstcheck", "--recursive", _DOCS_SOURCE)
@@ -276,7 +285,7 @@ def docs(session: nox.Session) -> None:
 @nox.session(python=DEFAULT_PYTHON)
 def linkcheck(session: nox.Session) -> None:
     """Check that every link in the documentation is valid (needs the network, so it is slow)."""
-    _sync(session, "--group", "docs-build")
+    _sync(session, "--extra", "cli", "--group", "docs-build")
     session.run("sphinx-build", "-b", "linkcheck", "-E", _DOCS_SOURCE, _DOCS_LINKCHECK)
 
 
@@ -315,12 +324,22 @@ def package(session: nox.Session) -> None:
     wheels = list(dist.glob("*.whl"))
     if len(wheels) != 1:
         session.error(f"expected exactly one wheel, found {len(wheels)}.")
-    _check_wheel_contents(session, wheels[0])
+    # The session changes its directory below, so the path of the wheel must not depend on it.
+    wheel = wheels[0].resolve()
+    _check_wheel_contents(session, wheel)
 
-    session.install(str(wheels[0]))
+    # First without the ``cli`` extra: the data needs NumPy alone, and the command must say what
+    # is missing, with the exit code 3, and not fail with a traceback.
+    session.install(str(wheel))
     session.chdir(session.create_tmp())
     session.run("python", "-c", _SMOKE_TEST)
-    # The command of the wheel, as a user starts it: by its name and as a module.
+    for command in (["pyml-datasets", "list"], ["python", "-m", "pyml_datasets", "list"]):
+        refusal = session.run(*command, success_codes=[3], silent=True) or ""
+        if "pip install rich rich-argparse" not in refusal or "Traceback" in refusal:
+            session.error(f"{' '.join(command)} without the cli extra printed:\n{refusal}")
+    # Then with the extra, the command of the wheel as a user starts it: by its name and as a
+    # module.
+    session.install(f"{wheel}[cli]")
     session.run("pyml-datasets", "list")
     session.run("pyml-datasets", "show", "iris")
     session.run("python", "-m", "pyml_datasets", "list")

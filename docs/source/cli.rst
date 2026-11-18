@@ -182,11 +182,16 @@ Exit codes
    * - 2
      - The dataset name is unknown, or the command line is wrong. Errors are printed to the
        standard error stream.
+   * - 3
+     - ``rich`` or ``rich-argparse`` is not installed, so the command cannot start. It prints
+       which package is missing and how to install it, to the standard error stream.
 
 Dependencies
 ------------
 
 The command uses `rich <https://github.com/Textualize/rich>`_ and
-`rich-argparse <https://github.com/hamdanal/rich-argparse>`_, which are installed together
-with the package. They are imported only when the command runs, so ``import pyml_datasets``
-does not load them.
+`rich-argparse <https://github.com/hamdanal/rich-argparse>`_. They belong to the optional
+``cli`` extra of the package, so install pyml-datasets with it (see :doc:`installation`) or
+install the two packages yourself. They are imported only when the command runs, so
+``import pyml_datasets`` does not load them. Without them the command prints which package is
+missing and ends with exit code 3.

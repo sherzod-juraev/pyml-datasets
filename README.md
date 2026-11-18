@@ -93,8 +93,9 @@ print(model.score(X_test, y_test))  # accuracy on the test set
 ## Installation
 
 pyml-datasets is not published on PyPI. It requires Python 3.12 or newer and is installed
-directly from GitHub. The data is read with NumPy alone; rich and rich-argparse are installed
-too, but only the command line uses them. With pip:
+directly from GitHub. The data is read with NumPy alone, which is the only package that a plain
+installation needs. The [command line](#command-line) also uses rich and rich-argparse, which
+belong to the optional `cli` extra. With pip:
 
 ```bash
 pip install git+https://github.com/sherzod-juraev/pyml-datasets.git
@@ -113,6 +114,15 @@ To install a fixed release, add its tag, replacing `vX.Y.Z` with a tag from the
 pip install git+https://github.com/sherzod-juraev/pyml-datasets.git@vX.Y.Z
 uv add git+https://github.com/sherzod-juraev/pyml-datasets.git --tag vX.Y.Z
 ```
+
+To use the command line too, ask for the `cli` extra. It installs rich and rich-argparse:
+
+```bash
+pip install "pyml-datasets[cli] @ git+https://github.com/sherzod-juraev/pyml-datasets.git"
+uv add "pyml-datasets[cli] @ git+https://github.com/sherzod-juraev/pyml-datasets.git"
+```
+
+Without the extra the command prints which package is missing and ends with exit code 3.
 
 ## Command line
 
