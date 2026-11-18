@@ -321,8 +321,8 @@ def test_no_name_of_a_feature_is_cut(capsys: pytest.CaptureFixture[str]) -> None
 
 
 def test_sizes_are_shown_in_kib_and_mib() -> None:
-    assert _render._size(2048) == "2.0 KiB"
-    assert _render._size(3 * 1024 * 1024) == "3.0 MiB"
+    assert _render.size_text(2048) == "2.0 KiB"
+    assert _render.size_text(3 * 1024 * 1024) == "3.0 MiB"
 
 
 def test_the_parser_stores_the_handler() -> None:

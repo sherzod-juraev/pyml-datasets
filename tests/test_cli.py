@@ -290,6 +290,10 @@ def test_help_is_plain_text_when_it_is_not_a_terminal(
             ],
         ),
         (["list", "--missing", "--all"], ["list", "--sort", "name", "--missing", "--all"]),
+        (
+            ["list", "--format", "json", "-o", "list.json", "--force"],
+            ["list", "--sort", "name", "--format", "json", "--output", "list.json", "--force"],
+        ),
     ],
 )
 def test_list_passes_its_options_to_the_package_command(
@@ -320,6 +324,10 @@ def test_list_rejects_a_wrong_option_like_the_package_command(argv: list[str]) -
     ("argv", "expected"),
     [
         (["show", "iris"], ["show", "iris"]),
+        (
+            ["show", "iris", "--full", "--format", "md", "--output", "iris.md"],
+            ["show", "iris", "--full", "--format", "md", "--output", "iris.md"],
+        ),
         (["show", "iris", "--full"], ["show", "iris", "--full"]),
     ],
 )
