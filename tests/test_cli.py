@@ -282,6 +282,14 @@ def test_help_is_plain_text_when_it_is_not_a_terminal(
             ["list", "--task", "regression", "--sort", "samples", "--reverse"],
             ["list", "--sort", "samples", "--task", "regression", "--reverse"],
         ),
+        (
+            ["list", "--name", "wine*", "--no-missing", "--limit", "5", "--offset", "10"],
+            [
+                *("list", "--sort", "name", "--name", "wine*", "--no-missing"),
+                *("--offset", "10", "--limit", "5"),
+            ],
+        ),
+        (["list", "--missing", "--all"], ["list", "--sort", "name", "--missing", "--all"]),
     ],
 )
 def test_list_passes_its_options_to_the_package_command(
@@ -298,9 +306,13 @@ def test_list_passes_its_options_to_the_package_command(
     assert calls == [expected]
 
 
-def test_list_rejects_a_wrong_option_like_the_package_command() -> None:
+@pytest.mark.parametrize(
+    "argv",
+    [["list", "--sort", "size"], ["list", "--limit", "0"], ["list", "--all", "--limit", "2"]],
+)
+def test_list_rejects_a_wrong_option_like_the_package_command(argv: list[str]) -> None:
     with pytest.raises(SystemExit) as stop:
-        cli.main(["list", "--sort", "size"])
+        cli.main(argv)
     assert stop.value.code == 2
 
 

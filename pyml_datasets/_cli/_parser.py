@@ -6,7 +6,53 @@ from functools import partial
 from rich_argparse import RawDescriptionRichHelpFormatter
 
 from .._types import TASKS
-from ._commands import SORT_KEYS, list_command, show_command
+from ._commands import DEFAULT_LIMIT, SORT_KEYS, list_command, show_command
+
+
+def _positive_int(text: str) -> int:
+    """Read a whole number of one or more.
+
+    Parameters
+    ----------
+    text : str
+        Text of the argument.
+
+    Returns
+    -------
+    int
+        The number.
+
+    Raises
+    ------
+    argparse.ArgumentTypeError
+        If the text is not a whole number of one or more.
+    """
+    if not text.isdecimal() or int(text) < 1:
+        raise argparse.ArgumentTypeError(f"{text!r} is not a whole number of 1 or more")
+    return int(text)
+
+
+def _non_negative_int(text: str) -> int:
+    """Read a whole number of zero or more.
+
+    Parameters
+    ----------
+    text : str
+        Text of the argument.
+
+    Returns
+    -------
+    int
+        The number.
+
+    Raises
+    ------
+    argparse.ArgumentTypeError
+        If the text is not a whole number of zero or more.
+    """
+    if not text.isdecimal():
+        raise argparse.ArgumentTypeError(f"{text!r} is not a whole number of 0 or more")
+    return int(text)
 
 
 class _HelpFormatter(RawDescriptionRichHelpFormatter):
@@ -33,6 +79,22 @@ def add_list_options(parser: argparse.ArgumentParser) -> None:
         help="show only the datasets of this task",
     )
     parser.add_argument(
+        "--name",
+        metavar="PATTERN",
+        help=(
+            "show only the datasets whose name matches the pattern: * (or %%) is any "
+            "characters and ? is one character, so 'wine*' starts with wine and '*quality' "
+            "ends with quality. Capital letters do not matter. Without them the pattern has "
+            "to match the whole name. Quote the pattern"
+        ),
+    )
+    parser.add_argument(
+        "--missing",
+        action=argparse.BooleanOptionalAction,
+        help="show only the datasets that have (--missing) or do not have (--no-missing) "
+        "missing values",
+    )
+    parser.add_argument(
         "--sort",
         choices=SORT_KEYS,
         default="name",
@@ -42,6 +104,26 @@ def add_list_options(parser: argparse.ArgumentParser) -> None:
         "--reverse",
         action="store_true",
         help="reverse the order, for example the largest dataset first",
+    )
+    parser.add_argument(
+        "--offset",
+        type=_non_negative_int,
+        default=0,
+        metavar="N",
+        help="skip the first N rows (default: %(default)s)",
+    )
+    size = parser.add_mutually_exclusive_group()
+    size.add_argument(
+        "--limit",
+        type=_positive_int,
+        metavar="N",
+        help=f"show at most N rows (default: {DEFAULT_LIMIT})",
+    )
+    size.add_argument(
+        "--all",
+        dest="show_all",
+        action="store_true",
+        help="show every row, without a limit",
     )
 
 
@@ -80,6 +162,8 @@ def build_parser() -> argparse.ArgumentParser:
             "examples:\n"
             "  pyml-datasets list\n"
             "  pyml-datasets list --task regression --sort samples --reverse\n"
+            "  pyml-datasets list --name 'wine*' --no-missing\n"
+            "  pyml-datasets list --limit 5 --offset 10\n"
             "  pyml-datasets show iris\n"
             "  pyml-datasets show german_credit --full"
         ),

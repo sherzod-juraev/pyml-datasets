@@ -1,6 +1,31 @@
 Changelog
 =========
 
+0.21.0
+------
+
+Added
+~~~~~
+
+- Options of ``pyml-datasets list`` that filter and page the rows. ``--name PATTERN`` keeps
+  the datasets whose name matches a pattern, like ``ILIKE`` in SQL: ``*`` (or ``%``) stands
+  for any characters and ``?`` for one, so ``--name "wine*"`` starts with ``wine`` and
+  ``--name "*quality"`` ends with ``quality``. Capital letters do not matter, and a pattern
+  without wildcards has to match the whole name; when a wider pattern would find more
+  datasets, a line below the table suggests it. ``--missing`` and ``--no-missing`` keep
+  the datasets that have, or do not have, missing values. ``--limit N`` shows at most N rows,
+  ``--offset N`` skips the first N rows and ``--all`` shows every row. ``python -m scripts
+  list`` takes the same options.
+
+Changed
+~~~~~~~
+
+- ``pyml-datasets list`` shows at most 25 rows unless ``--limit`` or ``--all`` is given. When
+  the table is cut, a line below it says which rows are shown and how many there are, for
+  example ``Showing 1-25 of 31.``. The package has fewer than 25 datasets now, so nothing is
+  cut yet. The line below the table says ``1 dataset``, not ``1 datasets``. The output is
+  meant for people and is not a stable interface.
+
 0.20.0
 ------
 

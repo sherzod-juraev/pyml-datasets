@@ -49,7 +49,9 @@ class ListRow:
     n_features: int
 
 
-def list_table(rows: Sequence[ListRow], totals: Mapping[str, int]) -> Table:
+def list_table(
+    rows: Sequence[ListRow], totals: Mapping[str, int], note: str | None = None
+) -> Table:
     """Build the table of all datasets.
 
     Parameters
@@ -58,6 +60,9 @@ def list_table(rows: Sequence[ListRow], totals: Mapping[str, int]) -> Table:
         One row for every dataset, in the order they are shown.
     totals : mapping of str to int
         Number of shown datasets of every task, shown below the table.
+    note : str, optional
+        A sentence for a second line below the table, for example which part of the
+        datasets is shown.
 
     Returns
     -------
@@ -65,12 +70,13 @@ def list_table(rows: Sequence[ListRow], totals: Mapping[str, int]) -> Table:
         The table, ready to be printed.
     """
     counts = ", ".join(f"{task} {count}" for task, count in totals.items())
+    caption = f"{_plural(len(rows), 'dataset')}: {counts}" + (f"\n{note}" if note else "")
     table = Table(
         box=box.SIMPLE_HEAD,
         header_style="bold",
         pad_edge=False,
         collapse_padding=True,
-        caption=f"{len(rows)} datasets: {counts}",
+        caption=caption,
         caption_justify="left",
     )
     table.add_column("Dataset", justify="left", no_wrap=True)
