@@ -16,11 +16,27 @@ Commands
 
 ``pyml-datasets list``
    Prints a table of the datasets with their task, license, number of samples and number of
-   features. The line below the table counts the datasets that are shown, by task. Three
-   options choose the rows and their order:
+   features. The line below the table counts the datasets that are shown, by task. The
+   options choose the rows and their order. The datasets are filtered first, then ordered,
+   and the table shows the page that ``--offset`` and ``--limit`` choose.
 
    ``--task {classification,regression}``
       Show only the datasets of this task.
+
+   ``--name PATTERN``
+      Show only the datasets whose name matches the pattern, like ``ILIKE`` in SQL. ``*`` (or
+      ``%``, as in SQL) stands for any characters, ``?`` for one character and ``[abc]`` for
+      one of the listed characters, so ``"wine*"`` starts with ``wine``, ``"*quality"`` ends
+      with ``quality`` and ``"*ine*"`` contains ``ine``. Capital letters do not matter. A
+      pattern without these characters has to match the whole name, as ``ILIKE 'wine'`` does,
+      and when a wider pattern would find more datasets, a line below the table suggests it.
+      ``_`` is an ordinary character, not a wildcard, because the names have it. Put the
+      pattern in quotes: a Unix shell can replace an ``*`` that is not quoted with the names
+      of files.
+
+   ``--missing`` or ``--no-missing``
+      Show only the datasets that have, or do not have, missing values. Without either
+      option both kinds are shown.
 
    ``--sort {name,samples,features}``
       The column to order the rows by. The default is ``name``.
@@ -28,6 +44,19 @@ Commands
    ``--reverse``
       Reverse the order, for example to see the largest dataset first. Datasets with an equal
       value stay in the order of their names.
+
+   ``--offset N``
+      Skip the first ``N`` rows of the ordered list. The default is 0.
+
+   ``--limit N``
+      Show at most ``N`` rows. The default is 25. When the table is cut, a line below it says
+      which rows are shown, for example ``Showing 1-25 of 31.``, and how to see the rest.
+
+   ``--all``
+      Show every row, without a limit. It cannot be used together with ``--limit``.
+
+   When no dataset matches the filters, or ``--offset`` is past the last row, a message says
+   so and the exit code is 0.
 
 ``pyml-datasets show NAME``
    Prints the facts about one dataset in sections. The header has the title, the task and
@@ -51,6 +80,15 @@ documentation is built.
 The regression datasets, the one with the most samples first:
 
 .. command-output:: pyml-datasets list --task regression --sort samples --reverse
+   :prompt:
+
+The datasets whose name starts with ``wine``, and the ones without missing values, two at a
+time (the second page):
+
+.. command-output:: pyml-datasets list --name "wine*"
+   :prompt:
+
+.. command-output:: pyml-datasets list --no-missing --limit 2 --offset 2
    :prompt:
 
 .. command-output:: pyml-datasets show iris

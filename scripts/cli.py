@@ -269,8 +269,18 @@ def _list(args: argparse.Namespace) -> int:
     argv = ["list", "--sort", args.sort]
     if args.task is not None:
         argv += ["--task", args.task]
+    if args.name is not None:
+        argv += ["--name", args.name]
+    if args.missing is not None:
+        argv.append("--missing" if args.missing else "--no-missing")
     if args.reverse:
         argv.append("--reverse")
+    if args.offset:
+        argv += ["--offset", str(args.offset)]
+    if args.limit is not None:
+        argv += ["--limit", str(args.limit)]
+    if args.show_all:
+        argv.append("--all")
     return package_cli(argv)
 
 
